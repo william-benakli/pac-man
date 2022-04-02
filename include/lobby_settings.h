@@ -1,5 +1,4 @@
-#include "./player_nolobby.h"
-#include "./player_inlobby.h"
+#include "player_ingame.h"
 
 #include <stdio.h>
 #include <stdlib.h>

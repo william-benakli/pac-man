@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include <client.h>
+#include "player_lobby.h"
 
 #define MAX_IDENTIFIANT 8
 
