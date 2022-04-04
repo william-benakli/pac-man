@@ -15,11 +15,11 @@ struct lobby{
 struct lobbylist{
     struct lobby data;
     struct lobbylist *next;
-}
+};
 
 struct lobbylist *listOfLobby;
 int nombre_lobby;
 
 int init_lobby(struct lobby game, int hauteur, int largeur, int max_players, char **labyrinth);
-int new_game(struct lobby *game);
+int new_game(int id, int port);
 void* listGames();
