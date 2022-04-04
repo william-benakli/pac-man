@@ -19,7 +19,40 @@ int init_lobby(struct lobby game, int hauteur, int largeur, int max_players, cha
     game.labyrinth = labyrinth;
     game.joueurs = NULL;
     return LOBBY_CREATION_SUCCESS;
-}       
+}     
+
+int new_game(int id, int port){
+    if(listOfLobby == NULL){
+        listOfLobby = malloc(sizeof(struct lobbylist));
+    }
+    //TODO: Faire un verrou lors de l'ajout et suppression
+    //TODO: faire des verifications sur la game
+
+
+
+
+
+    struct lobbylist * courant = listOfLobby;
+    while(courant->next != NULL){
+        courant = courant->next;
+    }
+    //A la fin on ajoute la partie
+    struct lobby game;
+    courant->next = &game;
+    nombre_lobby++;
+}
+
+void* listGames(){
+    struct lobbylist * courant = listOfLobby;
+    while(courant->next != NULL){
+        //Affichage uniquement pour l'instant aucune envoie 
+        struct lobby temporaire = courant->data;
+        printf("%s %d", "GAMES", nombre_lobby);
+        printf("%s %d %d", "OGAMES", (temporaire.id_partie), temporaire.max_players);
+        //write(socket);
+        courant = courant->next;
+    }
+}
 
 int player_join(struct lobby game, struct player player){
     struct participant *new_player = (struct participant *)malloc(sizeof(struct participant));

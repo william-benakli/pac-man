@@ -54,15 +54,17 @@ void *clientConnexion(void * client_connect){
     goto erreur;
   }
 
+  listGames();
   char buffer[6];
   buffer[5] = '\0';
 
   read(socket, buffer, 5);
 
   if(strcmp(buffer,"REGIS") == 0){
-    //inscription à une partie
+    //inscription à une partie  
+    registerGame();
   }else if(strcmp(buffer,"NEWPL") == 0){
-      //creation de la partie
+      //creation de la m!
   }else if(strcmp(buffer,"START") == 0){
       //Lancement de la partie s'il y'en a 
   }else{ 
@@ -81,6 +83,9 @@ void *clientConnexion(void * client_connect){
     return NULL;
 }
 
-int sendParty(int socketclient){
+int sendGame(int socketclient){
     //TODO: envoyer la liste des parties disponibles au joueur
+    while(listOfLobby->next != NULL){
+        write(socketclient, "GAMES", 10);
+    }
 }

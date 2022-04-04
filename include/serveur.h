@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "player_lobby.h"
+#include "lobby_settings.h"
 
 #define MAX_IDENTIFIANT 8
 
