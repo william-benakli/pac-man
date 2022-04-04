@@ -9,14 +9,11 @@
 
 
 //ajout un jeu a la fin de liste
-int add_game(struct game *game,struct list_game *list){
-    struct list_game *add;
-    add->game = game;
-    add->next_game = NULL;
+int add_game(struct list_game *game,struct list_game *list){
 
     struct list_game *copy = list;
     if(copy->game == NULL){
-        copy->game = game;
+        list->game = game->game;
         return GAME_CREATED_SUCCESSFULLY;
     } 
 
@@ -24,7 +21,7 @@ int add_game(struct game *game,struct list_game *list){
         copy = copy->next_game;
     }
 
-    copy->next_game = add;
+    copy->next_game = game;
     return GAME_CREATED_SUCCESSFULLY;
 }
 
@@ -37,7 +34,7 @@ int remove_game(struct game *game, struct list_game *list){
     }
 
     if(copy->game->id_partie == game->id_partie){
-        list->game = list->next_game;
+        list->next_game = list->next_game->next_game;
         return GAME_REMOVED_SUCCESSFULLY;
     }
 
