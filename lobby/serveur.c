@@ -1,4 +1,9 @@
 #include "../include/serveur.h"
+#include "../include/game_settings.h"
+#include "../include/list_game.h"
+
+struct list_game *_games;
+_games.first_game = NULL;
 
 int main(int argc, char const *argv[]) {
 
