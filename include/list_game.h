@@ -4,12 +4,13 @@
 #include "game_settings.h"
 
 struct list_game{
-    struct game *first_game;
-    struct game *current_game;
+    struct game *game;
+    struct list_game *next_game;
 };
+
 
 int add_game(struct game *game,struct list_game *list);
 int remove_game(struct game *game, struct list_game *list);
-struct game *search_game(int id, struct list_game *list); 
+int search_game(int id, struct list_game *list, struct game *ret); 
 
 #endif
