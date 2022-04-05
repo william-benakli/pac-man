@@ -51,7 +51,7 @@ int main(int argc, char const *argv[]) {
 void *clientConnexion(void * client_connect){
 
   int socket = ((struct player *)client_connect)->tcp_sock;
-  char pseudo[MAX_IDENTIFIANT];
+  char pseudo[SIZE_IDENTIFIANT];
 
   int rep_party = sendParty(socket);
   if(rep_party == -1){
@@ -61,13 +61,20 @@ void *clientConnexion(void * client_connect){
 
   char buffer[6];
   buffer[5] = '\0';
-
   read(socket, buffer, 5);
 
-  if(strcmp(buffer,"REGIS") == 0){
-    //inscription à une partie
-  }else if(strcmp(buffer,"NEWPL") == 0){
-      //creation de la partie
+  if(strcmp(buffer,"NEWPL") == 0){
+    char arguments[SIZE_IDENTIFIANT+SIZE_PORT];
+    read(socket, arguments, SIZE_IDENTIFIANT+SIZE_PORT);
+    
+    char identifiant[SIZE_IDENTIFIANT];
+    char port[SIZE_PORT];
+
+    int rep = create_game();
+    assert(rep >= 0); //on doit fermer le socket
+  }else if(strcmp(buffer,"REGIS") == 0){
+    int rep = join_game();
+    assert(rep >= 0);
   }else if(strcmp(buffer,"START") == 0){
       //Lancement de la partie s'il y'en a 
   }else{ 

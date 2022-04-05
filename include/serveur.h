@@ -14,7 +14,8 @@
 #include <assert.h>
 #include "player_lobby.h"
 
-#define MAX_IDENTIFIANT 8
+#define SIZE_IDENTIFIANT 8
+#define SIZE_PORT 4
 
 void *clientConnexion(void * client);
 int sendWelcome(int socketclient);
