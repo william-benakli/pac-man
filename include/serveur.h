@@ -1,3 +1,6 @@
+#ifndef SERVEUR_H
+#define SERVEUR_H
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -17,3 +20,5 @@ void *clientConnexion(void * client);
 int sendWelcome(int socketclient);
 
 pthread_mutex_t verrou= PTHREAD_MUTEX_INITIALIZER;
+
+#endif

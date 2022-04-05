@@ -1,4 +1,5 @@
-#define CLIENT_H
+#ifndef PLAYER_LOBBY_H
+#define PLAYER_LOBBY_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,3 +15,4 @@ struct player {
 
 int init_player(struct player *player, char identifiant[8], int udp_sock, int tcp_sock);
 
+#endif
