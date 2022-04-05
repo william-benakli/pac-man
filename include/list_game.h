@@ -9,7 +9,7 @@ struct list_game{
 };
 
 
-int add_game(struct game *game,struct list_game *list);
+int add_game(struct list_game *game,struct list_game *list);
 int remove_game(struct game *game, struct list_game *list);
 int search_game(int id, struct list_game *list, struct game *ret); 
 
