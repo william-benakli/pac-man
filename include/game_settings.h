@@ -13,7 +13,6 @@ struct game{
     int max_players;
     char **labyrinth;
     struct participant *joueurs;
-    struct game *next;
 };
 
 
