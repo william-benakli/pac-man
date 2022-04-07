@@ -5,18 +5,20 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct game{
-    int id_partie;
+    u_int8_t id_partie;
+    u_int8_t players;
+    u_int8_t max_player;
     int hauteur;
     int largeur;
-    int max_players;
     char **labyrinth;
     struct participant *joueurs;
 };
 
 
-int init_game(struct game *_game, int hauteur, int largeur, int max_players, char **labyrinth);
+int init_game(struct game *_game, int hauteur, int largeur, char **labyrinth);
 int player_join(struct game *_game, struct player player, struct participant *new_player);
 int check_ready(struct game *_game);
 

@@ -5,11 +5,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-
 struct participant{
 	char identifiant[8];
-	int udp_sock;
+	int udp_port;
 	int tcp_sock;
     int player_ready;
     int pos_x;
