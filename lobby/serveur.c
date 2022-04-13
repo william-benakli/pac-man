@@ -1,6 +1,5 @@
 #include "../include/serveur.h"
 
-uint8_t nombre_games;
 struct list_game * _games;
 
 //pour compiler gcc -pthread -Wall -o serveur serveur.c player_lobby.c list_game.c ../game/lobby.c
@@ -50,29 +49,19 @@ void *clientConnexion(void * client_connect){
 
   int socket = ((struct player *)client_connect)->tcp_sock;
 
+  printf("Ici tout est ok\n");
   int rep_party = sendgames(socket);
   if(rep_party == -1){
     perror("Erreur games invalide");
     goto erreur;
   }
 
-  char buffer[7];
-  buffer[6] = '\0';
-  read(socket, buffer, SIZE_INPUT_DEFAULT);
-
-  if(strcmp(buffer, CMD_NEW_PARTY) == 0){
-    int rep = creategame(socket); 
-    if(rep == -1){
-      perror("Erreur creation de la game à échoué");
-      goto erreur;
-    }
-  }else if(strcmp(buffer, CMD_REGISTER) == 0){
-
-  }else if(strcmp(buffer,"START ") == 0){
-
-  }else{ 
-    perror("Erreur arguments non conforme");
+  printf("Ici tout est ok\n");
+  int reponse_register = registerInput(socket);
+  if(reponse_register == -1){
     goto erreur;
+  }else if(reponse_register == 0){
+    goto success;
   }
 
   close(socket);
@@ -84,9 +73,54 @@ void *clientConnexion(void * client_connect){
     free(client_connect);
     exit(EXIT_FAILURE);
     return NULL;
+
+  success:
+    close(socket);
+    free(client_connect);
+    exit(EXIT_SUCCESS);
+    return NULL;
 }
 
+int registerInput(int socketclient){
+    char buffer[7];
+    buffer[6] = '\0';
+    read(socketclient, buffer, SIZE_INPUT_DEFAULT);
+
+    if(strcmp(buffer, CMD_NEW_PARTY) == 0){
+      int rep_create = creategame(socketclient); 
+      if(rep_create == -1){
+        sendError(socketclient);
+        registerInput(socketclient);
+      } 
+      //faire renjoindre la party au joueur
+    }else if(strcmp(buffer, CMD_REGISTER) == 0){
+
+    }else if(strcmp(buffer, CMD_IQUIT) == 0){
+      sendGodBye(socketclient);
+      return 0;
+    }else{
+      perror("Erreur arguments non conforme");
+      sendError(socketclient);
+      registerInput(socketclient);
+    }
+  return 0;
+  }
+
+int sendError(int socketclient){
+  char * buffer = "DUNNO***";
+  int count = write(socketclient, buffer, SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR -1);
+  return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR -1) ? -1:0;
+}
+
+int sendGodBye(int socketclient){
+  char * buffer = "GOBYE***";
+  int count = write(socketclient, buffer, SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR -1);
+  return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR -1) ? -1:0;
+}
+
+
 int sendgames(int socketclient){
+  int nombre_games = size_game_available(_games);
   int size_games = SIZE_INPUT_DEFAULT + sizeof(uint8_t) + SIZE_INPUT_STAR;
   int size_ogame = SIZE_INPUT_DEFAULT + sizeof(uint8_t)*2 + 1 + SIZE_INPUT_STAR;
   int size_max = size_games + nombre_games*(size_ogame);
@@ -97,17 +131,20 @@ int sendgames(int socketclient){
   memmove(mess_game+(SIZE_INPUT_DEFAULT) + sizeof(uint8_t), "***", SIZE_INPUT_STAR);
 
   struct list_game *listgames_courant = _games;
+
   if(listgames_courant->game != NULL){
       int it_games = 0;
-      while(listgames_courant->next_game != NULL){
+      while(listgames_courant->game != NULL){
         //Pour chaque partie on enrengistre [OGAME m s***]
-        memmove(mess_game+size_games + (it_games*size_ogame), "OGAME ", SIZE_INPUT_DEFAULT);
-        memmove(mess_game+size_games + (it_games*size_ogame) +(SIZE_INPUT_DEFAULT), &listgames_courant->game->id_partie, sizeof(uint8_t));
-        memmove(mess_game+size_games + (it_games*size_ogame) +(SIZE_INPUT_DEFAULT)+1, " ", sizeof(char)*1);
-        memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT)+sizeof(uint8_t)+1, &listgames_courant->game->players,sizeof(uint8_t));
-        memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT)+sizeof(uint8_t)+1+sizeof(uint8_t), "***", SIZE_INPUT_STAR);
-        listgames_courant = listgames_courant->next_game;
-        it_games++;
+        if(listgames_courant->game->status == STATUS_AVAILABLE){
+          memmove(mess_game+size_games + (it_games*size_ogame), "OGAME ", SIZE_INPUT_DEFAULT);
+          memmove(mess_game+size_games + (it_games*size_ogame) +(SIZE_INPUT_DEFAULT), &listgames_courant->game->id_partie, sizeof(uint8_t));
+          memmove(mess_game+size_games + (it_games*size_ogame) +(SIZE_INPUT_DEFAULT)+1, " ", sizeof(char)*1);
+          memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT)+sizeof(uint8_t)+1, &listgames_courant->game->players,sizeof(uint8_t));
+          memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT)+sizeof(uint8_t)+1+sizeof(uint8_t), "***", SIZE_INPUT_STAR);
+          it_games++;
+        }
+       listgames_courant = listgames_courant->next_game;
       }
   }
   printf("%d NOMBRE GAME CREATION\n", nombre_games);
@@ -118,21 +155,30 @@ int sendgames(int socketclient){
 int creategame(int socketclient){
 
     char arguments[SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR];
-    read(socketclient, arguments, SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR);
+    int count = read(socketclient, arguments, SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR);
+    if(count != SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR)return -1;
     
     char identifiant[SIZE_IDENTIFIANT+1];
     identifiant[SIZE_IDENTIFIANT] = '\0';
     char port[SIZE_PORT+1];
     port[SIZE_PORT] = '\0';
+    char stars[SIZE_INPUT_STAR+1];
+    stars[SIZE_INPUT_STAR] = '\0';
+
     memmove(identifiant, arguments, SIZE_IDENTIFIANT);
     memmove(port, arguments+SIZE_IDENTIFIANT, sizeof(int));
+    memmove(stars, arguments+SIZE_IDENTIFIANT+sizeof(int), SIZE_INPUT_STAR);
 
-    //fausse partie
+    if(strcmp(stars, "***") != 0)return -1;
+    
     struct game *game = malloc(sizeof(struct game));
-    game->id_partie = 2;
-    game->players = 5;
-    int rep = add_game(game, _games);
-    nombre_games++;
+    int rep_init = init_game(game, 10, 10, NULL);
+    if(rep_init == -1)return -1;
+    
     printf("[CREATE PARTY] Joueur %s Port %s", identifiant, port);
-    return rep;
+    //TODO: AJOUTER UN PLAYER
+    int rep_add = add_game(game, _games);
+    if(rep_add == -1)return -1;
+    
+    return 0;
 }
