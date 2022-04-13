@@ -37,23 +37,28 @@ int main(int argc, char const *argv[]) {
     int connexion = connect(descr, (struct sockaddr *)&adresse, sizeof(struct sockaddr_in));
 
     if(connexion !=-1){
-        write(descr, "NEWPL WILLIAM7 5454***", 7+8+3+4);
-
-        char reponseClient[100];
-        read(descr, reponseClient, 100);
-        for(int i = 0; i < 100; i++){
-            if(isalpha(reponseClient[i])){
-                printf("%c", reponseClient[i]);
-            }else{
-                if(reponseClient[i] == '*'){
-                    printf("*");
-                }else if(reponseClient[i] == ' '){
-                    printf(" ");
-                }else{
-                    printf("%d", reponseClient[i]);
-
-                }
-            }
+        
+        while(1){
+          char reponseClient[100];
+          read(descr, reponseClient, 100);
+          for(int i = 0; i < 100; i++){
+              if(isalpha(reponseClient[i])){
+                  printf("%c", reponseClient[i]);
+              }else{
+                  if(reponseClient[i] == '*'){
+                      printf("*");
+                  }else if(reponseClient[i] == ' '){
+                      printf(" ");
+                  }else{
+                      printf("%d", reponseClient[i]);
+                  }
+              }
+          }
+          char scanmsg[23];
+          scanf("%s",scanmsg); 
+          printf("Vous avez entré %s \n",scanmsg);
+          //"NEWPL WILLIAM7 5454***"
+          write(descr, scanmsg, 7+8+3+4);
         }
         printf("\n");
     }else{
