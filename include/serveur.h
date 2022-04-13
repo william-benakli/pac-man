@@ -25,11 +25,14 @@
 #define CMD_REGISTER "REGIS "
 #define CMD_START "START "
 #define CMD_NEW_PARTY "NEWPL "
+#define CMD_IQUIT "IQUIT "
 
 void *clientConnexion(void * client);
+int registerInput(int socketclient);
+int sendGodBye(int socketclient);
+int sendError(int socketclient);
 int sendgames(int socketclient);
 int creategame(int socketclient);
-
 extern struct list_game *_games;
 
 pthread_mutex_t verrou= PTHREAD_MUTEX_INITIALIZER;
