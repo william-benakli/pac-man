@@ -4,8 +4,6 @@
 #define GAME_FAILED_CREATION 1
 #define GAME_FAILED_REMOVAL 1 
 #define GAME_REMOVED_SUCCESSFULLY 0
-#define GAME_FOUND 0
-#define GAME_NOT_FOUND 1
 
 struct list_game * init_list_game(){
     struct list_game * game = malloc(sizeof(struct list_game));
@@ -63,19 +61,7 @@ int remove_game(struct game *rem_game, struct list_game *list){
 }
 
 //parcourir une liste et remplir ret avec la jeu de meme id_valeur comme id 
-int search_game(int id, struct list_game *list, struct game *ret){
-    struct list_game *copy = list;
 
-    while(copy != NULL){
-        if (copy->game->id_partie == id){
-            ret = copy->game;
-            return GAME_FOUND;
-        } 
-        copy = copy->next_game;
-    }
-
-    return GAME_NOT_FOUND;
-}
 /*
 int main(){
     struct list_game *test = malloc(sizeof(struct list_game));
