@@ -12,6 +12,7 @@ struct player {
 	int udp_port;
 	int tcp_sock;
 	int is_in_game;
+	int game_id;
 };
 
 int init_player(struct player *player, int tcp_sock);
