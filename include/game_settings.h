@@ -20,7 +20,6 @@ struct game{
 
 
 int init_game(struct game *_game, int hauteur, int largeur, char **labyrinth);
-int player_join(struct game *_game, struct player player, struct participant *new_player);
 int check_ready(struct game *_game);
 
 #endif

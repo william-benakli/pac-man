@@ -11,7 +11,5 @@ struct list_game{
 struct list_game * init_list_game();
 int add_game(struct game *game,struct list_game *list);
 int remove_game(struct game *game, struct list_game *list);
-int search_game(int id, struct list_game *list, struct game *ret); 
-int size_game_available(struct list_game *list);
 
 #endif
