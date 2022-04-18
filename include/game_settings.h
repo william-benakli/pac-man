@@ -15,6 +15,7 @@ struct game{
     int largeur;
     char **labyrinth;
     struct participant *joueurs;
+    enum { STATUS_AVAILABLE, STATUS_UNAVAILABLE} status;
 };
 
 
