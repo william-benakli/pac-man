@@ -20,7 +20,7 @@ int playerleave(struct game *_game, struct player *player){
 }
 
 int unregis(struct player *client, struct list_game *games){
-
+    
     if (client->status_game == IN_LOBBY){
         printf("player not in party\n");
         return PLAYER_UNREG_FAILURE;

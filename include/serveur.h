@@ -37,8 +37,17 @@
 void *clientConnexion(void * client);
 int registerInput(struct player *player);
 int creategame(struct player * player, struct list_game * games);
+
+int sendgames(int socketclient);
 int sendGodBye(int socketclient);
-int sendError(int socketclient);
+int sendDunno(int socketclient);
+
+int sendRegNo(int socketclient);
+
+int sendUnRegOk(int socketclient, u_int8_t id_partie);
+int sendRegOk(int socketclient, u_int8_t id_partie);
+
+int readStars(int socketclient);
 
 extern struct list_game *_games;
 

@@ -66,7 +66,7 @@ int regis(struct player *client,struct list_game *games){
     return PLAYER_REGISTER_SUCCESS;
 }
 
-int search_game(int id, struct list_game *list, struct game *ret){
+int search_game(uint8_t id, struct list_game *list, struct game *ret){
     struct list_game *copy = list;
 
     while(copy != NULL){

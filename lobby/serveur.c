@@ -121,25 +121,35 @@ int registerInput(struct player * player){
         sendError(socketclient);
         registerInput(player);
       }
-      return 0;
+
+      registerInput(player);
     }else if(strcmp(buffer, CMD_GAME) == 0){
       //verifier *** sinon incorrect
+      int check_stars = readStars(socketclient);
+      if(check_stars == -1){
+        sendError(socketclient);
+        registerInput(player);
+      }
       int rep_party = sendgames(socket);
       if(rep_party == -1){
         sendError(socketclient);
         registerInput(player);
       }
-      return 0;
+
     }else if(strcmp(buffer, CMD_SIZE) == 0){
       if(player->status_game == IN_LOBBY){
         sendError(socketclient);
         registerInput(player);
       }
 
-      return 0;
     }else if(strcmp(buffer, CMD_LIST) == 0){
-    
-      return 0;
+      int rep_list = sendList(socketclient);
+      if(rep_list == -1){
+        sendError(socketclient);
+        registerInput(player);
+      }
+      registerInput(player);
+
     }else{
       perror("Erreur arguments non conforme");
       sendError(socketclient);
@@ -149,7 +159,7 @@ int registerInput(struct player * player){
   }
 
 
-int sendError(int socketclient){
+int sendDunno(int socketclient){
   char * buffer = "DUNNO***";
   int count = write(socketclient, buffer, SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR);
   return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR) ? -1:0;
@@ -161,32 +171,88 @@ int sendRegNo(int socketclient){
   return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR) ? -1:0;
 }
 
-int sendUnRegOk(int socketclient, u_int8_t id_partie){
+int readStars(int socketclient){
+  char stars[4];
+  stars[3] = '\0';
+  int count = write(socketclient, stars, SIZE_INPUT_STAR);
+  if(strcmp(stars, "***" != 0)){
+    return -1;
+  }
+  return count == (SIZE_INPUT_STAR) ? -1:0;
+}
+
+int sendList(int socketclient){
+  char buffer_reception[1 + sizeof(uint8_t)];
+  read(socketclient, buffer_reception, 1+sizeof(uint8_t));
+
+  uint8_t id_partie;
+  memmove(id_partie, buffer_reception+1, sizeof(uint8_t));
+  struct game *game_courant;
+  int rep_search = search_game(id_partie, _games, game_courant);
+  if(rep_search == -1){
+    return -1;
+  }
+
+//  char buffer_envoie[SIZE_INPUT_DEFAULT+ size]
+
+  return 0;
+}
+
+
+int sendSize(int socketclient){
+  char buffer_reception[1 + sizeof(uint8_t)];
+  read(socketclient, buffer_reception, 1+sizeof(uint8_t));
+
+  uint8_t id_partie;
+  memmove(id_partie, buffer_reception+1, sizeof(uint8_t));
+  struct game *game_courant;
+  int rep_search = search_game(id_partie, _games, game_courant);
+  if(rep_search == -1){
+    return -1;
+  }
+
+  size_t size_reponse = SIZE_INPUT_DEFAULT_SPACE+ sizeof(uint8_t) + (sizeof(uint16_t)*2 )+ 2 + SIZE_INPUT_STAR;
+  char buffer_envoie[size_reponse];
+  char buffer_input = "SIZE! ";
+  char stars[3];
+  
+  memmove(buffer_envoie, buffer_input, SIZE_INPUT_DEFAULT_SPACE);
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE, &game_courant->id_partie, sizeof(uint8_t));
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), " ",  1);
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+1, &game_courant->hauteur, sizeof(uint16_t));
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), " ",  1);
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+2+sizeof(uint16_t), &game_courant->largeur, sizeof(uint16_t));
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+2+(sizeof(uint16_t)*2), stars, SIZE_INPUT_STAR);
+  
+  int count = write(socketclient, buffer_envoie, size_reponse);
+  return count == (size_reponse) ? -1:0;
+}
+
+int sendUnRegOk(int socketclient, uint8_t id_partie){
   char * buffer_input = "UNROK ";
   char * stars = "***";
 
-  char buffer_reponse[SIZE_INPUT_DEFAULT_SPACE + sizeof(u_int8_t) + SIZE_INPUT_STAR];
+  char buffer_reponse[SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR];
 
   memmove(buffer_reponse, buffer_input, SIZE_INPUT_DEFAULT_SPACE);
-  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE, &id_partie, sizeof(u_int8_t));
-  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(u_int8_t), stars, SIZE_INPUT_STAR);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE, &id_partie, sizeof(uint8_t));
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), stars, SIZE_INPUT_STAR);
 
-  int count = write(socketclient, buffer_reponse, SIZE_INPUT_DEFAULT_SPACE + sizeof(u_int8_t) + SIZE_INPUT_STAR);
-  return count == (SIZE_INPUT_DEFAULT_SPACE + sizeof(u_int8_t) + SIZE_INPUT_STAR) ? -1:0;
+  int count = write(socketclient, buffer_reponse, SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR);
+  return count == (SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR) ? -1:0;
 }
 
-int sendRegOk(int socketclient, u_int8_t id_partie){
+int sendRegOk(int socketclient, uint8_t id_partie){
+  char buffer_reponse[SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR];
   char * buffer_input = "REGOK ";
   char * stars = "***";
 
-  char buffer_reponse[SIZE_INPUT_DEFAULT_SPACE + sizeof(u_int8_t) + SIZE_INPUT_STAR];
-
   memmove(buffer_reponse, buffer_input, SIZE_INPUT_DEFAULT_SPACE);
-  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE, &id_partie, sizeof(u_int8_t));
-  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(u_int8_t), stars, SIZE_INPUT_STAR);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE, &id_partie, sizeof(uint8_t));
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), stars, SIZE_INPUT_STAR);
 
-  int count = write(socketclient, buffer_reponse, SIZE_INPUT_DEFAULT_SPACE + sizeof(u_int8_t) + SIZE_INPUT_STAR);
-  return count == (SIZE_INPUT_DEFAULT_SPACE + sizeof(u_int8_t) + SIZE_INPUT_STAR) ? -1:0;
+  int count = write(socketclient, buffer_reponse, SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR);
+  return count == (SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR) ? -1:0;
 }
 
 int sendGodBye(int socketclient){
