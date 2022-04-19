@@ -44,7 +44,7 @@ int regis(struct player *client,struct list_game *games){
       return PLAYER_REGISTER_FAILURE;
     }
     
-    struct game *target_game;
+    struct game *target_game = NULL;
     int sg = search_game(*((int *)room_buffer),games, target_game);
     if (sg == GAME_NOT_FOUND){
         printf("game not found\n");
@@ -59,7 +59,7 @@ int regis(struct player *client,struct list_game *games){
         printf("failed to join game\n");
         return PLAYER_REGISTER_FAILURE;
     }
-    player_join(&target_game,client,joining_player);
+    player_join(target_game,client,joining_player);
 
     client->status_game = IN_GAME;
     client->game_id = *((int *)room_buffer);
