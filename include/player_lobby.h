@@ -5,13 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NOT_IN_GAME 0;
-#define IN_GAME 0;
-
 struct player {
 	int udp_port;
 	int tcp_sock;
-	int is_in_game;
+    enum { IN_GAME, LOBBY} status_game;
 	int game_id;
 };
 

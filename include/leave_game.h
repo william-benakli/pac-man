@@ -14,7 +14,4 @@
 int player_leave(struct game *_game, struct player *player);
 int unregis(struct player *client, int socket,struct list_game *games, char *return_message);
 
-
-
-
 #endif
