@@ -14,6 +14,7 @@ struct list_game * init_list_game(){
 
 void free_list_game(struct list_game *games){
     if(games->next_game != NULL)
+    //TODO à FINIR !
     free(games);
 }
 
@@ -33,7 +34,6 @@ int add_game(struct game *game,struct list_game *list){
 
     copy->next_game = list_next;
 
-   // nombre_games++;
     return GAME_CREATED_SUCCESSFULLY;
 }
 
@@ -60,28 +60,18 @@ int remove_game(struct game *rem_game, struct list_game *list){
     return GAME_FAILED_REMOVAL;
 }
 
-//parcourir une liste et remplir ret avec la jeu de meme id_valeur comme id 
+int size_game_available(struct list_game *list){
+    struct list_game *copy = list;
 
-/*
-int main(){
-    struct list_game *test = malloc(sizeof(struct list_game));
-    test->game = NULL;
-    test->next_game = NULL;
-
-    struct game *game = malloc(sizeof(struct game));
-    game->id_partie = 1;
-    game->joueurs = NULL;
-    game->hauteur = NULL;
-    game->labyrinth = NULL;
-    game->max_player = NULL;
-    game->players = NULL;
-    add_game(game,test);
-    add_game(game,test);
-    add_game(game,test);
-
-    printf("%d",test->game->id_partie);
-    printf("%d",test->next_game->game->id_partie);
-    printf("%d",test->next_game->next_game->game->id_partie);
-
+    int nombre_party_available = 0;
+        if(copy->game == NULL){
+            return 0;
+        }
+    while(copy->next_game != NULL){
+        if (copy->game->status == STATUS_AVAILABLE){
+            nombre_party_available++;
+        } 
+        copy = copy->next_game;
+    }
+    return nombre_party_available;
 }
-*/

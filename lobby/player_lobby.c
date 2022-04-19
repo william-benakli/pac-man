@@ -5,7 +5,7 @@ int init_player(struct player *client, int tcp_sock){
 		return -1;
 	}
 	client->tcp_sock = tcp_sock;
-	client->is_in_game = NOT_IN_GAME;
+	client->status_game = IN_LOBBY;
 	client->game_id = -1;
 	return 0;
 }

@@ -19,30 +19,29 @@ int playerleave(struct game *_game, struct player *player){
     return GAME_LEAVE_FAILURE;
 }
 
-int unregis(struct player *client, int socket,struct list_game *games, char *return_message){
-    if (client->is_in_game == 0){
-        strcpy(return_message,"player not in party");
+int unregis(struct player *client, struct list_game *games){
+
+    if (client->status_game == IN_LOBBY){
+        printf("player not in party\n");
         return PLAYER_UNREG_FAILURE;
     }
 
-    struct game target_game;
-    int sg = search_game(client->game_id,games,&target_game);
+    struct game *target_game;
+    int sg = search_game(client->game_id,games,target_game);
     if (sg == GAME_NOT_FOUND){
-        strcpy(return_message,"game not found");
+        printf("game not found\n");
         return PLAYER_UNREG_FAILURE;
     }
 
-    int *pl  = (int *) malloc(sizeof(int));
-    *pl = playerleave(&target_game,client);
-
-    if (*pl != 0){ //GAME_LEAVE_SUCCESS fait un erreur ici pour quelque raison?
-        strcpy(return_message,"failed to join game");
+    if (target_game == NULL || games == NULL){ //GAME_LEAVE_SUCCESS fait un erreur ici pour quelque raison?
+        printf("failed to join\n");
         return PLAYER_UNREG_FAILURE;
     }
 
-    client->is_in_game = 0;
+    playerleave(target_game,client);
+
+    client->status_game = IN_LOBBY;
     client->game_id = -1;
-    free(pl);
     return PLAYER_UNREG_SUCCESS;
 
 }
