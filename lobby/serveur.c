@@ -88,10 +88,13 @@ int registerInput(int socketclient){
 
     if(strcmp(buffer, CMD_NEW_PARTY) == 0){
       int rep_create = creategame(socketclient); 
+      
       if(rep_create == -1){
         sendError(socketclient);
         registerInput(socketclient);
-      } 
+      }else{
+        registerInput(socketclient);
+      }
       //faire renjoindre la party au joueur
     }else if(strcmp(buffer, CMD_REGISTER) == 0){
 
@@ -169,7 +172,7 @@ int creategame(int socketclient){
     memmove(port, arguments+SIZE_IDENTIFIANT, sizeof(int));
     memmove(stars, arguments+SIZE_IDENTIFIANT+sizeof(int), SIZE_INPUT_STAR);
 
-    if(strcmp(stars, "***") != 0)return -1;
+    if(!strcmp(stars, "***"))return -1;
     
     struct game *game = malloc(sizeof(struct game));
     int rep_init = init_game(game, 10, 10, NULL);
@@ -179,6 +182,7 @@ int creategame(int socketclient){
     //TODO: AJOUTER UN PLAYER
     int rep_add = add_game(game, _games);
     if(rep_add == -1)return -1;
+    
     
     return 0;
 }

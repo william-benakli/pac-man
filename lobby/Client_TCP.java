@@ -6,6 +6,7 @@ import java.util.*;
 
 public class Client_TCP implements Runnable {
 	Socket socket;
+	static int is_the_game_started = 0;
 
 	public Client_TCP(Socket sock) {
 		this.socket = sock;
@@ -18,20 +19,19 @@ public class Client_TCP implements Runnable {
 			InputStream is = socket.getInputStream();
 			OutputStream os = socket.getOutputStream();
 			String msg;
-			
+
 			// Recois msg - message en TCP: [GAMES␣n***]
 			Command_games_number(is);
 
 			// AVANT LA PARTIE
-			while (true) {
+			while (is_the_game_started == 0) {
 				System.out.println("Info_commandes_reponses? tapez: INFOS***");
 				System.out.println("Info_variables? tapez: VARSE***");
 				System.out.print("Votre msg TCP: ");
 				msg = sc.nextLine();
 				Command_Check(msg, is, os);
-
 			}
-
+			System.out.println("LETS GO!");
 			// TODO: LE DEBUT DE LA PARTIE
 
 			// FERMETURE DES SOCKETS
@@ -141,6 +141,19 @@ public class Client_TCP implements Runnable {
 		System.out.println(" w: largeur du labyrinthe");
 	}
 
+	public static boolean Check_if_integer_zero_nine(byte b) {
+		try {
+			String crashtest = "";
+			crashtest += String.valueOf((int) b);
+			int valideoupas = Integer.valueOf(crashtest);
+			if (valideoupas >= 0 && valideoupas <= 9)
+				return true;
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	// VEIRIFIE LA COMMANDE PUIS REDIRIGE VERS LA BONNE METHODE
 	public static void Command_Check(String msg, InputStream is, OutputStream os) {
 		String lecture = "";
@@ -169,25 +182,42 @@ public class Client_TCP implements Runnable {
 						Command_new_player(msg, is, os);
 						break;
 					case "REGIS":
-						// TODO
+						Command_regis_player(msg, is, os);
 						break;
 					case "UNREG":
-						// TODO
+						Command_unreg_player(msg, is, os);
 						break;
 					case "SIZE?":
-						// TODO
+						Command_size_player(msg, is, os);
 						break;
 					case "LIST?":
-						// TODO
+						Command_list_player(msg, is, os);
 						break;
 					case "GAME?":
-						// TODO
+						try {
+							// Envoie msg - message en TCP
+							os.write(msg.getBytes());
+							System.out.println("J'ai envoye en TCP: " + msg);
+							// Recois msg - message en TCP
+							Command_games_number(is);
+						} catch (Exception e) {
+							System.out.println("ERREUR GAME? (COMMAND_CHECK)");
+						}
 						break;
 					case "START":
-						// TODO
-						break;
+						try {
+							// Envoie msg - message en TCP
+							String start = "START";
+							os.write(start.getBytes());
+							System.out.println("J'ai envoye en TCP: " + msg);
+							is_the_game_started = 1;
+						} catch (Exception e) {
+							System.out.println("ERREUR START (COMMAND_CHECK)");
+						}
+						return;
 					default:
 						System.out.println("COMMANDE NON RECONNUE! (COMMAND_CHECK)");
+						System.out.println("Entrer INFOS ou VARSE pour voir les commandes detailles");
 					}
 					lecture = "";
 				}
@@ -203,6 +233,209 @@ public class Client_TCP implements Runnable {
 		for (int i = 0; i < 5; i++)
 			res += msg.charAt(i);
 		return res;
+	}
+
+	// COMMANDE_SEND: [LIST?␣m***]
+	public static void Command_list_player(String str, InputStream is, OutputStream os) {
+		try {
+			// Envoie msg - message en TCP
+			os.write(str.getBytes());
+			System.out.println("J'ai envoye en TCP: " + str);
+			// Recois msg - message en TCP
+			String msg = "";
+			String receptacle = null;
+			int read;
+			String str_nombre_de_joueur = "";
+			int nombre_de_joueur = 0;
+			byte[] msg_byte = new byte[5];
+			if ((read = is.read(msg_byte)) != -1) {
+				receptacle = new String(msg_byte, 0, read);
+			}
+			for (int i = 0; i < msg_byte.length; i++) {
+				byte b = (byte) msg_byte[i];
+				msg += (char) b;
+			}
+			if (msg == "LIST!") {
+				byte[] msg_byte_OK = new byte[7];
+				if ((read = is.read(msg_byte_OK)) != -1) {
+					receptacle = new String(msg_byte_OK, 0, read);
+				}
+				for (int i = 0; i < msg_byte_OK.length; i++) {
+					byte b = (byte) msg_byte_OK[i];
+					if (i == 1 || i == 3) {
+						msg += String.valueOf((int) b);
+						if (i == 3) {
+							str_nombre_de_joueur += String.valueOf((int) b);
+							nombre_de_joueur = Integer.valueOf(str_nombre_de_joueur);
+						}
+					} else {
+						msg += (char) b;
+					}
+				}
+				System.out.println("J'ai reçu en TCP: " + msg);
+				// la partie suivi de s messages de la forme [PLAYR␣id***]
+				if (nombre_de_joueur == 0) {
+					System.out.println("Il n'y a aucun joueur dans cette partie.");
+				} else {
+					for (int i = 0; i < nombre_de_joueur; i++) {
+						msg = "";
+						byte[] msg_byte_joueur = new byte[17];
+						if ((read = is.read(msg_byte_joueur)) != -1) {
+							receptacle = new String(msg_byte_joueur, 0, read);
+						}
+						for (int j = 0; j < msg_byte_joueur.length; j++) {
+							byte b = (byte) msg_byte_joueur[j];
+							if (Check_if_integer_zero_nine(b)) {
+								msg += String.valueOf((int) b);
+							} else {
+								msg += (char) b;
+							}
+						}
+						System.out.println("J'ai reçu en TCP: " + msg);
+					}
+				}
+			} else if (msg == "DUNNO") {
+				byte[] msg_byte_NO = new byte[3];
+				if ((read = is.read(msg_byte_NO)) != -1) {
+					receptacle = new String(msg_byte_NO, 0, read);
+				}
+				for (int i = 0; i < msg_byte_NO.length; i++) {
+					byte b = (byte) msg_byte_NO[i];
+					msg += (char) b;
+				}
+				System.out.println("J'ai reçu en TCP: " + msg);
+			} else {
+				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[LIST?␣m***]");
+				System.out.println(msg);
+			}
+		} catch (Exception e) {
+			System.out.println("ERREUR LIST");
+			e.printStackTrace();
+		}
+	}
+
+	// COMMANDE_SEND: [SIZE?␣m***]
+	public static void Command_size_player(String str, InputStream is, OutputStream os) {
+		try {
+			// Envoie msg - message en TCP
+			os.write(str.getBytes());
+			System.out.println("J'ai envoye en TCP: " + str);
+			// Recois msg - message en TCP
+			String msg = "";
+			String receptacle = null;
+			int read;
+			byte[] msg_byte = new byte[5];
+			if ((read = is.read(msg_byte)) != -1) {
+				receptacle = new String(msg_byte, 0, read);
+			}
+			for (int i = 0; i < msg_byte.length; i++) {
+				byte b = (byte) msg_byte[i];
+				msg += (char) b;
+			}
+			if (msg == "SIZE!") {
+				byte[] msg_byte_OK = new byte[11];
+				if ((read = is.read(msg_byte_OK)) != -1) {
+					receptacle = new String(msg_byte_OK, 0, read);
+				}
+				for (int i = 0; i < msg_byte_OK.length; i++) {
+					byte b = (byte) msg_byte_OK[i];
+					// Attention [SIZE!␣m␣h␣w***] h et w sur 2 bytes
+					// et code en little endian (protocol)
+					switch (i) {
+					case 1:
+						msg += String.valueOf((int) b);
+						break;
+					case 3:
+						byte[] dbyte_h = new byte[2];
+						dbyte_h[0] = (byte) msg_byte_OK[i];
+						dbyte_h[1] = (byte) msg_byte_OK[i + 1];
+						i++;
+						int x_h = java.nio.ByteBuffer.wrap(dbyte_h).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
+						msg += String.valueOf(x_h);
+						break;
+					case 6:
+						byte[] dbyte_w = new byte[2];
+						dbyte_w[0] = (byte) msg_byte_OK[i];
+						dbyte_w[1] = (byte) msg_byte_OK[i + 1];
+						i++;
+						int x_w = java.nio.ByteBuffer.wrap(dbyte_w).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
+						msg += String.valueOf(x_w);
+						break;
+					default:
+						msg += (char) b;
+					}
+				}
+			} else if (msg == "DUNNO") {
+				byte[] msg_byte_NO = new byte[3];
+				if ((read = is.read(msg_byte_NO)) != -1) {
+					receptacle = new String(msg_byte_NO, 0, read);
+				}
+				for (int i = 0; i < msg_byte_NO.length; i++) {
+					byte b = (byte) msg_byte_NO[i];
+					msg += (char) b;
+				}
+			} else {
+				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[SIZE?␣m***]");
+				System.out.println(msg);
+			}
+			System.out.println("J'ai reçu en TCP: " + msg);
+		} catch (
+
+		Exception e) {
+			System.out.println("ERREUR SIZE");
+			e.printStackTrace();
+		}
+	}
+
+	// COMMANDE_SEND: [UNREG***]
+	public static void Command_unreg_player(String str, InputStream is, OutputStream os) {
+		try {
+			// Envoie msg - message en TCP
+			os.write(str.getBytes());
+			System.out.println("J'ai envoye en TCP: " + str);
+			// Recois msg - message en TCP
+			String msg = "";
+			String receptacle = null;
+			int read;
+			byte[] msg_byte = new byte[5];
+			if ((read = is.read(msg_byte)) != -1) {
+				receptacle = new String(msg_byte, 0, read);
+			}
+			for (int i = 0; i < msg_byte.length; i++) {
+				byte b = (byte) msg_byte[i];
+				msg += (char) b;
+			}
+			if (msg == "UNROK") {
+				byte[] msg_byte_OK = new byte[5];
+				if ((read = is.read(msg_byte_OK)) != -1) {
+					receptacle = new String(msg_byte_OK, 0, read);
+				}
+				for (int i = 0; i < msg_byte_OK.length; i++) {
+					byte b = (byte) msg_byte_OK[i];
+					if (i == 1) {
+						msg += String.valueOf((int) b);
+					} else {
+						msg += (char) b;
+					}
+				}
+			} else if (msg == "DUNNO") {
+				byte[] msg_byte_NO = new byte[3];
+				if ((read = is.read(msg_byte_NO)) != -1) {
+					receptacle = new String(msg_byte_NO, 0, read);
+				}
+				for (int i = 0; i < msg_byte_NO.length; i++) {
+					byte b = (byte) msg_byte_NO[i];
+					msg += (char) b;
+				}
+			} else {
+				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[UNREG***]");
+				System.out.println(msg);
+			}
+			System.out.println("J'ai reçu en TCP: " + msg);
+		} catch (Exception e) {
+			System.out.println("ERREUR UNREG");
+			e.printStackTrace();
+		}
 	}
 
 	// COMMANDE_SEND: [NEWPL␣id␣port***]
@@ -249,8 +482,60 @@ public class Client_TCP implements Runnable {
 				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[NEWPL␣id␣port***]");
 				System.out.println(msg);
 			}
+			System.out.println("J'ai reçu en TCP: " + msg);
 		} catch (Exception e) {
 			System.out.println("ERREUR NEWPL");
+			e.printStackTrace();
+		}
+	}
+
+	// COMMANDE_SEND: [REGIS␣id␣port␣m***]
+	public static void Command_regis_player(String str, InputStream is, OutputStream os) {
+		try {
+			// Envoie msg - message en TCP
+			os.write(str.getBytes());
+			System.out.println("J'ai envoye en TCP: " + str);
+			// Recois msg - message en TCP
+			String msg = "";
+			String receptacle = null;
+			int read;
+			byte[] msg_byte = new byte[5];
+			if ((read = is.read(msg_byte)) != -1) {
+				receptacle = new String(msg_byte, 0, read);
+			}
+			for (int i = 0; i < msg_byte.length; i++) {
+				byte b = (byte) msg_byte[i];
+				msg += (char) b;
+			}
+			if (msg == "REGOK") {
+				byte[] msg_byte_OK = new byte[5];
+				if ((read = is.read(msg_byte_OK)) != -1) {
+					receptacle = new String(msg_byte_OK, 0, read);
+				}
+				for (int i = 0; i < msg_byte_OK.length; i++) {
+					byte b = (byte) msg_byte_OK[i];
+					if (i == 1) {
+						msg += String.valueOf((int) b);
+					} else {
+						msg += (char) b;
+					}
+				}
+			} else if (msg == "REGNO") {
+				byte[] msg_byte_NO = new byte[3];
+				if ((read = is.read(msg_byte_NO)) != -1) {
+					receptacle = new String(msg_byte_NO, 0, read);
+				}
+				for (int i = 0; i < msg_byte_NO.length; i++) {
+					byte b = (byte) msg_byte_NO[i];
+					msg += (char) b;
+				}
+			} else {
+				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[REGIS␣id␣port␣m***]");
+				System.out.println(msg);
+			}
+			System.out.println("J'ai reçu en TCP: " + msg);
+		} catch (Exception e) {
+			System.out.println("ERREUR REGIS");
 			e.printStackTrace();
 		}
 	}

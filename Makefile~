@@ -1,0 +1,15 @@
+init: serveur client
+
+serveur: lobby/serveur.c
+	gcc -c lobby/player_lobby.c
+	gcc -pthread -Wall -g -o serveur lobby/serveur.c
+	gcc -c game/labyrinthe.c
+	gcc -c game/lobby.c
+
+client: lobby/Client_Main.java
+	gcc -c lobby/Client_TCP.java
+	gcc -c lobby/Client_UDP.java
+	gcc -g -o client lobby/Client_Main.java
+
+distclean:
+	rm -f *.o
