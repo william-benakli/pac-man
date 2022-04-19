@@ -49,7 +49,6 @@ void *clientConnexion(void * client_connect){
 
   int socket = ((struct player *)client_connect)->tcp_sock;
 
-  printf("Ici tout est ok\n");
   int rep_party = sendgames(socket);
   if(rep_party == -1){
     perror("Erreur games invalide");
@@ -57,13 +56,11 @@ void *clientConnexion(void * client_connect){
   }
 
   printf("Ici tout est ok\n");
-  int reponse_register = registerInput(socket);
-  if(reponse_register == -1){
-    goto erreur;
-  }else if(reponse_register == 0){
-    goto success;
-  }
+  int reponse_register = registerInput((struct player *)client_connect);
 
+  if(reponse_register == -1)goto erreur;
+  else if(reponse_register == 0)goto success;
+  
   close(socket);
   free(client_connect);
   return NULL;
@@ -81,19 +78,32 @@ void *clientConnexion(void * client_connect){
     return NULL;
 }
 
-int registerInput(int socketclient){
+int registerInput(struct player * player){
+    int socketclient = player->tcp_sock;
+
     char buffer[7];
     buffer[6] = '\0';
     read(socketclient, buffer, SIZE_INPUT_DEFAULT);
 
     if(strcmp(buffer, CMD_NEW_PARTY) == 0){
-      int rep_create = creategame(socketclient); 
-      if(rep_create == -1){
-        sendError(socketclient);
-        registerInput(socketclient);
-      } 
+        int rep_create = creategame(player); 
+        if(rep_create == -1){
+          sendRegNo(socketclient);
+          registerInput(socketclient);
+        }else{
+          sendRegOk(socketclient);
+          registerInput(socketclient);
+        } 
       //faire renjoindre la party au joueur
     }else if(strcmp(buffer, CMD_REGISTER) == 0){
+        int rep_regis = regis(socketclient); 
+        if(rep_regis == -1){
+          sendRegNo(socketclient);
+          registerInput(socketclient);
+        }else{
+          sendRegOk(socketclient);
+          registerInput(socketclient);
+        } 
 
     }else if(strcmp(buffer, CMD_IQUIT) == 0){
       sendGodBye(socketclient);
@@ -109,6 +119,18 @@ int registerInput(int socketclient){
 int sendError(int socketclient){
   char * buffer = "DUNNO***";
   int count = write(socketclient, buffer, SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR -1);
+  return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR -1) ? -1:0;
+}
+
+int sendRegNo(int socketclient){
+  char * buffer = "REGNO***";
+  int count = write(socketclient, buffer, SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR -1);
+  return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR -1) ? -1:0;
+}
+
+int sendRegOk(int socketclient){
+  char * buffer = "REGOK 0***";
+  int count = write(socketclient, buffer, SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR +2);
   return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR -1) ? -1:0;
 }
 
@@ -152,7 +174,8 @@ int sendgames(int socketclient){
   return count == size_max ? 0 : -1;
 }
 
-int creategame(int socketclient){
+int creategame(struct player * player){
+    int socketclient = player->tcp_sock;
 
     char arguments[SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR];
     int count = read(socketclient, arguments, SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR);
@@ -174,11 +197,16 @@ int creategame(int socketclient){
     struct game *game = malloc(sizeof(struct game));
     int rep_init = init_game(game, 10, 10, NULL);
     if(rep_init == -1)return -1;
-    
-    printf("[CREATE PARTY] Joueur %s Port %s", identifiant, port);
-    //TODO: AJOUTER UN PLAYER
+
+    //Ajouter le joueur à la partie
+    struct participant* participant;
+    int rep_join = player_join(game, player, participant);
+    if(rep_join == -1)return -1;
+
+
     int rep_add = add_game(game, _games);
     if(rep_add == -1)return -1;
     
+    printf("[CREATE PARTY] Joueur %s Port %s", identifiant, port);
     return 0;
 }

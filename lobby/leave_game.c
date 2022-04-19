@@ -46,7 +46,3 @@ int unregis(struct player *client, int socket,struct list_game *games, char *ret
     return PLAYER_UNREG_SUCCESS;
 
 }
-
-int main(){
-    return 0;
-}

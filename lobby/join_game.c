@@ -2,7 +2,6 @@
 #include "../include/join_game.h"
 
 int player_join(struct game *_game, struct player *player, struct participant *new_player_ingame){
-    //struct participant *new_player = (struct participant *)malloc(sizeof(struct participant));
     new_player_ingame->pos_x = 0;
     new_player_ingame->pos_y = 0;
     new_player_ingame->score = 0;
@@ -12,6 +11,59 @@ int player_join(struct game *_game, struct player *player, struct participant *n
     new_player_ingame->next = _game->joueurs;
     _game->joueurs = new_player_ingame;
     return PLAYER_JOIN_SUCCESS;
+}
+
+int regis(struct player *client,struct list_game *games){
+    
+    int socketclient = client->tcp_sock;
+    
+    char regis_buffer[SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR];
+ 
+    int count = read(socketclient, regis_buffer, SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR);
+    if(count != SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR){
+        printf("missing argument\n");
+        return PLAYER_REGISTER_FAILURE;
+    }
+
+    char id_buffer[8];
+    char port_buffer[4];
+    char room_buffer[1];
+
+    if(client->status_game == IN_GAME){
+      printf("player already in party\n");
+      return PLAYER_REGISTER_FAILURE;
+    }
+
+    memmove((void *)id_buffer,regis_buffer,8);
+    memmove((void *)port_buffer,regis_buffer+9,4);
+    memmove((void *)room_buffer,(char *)regis_buffer+8+1+4+1,1);
+    
+    int protocol_respected = strcmp(regis_buffer+15,"***");
+    if(protocol_respected != 0){
+      printf("invalid protocol\n");
+      return PLAYER_REGISTER_FAILURE;
+    }
+    
+    struct game *target_game;
+    int sg = search_game(*((int *)room_buffer),games, target_game);
+    if (sg == GAME_NOT_FOUND){
+        printf("game not found\n");
+        return PLAYER_REGISTER_FAILURE;
+    }
+
+    struct participant *joining_player = malloc(sizeof(struct participant));
+
+    strcpy(joining_player->identifiant,id_buffer);
+
+    if (joining_player == NULL || target_game == NULL){
+        printf("failed to join game\n");
+        return PLAYER_REGISTER_FAILURE;
+    }
+    player_join(&target_game,client,joining_player);
+
+    client->status_game = IN_GAME;
+    client->game_id = *((int *)room_buffer);
+    return PLAYER_REGISTER_SUCCESS;
 }
 
 int search_game(int id, struct list_game *list, struct game *ret){
@@ -26,51 +78,4 @@ int search_game(int id, struct list_game *list, struct game *ret){
     }
 
     return GAME_NOT_FOUND;
-}
-
-int regis(struct player *client, char *regis_buffer, int socket,struct list_game *games, char *return_message){
-    
-    char id_buffer[8];
-    char port_buffer[4];
-    char room_buffer[1];
-
-    if(client->is_in_game == 1){
-    strcpy(return_message,"player already in party");
-      return PLAYER_REGISTER_FAILURE;
-    }
-
-    memmove((void *)id_buffer,regis_buffer,8);
-    memmove((void *)port_buffer,regis_buffer+9,4);
-    memmove((void *)room_buffer,(char *)regis_buffer+8+1+4+1,1);
-    int protocol_respected = strcmp(regis_buffer+15,"***");
-    if(protocol_respected != 0){
-      strcpy(return_message,"invalid protocol");
-      return PLAYER_REGISTER_FAILURE;
-    }
-
-    client->tcp_sock = socket;
-    client->udp_port = atoi(port_buffer);
-
-    struct game target_game;
-    int sg = search_game(*((int *)room_buffer),games,&target_game);
-    if (sg == GAME_NOT_FOUND){
-        strcpy(return_message,"game not found");
-        return PLAYER_REGISTER_FAILURE;
-    }
-
-    struct participant joining_player;
-    strcpy(joining_player.identifiant,id_buffer);
-
-    int *pj  = (int *) malloc(sizeof(int));
-    *pj = player_join(&target_game,client,&joining_player);
-    if (*pj != PLAYER_JOIN_SUCCESS){
-        strcpy(return_message,"failed to join game");
-        return PLAYER_REGISTER_FAILURE;
-    }
-
-    client->is_in_game = 1;
-    client->game_id = *((int *)room_buffer);
-    free(pj);
-    return PLAYER_REGISTER_SUCCESS;
-
 }
