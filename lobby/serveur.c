@@ -130,20 +130,20 @@ int registerInput(struct player * player){
       registerInput(player);
     }else if(strcmp(buffer, CMD_GAME) == 0){
 
-      printf("avant readStars");
+      printf("avant readStars\n");
 
       int check_stars = readStars(socketclient);
       if(check_stars == -1){
         sendDunno(socketclient);
         registerInput(player);
       }
-      printf("OUi on est passé");
+      printf("OUi on est passé\n");
       int rep_party = sendgames(socketclient);
       if(rep_party == -1){
         sendDunno(socketclient);
         registerInput(player);
       }
-      printf("fin ");
+      printf("fin \n");
 
       registerInput(player);
 
