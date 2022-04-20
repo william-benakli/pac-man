@@ -3,7 +3,7 @@
 struct list_game * _games;
 
 //pour compiler gcc -pthread -Wall -o serveur serveur.c player_lobby.c list_game.c ../game/lobby.c
-
+//gcc -pthread -Wall -o serveur serveur.c player_lobby.c list_game.c join_game.c leave_game.c lobby.c
 int main(int argc, char const *argv[]) {
   _games = init_list_game();
 
