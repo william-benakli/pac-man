@@ -85,6 +85,8 @@ int registerInput(struct player * player){
     buffer[SIZE_INPUT_DEFAULT] = '\0';
     read(socketclient, buffer, SIZE_INPUT_DEFAULT);
 
+    printf("%s je viens de lire\n", buffer);
+
     if(strcmp(buffer, CMD_NEW_PARTY) == 0){
         int rep_create = creategame(player, _games); 
         if(rep_create == -1){
@@ -128,16 +130,21 @@ int registerInput(struct player * player){
       registerInput(player);
     }else if(strcmp(buffer, CMD_GAME) == 0){
 
+      printf("avant readStars");
+
       int check_stars = readStars(socketclient);
       if(check_stars == -1){
         sendDunno(socketclient);
         registerInput(player);
       }
+      printf("OUi on est passé");
       int rep_party = sendgames(socketclient);
       if(rep_party == -1){
         sendDunno(socketclient);
         registerInput(player);
       }
+      printf("fin ");
+
       registerInput(player);
 
     }else if(strcmp(buffer, CMD_SIZE) == 0){
@@ -310,8 +317,8 @@ int sendgames(int socketclient){
   char mess_game[size_max];
   //On deplace [GAMES n***] dans le buffer
   memmove(mess_game, "GAMES ", SIZE_INPUT_DEFAULT_SPACE);
-  memmove(mess_game+(SIZE_INPUT_DEFAULT), &nombre_games, sizeof(uint8_t));
-  memmove(mess_game+(SIZE_INPUT_DEFAULT) + sizeof(uint8_t), "***", SIZE_INPUT_STAR);
+  memmove(mess_game+(SIZE_INPUT_DEFAULT)+SIZE_ONE_SPACE, &nombre_games, sizeof(uint8_t));
+  memmove(mess_game+(SIZE_INPUT_DEFAULT) + SIZE_ONE_SPACE + sizeof(uint8_t), "***", SIZE_INPUT_STAR);
 
   struct list_game *listgames_courant = _games;
 
