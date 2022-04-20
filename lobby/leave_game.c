@@ -1,8 +1,4 @@
-#include "../include/game_settings.h"
-#include "../include/join_game.h"
 #include "../include/leave_game.h"
-#include "./join_game.c"
-
 
 int playerleave(struct game *_game, struct player *player){
     struct game *copy = _game;

@@ -1,4 +1,3 @@
-#include "../include/game_settings.h"
 #include "../include/join_game.h"
 
 int player_join(struct game *_game, struct player *player, struct participant *new_player_ingame){

@@ -9,7 +9,3 @@ int init_player(struct player *client, int tcp_sock){
 	client->game_id = -1;
 	return 0;
 }
-
-int main(){
-	return 0;
-}

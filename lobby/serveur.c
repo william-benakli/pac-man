@@ -190,8 +190,8 @@ int readStars(int socketclient){
 }
 
 int sendList(int socketclient){
-  char buffer_reception[1 + sizeof(uint8_t)];
-  read(socketclient, buffer_reception, 1+sizeof(uint8_t));
+  char buffer_reception[1 + sizeof(uint8_t)+SIZE_INPUT_STAR];
+  read(socketclient, buffer_reception, 1+sizeof(uint8_t)+SIZE_INPUT_STAR);
 
   uint8_t id_partie;
   char stars[4];
@@ -207,11 +207,30 @@ int sendList(int socketclient){
     return -1;
   }
 
-  //char buffer_envoie[SIZE_INPUT_DEFAULT_SPACE+ (sizeof(uint8_t) * 2) + 1 + SIZE_INPUT_STAR + (SIZE_INPUT_DEFAULT_SPACE + SIZE_IDENTIFIANT +  SIZE_INPUT_STAR) * + game_courant->players];
+  size_t size_reponse = SIZE_INPUT_DEFAULT_SPACE+ (sizeof(uint8_t) * 2) + SIZE_ONE_SPACE + SIZE_INPUT_STAR + (SIZE_INPUT_DEFAULT_SPACE + SIZE_IDENTIFIANT +  SIZE_INPUT_STAR) * + game_courant->players;
+  size_t size_list = SIZE_INPUT_DEFAULT_SPACE + (sizeof(uint8_t) * 2) + SIZE_ONE_SPACE + SIZE_INPUT_STAR;
+  size_t size_playr = SIZE_INPUT_DEFAULT_SPACE + (sizeof(uint8_t)) + SIZE_INPUT_STAR;
+  char buffer_envoie[size_reponse];
 
- // memmove(buffer_envoie,  )
+  u_int8_t size_joueur = game_courant->players;
+  memmove(buffer_envoie,  "LIST! ", SIZE_INPUT_DEFAULT_SPACE);
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE,  &id_partie, sizeof(u_int8_t));
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(u_int8_t),  " ", SIZE_ONE_SPACE);
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(u_int8_t)+SIZE_ONE_SPACE,  &size_joueur, sizeof(u_int8_t));
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(u_int8_t)+SIZE_ONE_SPACE+sizeof(u_int8_t),  "***", SIZE_INPUT_STAR);
+  
+  struct participant *participant_courant = game_courant->joueurs;
+  int it_games = 0;
+  while(participant_courant != NULL){
+    memmove(buffer_envoie+size_list + (it_games*size_playr), "PLAYR ", SIZE_INPUT_DEFAULT_SPACE);
+    memmove(buffer_envoie+size_list + (it_games*size_playr) +(SIZE_INPUT_DEFAULT_SPACE), &participant_courant->identifiant, SIZE_IDENTIFIANT);
+    memmove(buffer_envoie+size_list + (it_games*size_playr)+(SIZE_INPUT_DEFAULT_SPACE)+SIZE_IDENTIFIANT, "***", SIZE_INPUT_STAR);
+    it_games++;
+    participant_courant = participant_courant->next;
+  }
 
-  return 0;
+  int count = write(socketclient, buffer_envoie, size_reponse);
+  return count == (size_reponse) ? -1:0;
 }
 
 
@@ -223,7 +242,7 @@ int sendSize(int socketclient){
   char stars[4];
   stars[3] = '\0';
   memmove(&id_partie, buffer_reception+1, sizeof(uint8_t));
-  memmove(&stars, buffer_reception+1+sizeof(uint8_t), SIZE_INPUT_STAR);
+  memmove(stars, buffer_reception+1+sizeof(uint8_t), SIZE_INPUT_STAR);
 
   if(strcmp(stars, "***") != 0)return -1;
   
@@ -239,9 +258,9 @@ int sendSize(int socketclient){
   
   memmove(buffer_envoie, buffer_input, SIZE_INPUT_DEFAULT_SPACE);
   memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE, &game_courant->id_partie, sizeof(uint8_t));
-  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), " ",  1);
-  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+1, &game_courant->hauteur, sizeof(uint16_t));
-  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), " ",  1);
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), " ",  SIZE_ONE_SPACE);
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE, &game_courant->hauteur, sizeof(uint16_t));
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), " ",  SIZE_ONE_SPACE);
   memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+2+sizeof(uint16_t), &game_courant->largeur, sizeof(uint16_t));
   memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+2+(sizeof(uint16_t)*2), "***", SIZE_INPUT_STAR);
   
@@ -286,7 +305,7 @@ int sendGodBye(int socketclient){
 int sendgames(int socketclient){
   int nombre_games = size_game_available(_games);
   int size_games = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR;
-  int size_ogame = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t)*2 + 1 + SIZE_INPUT_STAR;
+  int size_ogame = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t)*2 + SIZE_ONE_SPACE + SIZE_INPUT_STAR;
   int size_max = size_games + nombre_games*(size_ogame);
   char mess_game[size_max];
   //On deplace [GAMES n***] dans le buffer
@@ -302,9 +321,9 @@ int sendgames(int socketclient){
         if(listgames_courant->game->status == STATUS_AVAILABLE){
           memmove(mess_game+size_games + (it_games*size_ogame), "OGAME ", SIZE_INPUT_DEFAULT_SPACE);
           memmove(mess_game+size_games + (it_games*size_ogame) +(SIZE_INPUT_DEFAULT_SPACE), &listgames_courant->game->id_partie, sizeof(uint8_t));
-          memmove(mess_game+size_games + (it_games*size_ogame) +(SIZE_INPUT_DEFAULT_SPACE)+1, " ", sizeof(char)*1);
-          memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT_SPACE)+sizeof(uint8_t)+1, &listgames_courant->game->players,sizeof(uint8_t));
-          memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT_SPACE)+sizeof(uint8_t)+1+sizeof(uint8_t), "***", SIZE_INPUT_STAR);
+          memmove(mess_game+size_games + (it_games*size_ogame) +(SIZE_INPUT_DEFAULT_SPACE)+SIZE_ONE_SPACE, " ", sizeof(char)*1);
+          memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT_SPACE)+sizeof(uint8_t)+SIZE_ONE_SPACE, &listgames_courant->game->players,sizeof(uint8_t));
+          memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT_SPACE)+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint8_t), "***", SIZE_INPUT_STAR);
           it_games++;
         }
        listgames_courant = listgames_courant->next_game;
@@ -349,7 +368,7 @@ int creategame(struct player * player, struct list_game * games){
     int rep_add = add_game(game, _games);
     if(rep_add == -1)return -1;
     player->game_id = game->id_partie;
- //Ajouter le joueur à la partie
+
     int rep_join = regis(player, _games);
     if(rep_join == -1)return -1;
 
