@@ -303,7 +303,7 @@ int sendGodBye(int socketclient){
 
 
 int sendgames(int socketclient){
-  int nombre_games = size_game_available(_games);
+  uint8_t nombre_games = size_game_available(_games);
   int size_games = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR;
   int size_ogame = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t)*2 + SIZE_ONE_SPACE + SIZE_INPUT_STAR;
   int size_max = size_games + nombre_games*(size_ogame);

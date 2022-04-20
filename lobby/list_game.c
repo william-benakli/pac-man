@@ -60,10 +60,10 @@ int remove_game(struct game *rem_game, struct list_game *list){
     return GAME_FAILED_REMOVAL;
 }
 
-int size_game_available(struct list_game *list){
+uint8_t size_game_available(struct list_game *list){
     struct list_game *copy = list;
 
-    int nombre_party_available = 0;
+    uint8_t nombre_party_available = 0;
         if(copy->game == NULL){
             return 0;
         }
