@@ -9,7 +9,7 @@ struct player {
 	int udp_port;
 	int tcp_sock;
     enum {IN_GAME, IN_LOBBY} status_game;
-	uint8_t game_id;
+	u_int8_t game_id;
 };
 
 int init_player(struct player *player, int tcp_sock);

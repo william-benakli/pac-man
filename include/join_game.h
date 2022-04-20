@@ -3,9 +3,7 @@
 
 #include <regex.h>
 
-#include "./list_game.h"
-#include "./game_settings.h"
-#include "./player_lobby.h"
+#include "list_game.h"
 #include "serveur.h"
 
 #define GAME_FOUND 0

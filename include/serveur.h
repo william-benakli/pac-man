@@ -13,12 +13,10 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "player_lobby.h"
-#include "game_settings.h"
 #include "list_game.h"
-#include "join_game.h"
 #include "leave_game.h"
 
+#define SIZE_ONE_SPACE 1
 #define SIZE_IDENTIFIANT 8
 #define SIZE_PORT 4
 #define SIZE_INPUT_DEFAULT 5
@@ -39,6 +37,9 @@ int registerInput(struct player *player);
 int creategame(struct player * player, struct list_game * games);
 
 int sendgames(int socketclient);
+int sendSize(int socketclient);
+int sendList(int socketclient);
+
 int sendGodBye(int socketclient);
 int sendDunno(int socketclient);
 
@@ -51,6 +52,6 @@ int readStars(int socketclient);
 
 extern struct list_game *_games;
 
-pthread_mutex_t verrou= PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t verrou = PTHREAD_MUTEX_INITIALIZER;
 
 #endif
