@@ -41,25 +41,19 @@ int main(int argc, char const *argv[]) {
         while(1){
           char reponseClient[100];
           read(descr, reponseClient, 100);
-          int t = 0;
           for(int i = 0; i < 100; i++){
               if(isalpha(reponseClient[i])){
                   printf("%c", reponseClient[i]);
-                  //t++;
               }else{
                   if(reponseClient[i] == '*'){
                       printf("*");
-                      t++;
                   }else if(reponseClient[i] == ' '){
                       printf(" ");
-                      t++;
                   }else{
-                      t++;
                       printf("%d", reponseClient[i]);
                   }
               }
           }
-          printf("dzzzzdzd%ddsssdsd\n", t);
           char scanmsg[23];
           scanf("%s",scanmsg); 
           printf("Vous avez entré %s \n",scanmsg);
