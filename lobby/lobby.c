@@ -1,17 +1,20 @@
 #include "../include/game_settings.h"
 
-#define GAME_CREATION_SUCCESS 0 
-#define PLAYERS_READY 1
-#define PLAYERS_NOT_READY 0
+uint8_t id_games_static = 0;
 
-
-int init_game(struct game *_game, int hauteur, int largeur, char **labyrinth){
-    _game->id_partie = 0; //TODO STATIC ALLOCATION OF ID 
+int init_game(struct game *_game, uint16_t hauteur, uint16_t largeur, char **labyrinth){
+    
+    _game->id_partie = id_games_static; //TODO STATIC ALLOCATION OF ID 
     _game->hauteur = hauteur;
     _game->largeur = largeur;
     _game->max_player = 0;
     _game->labyrinth = labyrinth; //TODO: gerer le transision
     _game->joueurs = NULL;
+    //TODO: METTRE UN VERROU
+    if(id_games_static > 255){
+        return GAME_CREATION_FAILED;
+    }
+    id_games_static++;
     return GAME_CREATION_SUCCESS;
 }       
 
