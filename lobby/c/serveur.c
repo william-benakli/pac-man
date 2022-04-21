@@ -1,4 +1,4 @@
-#include "../include/serveur.h"
+#include "../../include/serveur.h"
 
 struct list_game * _games;
 

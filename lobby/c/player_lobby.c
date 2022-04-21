@@ -1,4 +1,4 @@
-#include "../include/player_lobby.h"
+#include "../../include/player_lobby.h"
 
 int init_player(struct player *client, int tcp_sock){
 	if(tcp_sock<0) {

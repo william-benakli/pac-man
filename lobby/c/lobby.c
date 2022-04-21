@@ -1,4 +1,4 @@
-#include "../include/game_settings.h"
+#include "../../include/game_settings.h"
 
 #define GAME_CREATION_SUCCESS 0 
 #define PLAYERS_READY 1
