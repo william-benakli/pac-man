@@ -22,9 +22,8 @@ int unregis(struct player *client, struct list_game *games){
         return PLAYER_UNREG_FAILURE;
     }
 
-    struct game *target_game = NULL;
-    int sg = search_game(client->game_id,games,target_game);
-    if (sg == GAME_NOT_FOUND){
+    struct game *target_game = search_game(client->game_id,games);
+    if (target_game == NULL){
         printf("game not found\n");
         return PLAYER_UNREG_FAILURE;
     }

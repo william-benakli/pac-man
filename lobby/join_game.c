@@ -16,7 +16,7 @@ int regis(struct player *client,struct list_game *games){
     
     int socketclient = client->tcp_sock;
     
-    char regis_buffer[SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR];
+    char regis_buffer[SIZE_ONE_SPACE+ SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_PORT+SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_INPUT_STAR];
  
     int count = read(socketclient, regis_buffer, SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR);
     if(count != SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR){
@@ -26,55 +26,77 @@ int regis(struct player *client,struct list_game *games){
 
     char id_buffer[8];
     char port_buffer[4];
-    char room_buffer[1];
-
+    uint8_t room_buffer;
+    char stars[4];
+    stars[3] = '\0';
     if(client->status_game == IN_GAME){
       printf("player already in party\n");
       return PLAYER_REGISTER_FAILURE;
     }
 
-    memmove((void *)id_buffer,regis_buffer,8);
-    memmove((void *)port_buffer,regis_buffer+9,4);
-    memmove((void *)room_buffer,(char *)regis_buffer+8+1+4+1,1);
-    
-    int protocol_respected = strcmp(regis_buffer+15,"***");
+    memmove(id_buffer,regis_buffer+SIZE_ONE_SPACE, SIZE_IDENTIFIANT);
+    memmove(port_buffer,regis_buffer+SIZE_ONE_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE,sizeof(int));
+    memmove(&room_buffer,regis_buffer+SIZE_ONE_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+sizeof(int), sizeof(uint8_t));
+    memmove(stars,regis_buffer+SIZE_ONE_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+sizeof(int) + sizeof(uint8_t), SIZE_INPUT_STAR);
+
+    int protocol_respected = strcmp(stars,"***");
     if(protocol_respected != 0){
       printf("invalid protocol\n");
       return PLAYER_REGISTER_FAILURE;
     }
+   
+    int protocol_register_game = register_game(client, id_buffer, room_buffer, games);
+    if(protocol_register_game != 0){
+      printf("invalid protocol\n");
+      return PLAYER_REGISTER_FAILURE;
+    }
     
-    struct game *target_game = NULL;
-    int sg = search_game(*((int *)room_buffer),games, target_game);
-    if (sg == GAME_NOT_FOUND){
-        printf("game not found\n");
-        return PLAYER_REGISTER_FAILURE;
-    }
-
-    struct participant *joining_player = malloc(sizeof(struct participant));
-
-    strcpy(joining_player->identifiant,id_buffer);
-
-    if (joining_player == NULL || target_game == NULL){
-        printf("failed to join game\n");
-        return PLAYER_REGISTER_FAILURE;
-    }
-    player_join(target_game,client,joining_player);
-
-    client->status_game = IN_GAME;
-    client->game_id = *((int *)room_buffer);
     return PLAYER_REGISTER_SUCCESS;
 }
 
-int search_game(uint8_t id, struct list_game *list, struct game *ret){
+int register_game(struct player *client, char * identifiant, uint8_t room_id_game, struct list_game *games){
+     
+    struct game *target_game = search_game(room_id_game,games);
+    if (target_game == NULL){
+        printf("game not found\n");
+        return PLAYER_REGISTER_FAILURE;
+    }
+    printf("pre malloc participant \n");
+
+    struct participant *joining_player = malloc(sizeof(struct participant));
+    strcpy(joining_player->identifiant, identifiant);
+
+    printf("post malloc participant \n");
+
+    if (joining_player == NULL || target_game == NULL){
+        printf("failed to join game \n");
+        if(joining_player == NULL){
+            printf("NULL joining player \n");
+        }
+        return PLAYER_REGISTER_FAILURE;
+    }
+    printf("pre join participant \n");
+    player_join(target_game,client,joining_player);
+    printf("post join participant \n");
+
+    client->status_game = IN_GAME;
+    client->game_id = room_id_game;
+    return PLAYER_REGISTER_SUCCESS;
+}
+
+void *  search_game(uint8_t id, struct list_game *list){
     struct list_game *copy = list;
+
+    printf("Search game error 1 \n");
 
     while(copy != NULL){
         if (copy->game->id_partie == id){
-            ret = copy->game;
-            return GAME_FOUND;
-        } 
+            printf("Trouvé \n");
+            return copy->game;
+        }
         copy = copy->next_game;
     }
+    printf("Search game error \n");
 
-    return GAME_NOT_FOUND;
+    return NULL;
 }

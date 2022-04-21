@@ -13,11 +13,11 @@
 #define PLAYERS_NOT_READY 0
 
 struct game{
-    u_int8_t id_partie;
-    u_int8_t players;
-    u_int8_t max_player;
-    u_int16_t hauteur;
-    u_int16_t largeur;
+    uint8_t id_partie;
+    uint8_t players;
+    uint8_t max_player;
+    uint16_t hauteur;
+    uint16_t largeur;
     
     char **labyrinth;
     enum { STATUS_AVAILABLE, STATUS_UNAVAILABLE} status;
