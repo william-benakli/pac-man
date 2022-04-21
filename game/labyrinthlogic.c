@@ -10,6 +10,8 @@
 #define MOVEUP 3 
 #define MOVEDOWN 4
 
+#define FANTOME 10
+
 char  **initlabirynth(int x, int y){
     char **labyrinth = (char **) malloc(y * sizeof(char *));
     for (int i = 0; i < y; i++){
@@ -28,13 +30,19 @@ void freelabirynth(struct game *game){
 
 int moveinlabyrinth(int direction, int steps, struct game *game, struct participant *player){
     int stepsmoved = 0;
+    int ghostfound = 0;
     switch (direction)
     {
-    case 1:
+    case MOVELEFT:
         for(int i = 1; i <= steps; i++){
             if (player->pos_x - i < 0 || game->labyrinth[player->pos_x - i][player->pos_y] != '0' 
                 || game->labyrinth[player->pos_x - i][player->pos_y] != 'f' ){
                 break;
+            } 
+            if (game->labyrinth[player->pos_x - i][player->pos_y] == 'f'){
+                ghostfound = 1;
+                game->labyrinth[player->pos_x - i][player->pos_y] = '0';
+                //TODO: ENVOYER UDP A TOUT LE MONDE
             }
             stepsmoved++;
         }
@@ -43,11 +51,16 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
         player->pos_x = player->pos_x - stepsmoved;
         break;
 
-    case 2: 
+    case MOVERIGHT: 
         for(int i = 1; i <= steps; i++){
             if (player->pos_x - i < 0 || game->labyrinth[player->pos_x + i][player->pos_y] != '0' 
                 || game->labyrinth[player->pos_x + i][player->pos_y] != 'f' ){
                 break;
+            }
+            if (game->labyrinth[player->pos_x - i][player->pos_y] == 'f'){
+                ghostfound = 1;
+                game->labyrinth[player->pos_x - i][player->pos_y] = '0';
+                //TODO: ENVOYER UDP A TOUT LE MONDE
             }
             stepsmoved++;
         }
@@ -56,11 +69,16 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
         player->pos_x = player->pos_x + stepsmoved;
         break;
 
-    case 3:
+    case MOVEUP:
         for(int i = 1; i <= steps; i++){
             if (player->pos_x - i < 0 || game->labyrinth[player->pos_x][player->pos_y - i] != '0' 
                 || game->labyrinth[player->pos_x][player->pos_y - i] != 'f' ){
                 break;
+            }
+            if (game->labyrinth[player->pos_x - i][player->pos_y] == 'f'){
+                ghostfound = 1;
+                game->labyrinth[player->pos_x - i][player->pos_y] = '0';
+                //TODO: ENVOYER UDP A TOUT LE MONDE
             }
             stepsmoved++;
         }
@@ -69,11 +87,16 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
         player->pos_y = player->pos_y - stepsmoved;
         break;
     
-    case 4: 
+    case MOVEDOWN: 
         for(int i = 1; i <= steps; i++){
             if (player->pos_x - i < 0 || game->labyrinth[player->pos_x][player->pos_y + i] != '0' 
                 || game->labyrinth[player->pos_x][player->pos_y + i] != 'f' ){
                 break;
+            }
+            if (game->labyrinth[player->pos_x - i][player->pos_y] == 'f'){
+                ghostfound = 1;
+                game->labyrinth[player->pos_x - i][player->pos_y] = '0';
+                //TODO: ENVOYER UDP A TOUT LE MONDE
             }
             stepsmoved++;
         }
@@ -86,5 +109,10 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
         break;
     }
 
-    return stepsmoved;
+    int ret = (ghostfound == 1) ? stepsmoved + FANTOME : stepsmoved;
+    return ret;
+}
+
+int main(){
+    return 0;
 }
