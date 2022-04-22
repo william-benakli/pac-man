@@ -55,7 +55,6 @@ void *clientConnexion(void * client_connect){
     goto erreur;
   }
 
-  printf("Ici tout est ok\n");
   int reponse_register = registerInput((struct player *)client_connect);
 
   if(reponse_register == -1)goto erreur;
@@ -85,10 +84,7 @@ int registerInput(struct player * player){
     buffer[SIZE_INPUT_DEFAULT] = '\0';
     read(socketclient, buffer, SIZE_INPUT_DEFAULT);
 
-    printf("%s je viens de lire\n", buffer);
-
     if(strcmp(buffer, CMD_NEW_PARTY) == 0){
-      printf("Je suis entrée ici du coup \n");
         int rep_create = creategame(player, _games); 
         if(rep_create == -1){
           sendRegNo(socketclient);
@@ -176,23 +172,21 @@ int registerInput(struct player * player){
 int sendDunno(int socketclient){
   char * buffer = "DUNNO***";
   int count = write(socketclient, buffer, SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR);
-  return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR) ? -1:0;
+  return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR) ? 0 : -1;
 }
 
 int sendRegNo(int socketclient){
   char * buffer = "REGNO***";
   int count = write(socketclient, buffer, SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR);
-  return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR) ? -1:0;
+  return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR) ? 0 : -1;
 }
 
 int readStars(int socketclient){
   char stars[4];
   stars[3] = '\0';
   int count = read(socketclient, stars, SIZE_INPUT_STAR);
-  if(strcmp(stars, "***") != 0){
-    return -1;
-  }
-  return count == (SIZE_INPUT_STAR) ? -1:0;
+  if(strcmp(stars, "***") != 0)return -1;
+  return count == (SIZE_INPUT_STAR) ? 0 : -1 ;
 }
 
 int sendList(int socketclient){
@@ -204,7 +198,7 @@ int sendList(int socketclient){
   stars[3] = '\0';
   memmove(&id_partie, (buffer_reception+1), sizeof(uint8_t));
   memmove(stars, (buffer_reception+1+sizeof(uint8_t)), SIZE_INPUT_STAR);
-
+  printf("Id reconstitué: %d...\n", id_partie);
   if(strcmp(stars, "***") != 0)return -1;
 
   struct game *game_courant = search_game(id_partie, _games);
@@ -235,20 +229,27 @@ int sendList(int socketclient){
   }
 
   int count = write(socketclient, buffer_envoie, size_reponse);
-  return count == (size_reponse) ? -1:0;
+  return count == (size_reponse) ? 0 : -1 ;
 }
 
 
 int sendSize(int socketclient){
-  char buffer_reception[SIZE_ONE_SPACE + sizeof(uint8_t)+SIZE_INPUT_STAR];
-  read(socketclient, buffer_reception, SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_INPUT_STAR);
 
+  char buffer_reception [SIZE_ONE_SPACE + sizeof(uint8_t)+SIZE_INPUT_STAR + 1];
+  read(socketclient, buffer_reception, SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_INPUT_STAR);
+  buffer_reception[SIZE_ONE_SPACE + sizeof(uint8_t)+SIZE_INPUT_STAR] = '\0';
+ 
+ // printf("-------%s\n", buffer_reception);
+  
   uint8_t id_partie;
   char stars[4];
   stars[3] = '\0';
-  memmove(&id_partie, buffer_reception+SIZE_ONE_SPACE, sizeof(uint8_t));
-  memmove(stars, buffer_reception+SIZE_ONE_SPACE+sizeof(uint8_t), SIZE_INPUT_STAR);
-
+  memmove(&id_partie, (buffer_reception+SIZE_ONE_SPACE), sizeof(uint8_t));
+  memmove(stars, (buffer_reception+SIZE_ONE_SPACE+sizeof(uint8_t)), SIZE_INPUT_STAR);
+/*TEST
+  printf("%u partie dans size \n", id_partie);
+  printf("%s partie dans size \n", stars);
+*/
   if(strcmp(stars, "***") != 0)return -1;
   
   struct game *game_courant = search_game(id_partie, _games);
@@ -269,7 +270,7 @@ int sendSize(int socketclient){
   memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+2+(sizeof(uint16_t)*2), "***", SIZE_INPUT_STAR);
   
   int count = write(socketclient, buffer_envoie, size_reponse);
-  return count == (size_reponse) ? -1:0;
+  return count == (size_reponse) ? 0 : -1;
 }
 
 int sendUnRegOk(int socketclient, uint8_t id_partie){
@@ -283,7 +284,7 @@ int sendUnRegOk(int socketclient, uint8_t id_partie){
   memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), stars, SIZE_INPUT_STAR);
 
   int count = write(socketclient, buffer_reponse, SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR);
-  return count == (SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR) ? -1:0;
+  return count == (SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR) ? 0 : -1;
 }
 
 int sendRegOk(int socketclient, uint8_t id_partie){
@@ -296,18 +297,20 @@ int sendRegOk(int socketclient, uint8_t id_partie){
   memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), stars, SIZE_INPUT_STAR);
 
   int count = write(socketclient, buffer_reponse, SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR);
-  return count == (SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR) ? -1:0;
+  return count == (SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR) ? 0 : -1;
 }
 
 int sendGodBye(int socketclient){
   char * buffer = "GOBYE***";
   int count = write(socketclient, buffer, SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR);
-  return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR) ? -1:0;
+  return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR) ? 0 : -1 ;
 }
 
 
 int sendgames(int socketclient){
+
   uint8_t nombre_games = size_game_available(_games);
+
   int size_games = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR;
   int size_ogame = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t)*2 + SIZE_ONE_SPACE + SIZE_INPUT_STAR;
   int size_max = size_games + nombre_games*(size_ogame);
@@ -321,17 +324,22 @@ int sendgames(int socketclient){
 
   if(listgames_courant->game != NULL){
       int it_games = 0;
-      while(listgames_courant->game != NULL){
+      while(listgames_courant != NULL){
         if(listgames_courant->game->status == STATUS_AVAILABLE){
           memmove(mess_game+size_games + (it_games*size_ogame), "OGAME ", SIZE_INPUT_DEFAULT_SPACE);
           memmove(mess_game+size_games + (it_games*size_ogame) +(SIZE_INPUT_DEFAULT_SPACE), &listgames_courant->game->id_partie, sizeof(uint8_t));
           memmove(mess_game+size_games + (it_games*size_ogame) +(SIZE_INPUT_DEFAULT_SPACE)+SIZE_ONE_SPACE, " ", sizeof(char)*1);
           memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT_SPACE)+sizeof(uint8_t)+SIZE_ONE_SPACE, &listgames_courant->game->players,sizeof(uint8_t));
           memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT_SPACE)+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint8_t), "***", SIZE_INPUT_STAR);
+          printf("jusqu'ici pas d'erreur %d\n", it_games);
           it_games++;
         }
-       listgames_courant = listgames_courant->next_game;
+        printf("On sort \n");
+        if(listgames_courant == NULL)printf("game suivant est NULL\n");
+        listgames_courant = listgames_courant->next_game;
       }
+      printf("---- %s ---- \n",mess_game);
+
   }
   printf("Nombre de game jouable %d:\n", nombre_games);
   int count =  write(socketclient, mess_game, size_max);
@@ -339,10 +347,6 @@ int sendgames(int socketclient){
 }
 
 int creategame(struct player * player, struct list_game * games){
-
-      printf("ok 1 ici\n");
-
-
     int socketclient = player->tcp_sock;
 
     if(player->status_game == IN_GAME){
@@ -351,13 +355,10 @@ int creategame(struct player * player, struct list_game * games){
     }
     size_t size_max_args = SIZE_ONE_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_PORT+SIZE_INPUT_STAR;
     char arguments[size_max_args];
-    printf("ok 2 ici\n");
 
     int count = read(socketclient, arguments, size_max_args);
     if(count != size_max_args)return -1;
     
-        printf("ok 3 ici\n");
-
     char identifiant[SIZE_IDENTIFIANT+1];
     identifiant[SIZE_IDENTIFIANT] = '\0';
     char port[SIZE_PORT+1];
@@ -368,28 +369,23 @@ int creategame(struct player * player, struct list_game * games){
     memmove(identifiant, arguments+SIZE_ONE_SPACE, SIZE_IDENTIFIANT);
     memmove(port, arguments+SIZE_ONE_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE, sizeof(int));
     memmove(stars, arguments+SIZE_ONE_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+sizeof(int), SIZE_INPUT_STAR);
-    printf("ok 4 ici\n");
 
     if(strcmp(stars, "***") != 0){
       printf("Argument incorrect %s %s %s\n", identifiant, port, stars);
       return -1;
     }
-        printf("ok 4 ici\n");
 
     struct game *game = malloc(sizeof(struct game));
     int rep_init = init_game(game, 10, 10, NULL);
     if(rep_init == -1)return -1;
-    printf("ok 5 ici\n");
 
     int rep_add = add_game(game, _games);
     if(rep_add == -1)return -1;
     player->game_id = game->id_partie;
-    printf("ok 6 ici\n");
 
     int rep_join = register_game(player, identifiant, game->id_partie, _games);
     if(rep_join == -1)return -1;
-    printf("ok 7 ici\n");
 
-    printf("[CREATE PARTY] Joueur %s Port %s\n", identifiant, port);
+    printf("[CREATE GAME] Joueur %s Port %s\n", identifiant, port);
     return 0;
 }

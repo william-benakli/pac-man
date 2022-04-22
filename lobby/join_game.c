@@ -84,19 +84,16 @@ int register_game(struct player *client, char * identifiant, uint8_t room_id_gam
     return PLAYER_REGISTER_SUCCESS;
 }
 
-void *  search_game(uint8_t id, struct list_game *list){
+void * search_game(uint8_t id, struct list_game *list){
     struct list_game *copy = list;
 
-    printf("Search game error 1 \n");
-
     while(copy != NULL){
+        printf("Partie lu %d\n", copy->game->id_partie);
+        printf("parti attendu  %d\n", id);
         if (copy->game->id_partie == id){
-            printf("Trouvé \n");
             return copy->game;
         }
         copy = copy->next_game;
     }
-    printf("Search game error \n");
-
     return NULL;
 }
