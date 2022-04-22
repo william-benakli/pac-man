@@ -12,7 +12,7 @@ CLASSES_JAVA = \
 
 # COMPILATION DES FICHIERS C #########################
 CC = gcc
-CFLAGS = -pthread -Wall -I $(INCLUDE_DIR)
+CFLAGS = -pthread -Wall
 CPATH = lobby/c/
 CPATH_GAME = game/
 INCLUDE_DIR = include
@@ -22,7 +22,7 @@ INCLUDE_DIR = include
 #.c.o:
 #	$(CC) $(CFLAGS) -o serveur -c lobby/c $<
 
-CLASSES_C = $(CPATH)serveur.c $(CPATH)player_lobby.c $(CPATH)list_game.c $(CPATH_GAME)lobby.c
+CLASSES_C = $(CPATH)serveur.c $(CPATH)player_lobby.c $(CPATH)list_game.c $(CPATH)lobby.c
 
 # LANCE LA COMPILATION DES FICHIERS ##################
 default: java c
