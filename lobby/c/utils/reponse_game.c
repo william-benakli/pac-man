@@ -6,17 +6,16 @@ int sendSize(int socketclient){
   read(socketclient, buffer_reception, SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_INPUT_STAR);
   buffer_reception[SIZE_ONE_SPACE + sizeof(uint8_t)+SIZE_INPUT_STAR] = '\0';
  
- // printf("-------%s\n", buffer_reception);
+  printf("-------%s\n", buffer_reception);
   
   uint8_t id_partie;
   char stars[4];
   stars[3] = '\0';
   memmove(&id_partie, (buffer_reception+SIZE_ONE_SPACE), sizeof(uint8_t));
   memmove(stars, (buffer_reception+SIZE_ONE_SPACE+sizeof(uint8_t)), SIZE_INPUT_STAR);
-/*TEST
   printf("%u partie dans size \n", id_partie);
   printf("%s partie dans size \n", stars);
-*/
+
   if(strcmp(stars, "***") != 0)return -1;
   
   struct game *game_courant = search_game(id_partie, _games);
