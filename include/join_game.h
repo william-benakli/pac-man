@@ -15,6 +15,5 @@
 
 int player_join(struct game *_game, struct player *player, struct participant *new_player_ingame);
 void *  search_game(uint8_t id, struct list_game *list);
-int regis(struct player *client,struct list_game *games);
 int register_game(struct player *client, char * identifiant, uint8_t room_id_game, struct list_game *games);
 #endif

@@ -15,6 +15,9 @@
 
 #include "list_game.h"
 #include "leave_game.h"
+#include "utils/reponse_lobby.h"
+#include "utils/reponse_serveur.h"
+#include "utils/reponse_game.h"
 
 #define SIZE_ONE_SPACE 1
 #define SIZE_IDENTIFIANT 8
@@ -34,24 +37,9 @@
 
 void *clientConnexion(void * client);
 int registerInput(struct player *player);
-int creategame(struct player * player, struct list_game * games);
-
-int sendgames(int socketclient);
-int sendSize(int socketclient);
-int sendList(int socketclient);
-
-int sendGodBye(int socketclient);
-int sendDunno(int socketclient);
-
-int sendRegNo(int socketclient);
-
-int sendUnRegOk(int socketclient, u_int8_t id_partie);
-int sendRegOk(int socketclient, u_int8_t id_partie);
-
 int readStars(int socketclient);
 
 extern struct list_game *_games;
-
 //pthread_mutex_t verrou = PTHREAD_MUTEX_INITIALIZER;
 
 #endif

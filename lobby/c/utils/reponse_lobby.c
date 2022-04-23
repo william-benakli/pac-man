@@ -1,4 +1,4 @@
-#include "../../../include/serveur.h"
+#include "../../../include/utils/reponse_lobby.h"
 
 int creategame(struct player * player, struct list_game * games){
     int socketclient = player->tcp_sock;
@@ -84,7 +84,7 @@ int sendgames(int socketclient){
 }
 
 
-int regis(struct player *client,struct list_game *games){
+int regisgame(struct player *client,struct list_game *games){
     
     int socketclient = client->tcp_sock;
     

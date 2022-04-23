@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+//#include "serveur.h"
 struct player {
 	int udp_port;
 	int tcp_sock;

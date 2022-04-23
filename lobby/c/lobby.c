@@ -5,6 +5,7 @@ uint8_t id_games_static = 0;
 int init_game(struct game *_game, uint16_t hauteur, uint16_t largeur, char **labyrinth){
     
     _game->id_partie = id_games_static; //TODO STATIC ALLOCATION OF ID 
+    id_games_static++;
     _game->hauteur = hauteur;
     _game->largeur = largeur;
     _game->max_player = 0;
@@ -14,7 +15,6 @@ int init_game(struct game *_game, uint16_t hauteur, uint16_t largeur, char **lab
     if(id_games_static > 255){
         return GAME_CREATION_FAILED;
     }
-    id_games_static++;
     return GAME_CREATION_SUCCESS;
 }       
 

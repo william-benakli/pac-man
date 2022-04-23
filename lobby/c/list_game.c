@@ -20,20 +20,22 @@ void free_list_game(struct list_game *games){
 
 //ajout un jeu a la fin de liste
 int add_game(struct game *addgame, struct list_game *list){
-    struct list_game *copy = list;
-    if(copy->game == NULL){
-        list->game = addgame;
-        printf("Ajout au debut\n");
-        return GAME_CREATED_SUCCESSFULLY;
-    } 
+    //pthread_mutex_lock(&verrou);
 
-    while(copy->next_game != NULL){
-        copy = copy->next_game;
-    }
-    struct list_game * list_next = init_list_game();
-    list_next->game = addgame;
+        struct list_game *copy = list;
+        if(copy->game == NULL){
+            list->game = addgame;
+            printf("Ajout au debut\n");
+            return GAME_CREATED_SUCCESSFULLY;
+        } 
 
-    copy->next_game = list_next;
+        while(copy->next_game != NULL){
+            copy = copy->next_game;
+        }
+        struct list_game * list_next = init_list_game();
+        list_next->game = addgame;
+
+        copy->next_game = list_next;
 
     return GAME_CREATED_SUCCESSFULLY;
 }
