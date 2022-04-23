@@ -12,47 +12,6 @@ int player_join(struct game *_game, struct player *player, struct participant *n
     return PLAYER_JOIN_SUCCESS;
 }
 
-int regis(struct player *client,struct list_game *games){
-    
-    int socketclient = client->tcp_sock;
-    
-    char regis_buffer[SIZE_ONE_SPACE+ SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_PORT+SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_INPUT_STAR];
- 
-    int count = read(socketclient, regis_buffer, SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR);
-    if(count != SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR){
-        printf("missing argument\n");
-        return PLAYER_REGISTER_FAILURE;
-    }
-
-    char id_buffer[8];
-    char port_buffer[4];
-    uint8_t room_buffer;
-    char stars[4];
-    stars[3] = '\0';
-    if(client->status_game == IN_GAME){
-      printf("player already in party\n");
-      return PLAYER_REGISTER_FAILURE;
-    }
-
-    memmove(id_buffer,regis_buffer+SIZE_ONE_SPACE, SIZE_IDENTIFIANT);
-    memmove(port_buffer,regis_buffer+SIZE_ONE_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE,sizeof(int));
-    memmove(&room_buffer,regis_buffer+SIZE_ONE_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+sizeof(int), sizeof(uint8_t));
-    memmove(stars,regis_buffer+SIZE_ONE_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+sizeof(int) + sizeof(uint8_t), SIZE_INPUT_STAR);
-
-    int protocol_respected = strcmp(stars,"***");
-    if(protocol_respected != 0){
-      printf("invalid protocol\n");
-      return PLAYER_REGISTER_FAILURE;
-    }
-   
-    int protocol_register_game = register_game(client, id_buffer, room_buffer, games);
-    if(protocol_register_game != 0){
-      printf("invalid protocol\n");
-      return PLAYER_REGISTER_FAILURE;
-    }
-    
-    return PLAYER_REGISTER_SUCCESS;
-}
 
 int register_game(struct player *client, char * identifiant, uint8_t room_id_game, struct list_game *games){
      
