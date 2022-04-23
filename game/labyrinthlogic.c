@@ -1,17 +1,7 @@
+#include "../include/labyrinthlogic.h"
 
-#include "../include/game_settings.h"
-#include <assert.h>
 
-#define CASEVIDE = '0'
-#define MUR = '#'
-#define JOUEUR = '1'
 
-#define MOVELEFT 1 
-#define MOVERIGHT 2 
-#define MOVEUP 3 
-#define MOVEDOWN 4
-
-#define FANTOME 10
 
 char  **initlabirynth(int x, int y){
     char **labyrinth = (char **) malloc(y * sizeof(char *));
@@ -171,13 +161,13 @@ int main(){
 
     printlabyrinth(_game);
     printf("----------\n");
-    int x  = moveinlabyrinth(MOVELEFT,1,_game,player);
+    int x  = moveinlabyrinth(MOVEDOWN,1,_game,player);
     printlabyrinth(_game);
     printf("%d",x);
     printf("%d",player->pos_x);
     printf("%d",player->pos_y);
     printf("----------\n");
-    x = moveinlabyrinth(MOVERIGHT,2,_game,player);
+    x = moveinlabyrinth(MOVERIGHT,5,_game,player);
     printlabyrinth(_game);
     printf("%d",x);
     printf("%d",player->pos_x);
