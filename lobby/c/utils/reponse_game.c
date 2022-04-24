@@ -17,12 +17,15 @@ int sendSize(int socketclient){
   printf("%s partie dans size \n", stars);
 
   if(strcmp(stars, "***") != 0)return -1;
-  
+  printf("avant le searche\n");
   struct game *game_courant = search_game(id_partie, _games);
   if(game_courant == NULL){
     return -1;
+  }else{
+      printf("bah c good\n");
   }
 
+  printf("partie existe pas mais on passe \n");
   size_t size_reponse = SIZE_INPUT_DEFAULT_SPACE+ sizeof(uint8_t) + (sizeof(uint16_t)*2 )+ 2 + SIZE_INPUT_STAR;
   char buffer_envoie[size_reponse];
   char * buffer_input = "SIZE! ";

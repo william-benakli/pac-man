@@ -12,7 +12,6 @@ int player_join(struct game *_game, struct player *player, struct participant *n
     return PLAYER_JOIN_SUCCESS;
 }
 
-
 int register_game(struct player *client, char * identifiant, uint8_t room_id_game, struct list_game *games){
      
     struct game *target_game = search_game(room_id_game,games);
@@ -44,15 +43,19 @@ int register_game(struct player *client, char * identifiant, uint8_t room_id_gam
 }
 
 void * search_game(uint8_t id, struct list_game *list){
-    struct list_game *copy = list;
-
-    while(copy != NULL){
+ 
+   struct list_game *copy = list;
+    
+    while(copy->game != NULL){
         printf("Partie lu %d\n", copy->game->id_partie);
         printf("parti attendu  %d\n", id);
+
         if (copy->game->id_partie == id){
+                printf("trouvé\n");
             return copy->game;
         }
         copy = copy->next_game;
     }
+
     return NULL;
 }
