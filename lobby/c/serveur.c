@@ -128,28 +128,19 @@ int registerInput(struct player * player){
         sendDunno(socketclient, "UNREG ERREUR UNREGOK FAIL");
         registerInput(player);
       }
-
       registerInput(player);
-      printf("Le client s'est bien desinscrit \n");
     }else if(strcmp(buffer, CMD_GAME) == 0){
-
-      printf("avant readStars\n");
-
       int check_stars = readStars(socketclient);
       if(check_stars == -1){
         sendDunno(socketclient, "CMD GAME READSTART ERROR");
         registerInput(player);
       }
-      printf("OUi on est passé\n");
       int rep_party = sendgames(socketclient);
       if(rep_party == -1){
         sendDunno(socketclient, "CMD GAME ENVOIE GAME ECHEC");
         registerInput(player);
       }
-      printf("fin \n");
-
       registerInput(player);
-
     }else if(strcmp(buffer, CMD_SIZE) == 0){
 
       int rep_size = sendSize(socketclient);
