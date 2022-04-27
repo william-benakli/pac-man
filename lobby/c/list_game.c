@@ -25,7 +25,6 @@ int add_game(struct game *addgame, struct list_game *list){
         struct list_game *copy = list;
         if(copy->game == NULL){
             list->game = addgame;
-            printf("Ajout au debut\n");
             return GAME_CREATED_SUCCESSFULLY;
         } 
 

@@ -68,11 +68,8 @@ int sendgames(int socketclient){
           memmove(mess_game+size_games + (it_games*size_ogame) +(SIZE_INPUT_DEFAULT_SPACE)+SIZE_ONE_SPACE, " ", sizeof(char)*1);
           memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT_SPACE)+sizeof(uint8_t)+SIZE_ONE_SPACE, &listgames_courant->game->players,sizeof(uint8_t));
           memmove(mess_game+size_games + (it_games*size_ogame)+(SIZE_INPUT_DEFAULT_SPACE)+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint8_t), "***", SIZE_INPUT_STAR);
-          printf("jusqu'ici pas d'erreur %d\n", it_games);
           it_games++;
         }
-        printf("On sort \n");
-        if(listgames_courant == NULL)printf("game suivant est NULL\n");
         listgames_courant = listgames_courant->next_game;
       }
       printf("---- %s ---- \n",mess_game);
@@ -88,10 +85,11 @@ int regisgame(struct player *client,struct list_game *games){
     
     int socketclient = client->tcp_sock;
     
-    char regis_buffer[SIZE_ONE_SPACE+ SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_PORT+SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_INPUT_STAR];
+    size_t size_buffer_max = SIZE_ONE_SPACE+ SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_PORT+SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_INPUT_STAR;
+    char regis_buffer[size_buffer_max];
  
-    int count = read(socketclient, regis_buffer, SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR);
-    if(count != SIZE_IDENTIFIANT+SIZE_PORT+SIZE_INPUT_STAR){
+    int count = read(socketclient, regis_buffer, size_buffer_max);
+    if(count != size_buffer_max){
         printf("missing argument\n");
         return PLAYER_REGISTER_FAILURE;
     }
@@ -111,15 +109,17 @@ int regisgame(struct player *client,struct list_game *games){
     memmove(&room_buffer,regis_buffer+SIZE_ONE_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+sizeof(int), sizeof(uint8_t));
     memmove(stars,regis_buffer+SIZE_ONE_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+sizeof(int) + sizeof(uint8_t), SIZE_INPUT_STAR);
 
+    printf("Je recois id: %s , port %s, l'id game %d, les etoiles %s\n", id_buffer, port_buffer, room_buffer, stars);
+    
     int protocol_respected = strcmp(stars,"***");
     if(protocol_respected != 0){
-      printf("invalid protocol\n");
+      printf("invalid protocol etoile miss\n");
       return PLAYER_REGISTER_FAILURE;
     }
    
     int protocol_register_game = register_game(client, id_buffer, room_buffer, games);
     if(protocol_register_game != 0){
-      printf("invalid protocol\n");
+      printf("invalid protocol to the game\n");
       return PLAYER_REGISTER_FAILURE;
     }
     

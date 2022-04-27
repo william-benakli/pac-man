@@ -4,7 +4,7 @@
 #include "../serveur.h"
 
 int sendGodBye(int socketclient);
-int sendDunno(int socketclient);
+int sendDunno(int socketclient, char * s);
 int sendRegNo(int socketclient);
 
 #endif
