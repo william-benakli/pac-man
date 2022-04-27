@@ -225,11 +225,40 @@ public class Client_TCP implements Runnable {
 						System.out.println("Entrer INFOS ou VARSE pour voir les commandes detailles");
 					}
 					lecture = "";
+
 				}
 				pos_lecture++;
 			}
+
+			// ENVOIE COMME MEME POUR TESTER ROBUSTESSE DU SERVEUR
+			if (!lecture.equals("")) {
+				try {
+					System.out.println("ATTENTION MSG NON CONFORME ENVOYE");
+					System.out.println("MSG ENVOYE: " + msg);
+					os.write(msg.getBytes());
+					// Recois msg - message en TCP
+					String msg_erreur = "";
+					String receptacle = null;
+					int read;
+					byte[] msg_byte = new byte[8];
+					if ((read = is.read(msg_byte)) != -1) {
+						receptacle = new String(msg_byte, 0, read);
+					}
+					for (int j = 0; j < msg_byte.length; j++) {
+						byte b = (byte) msg_byte[j];
+						msg_erreur += (char) b;
+					}
+					System.out.println("MSG RECU: " + msg_erreur);
+				} catch (Exception e) {
+					System.out.println("ERREUR DEFAULT SWITCH");
+					e.printStackTrace();
+				}
+			}
+			// FIN TEST ROBUSTESSE DU SERVEUR
+
 			System.out.println("Derniere lecture: " + lecture);
 		}
+
 	}
 
 	// Pour verifier la commande 5 premiers chars (commande)
@@ -540,8 +569,8 @@ public class Client_TCP implements Runnable {
 			for (int i = 0; i < str.length(); i++) {
 				if (Character.isDigit(str.charAt(i)) && i >= 20) {
 					if (Check_int_value(str, i) > 255 || Check_int_value(str, i) < 0) {
-						System.out
-								.println("Numero de partie invalide car sous uint8 on ne depasse pas 255 [REGIS␣id␣port␣m***]");
+						System.out.println(
+								"Numero de partie invalide car sous uint8 on ne depasse pas 255 [REGIS␣id␣port␣m***]");
 						return;
 					}
 					byte_out.write((byte) Check_int_value(str, i));
