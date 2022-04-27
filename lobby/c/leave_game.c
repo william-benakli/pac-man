@@ -32,9 +32,7 @@ int unregis(struct player *client, struct list_game *games){
         printf("failed to join\n");
         return PLAYER_UNREG_FAILURE;
     }
-
     playerleave(target_game,client);
-
     client->status_game = IN_LOBBY;
     client->game_id = -1;
     return PLAYER_UNREG_SUCCESS;

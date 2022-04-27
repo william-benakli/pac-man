@@ -1,6 +1,7 @@
 #include "../../../include/utils/reponse_serveur.h"
 
-int sendDunno(int socketclient){
+int sendDunno(int socketclient, char * s){
+  printf("Erreur du DUNNOO %s\n", s);
   char * buffer = "DUNNO***";
   int count = write(socketclient, buffer, SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR);
   return count == (SIZE_INPUT_DEFAULT+SIZE_INPUT_STAR) ? 0 : -1;

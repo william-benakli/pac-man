@@ -2,8 +2,11 @@
 
 int sendSize(int socketclient){
 
-  char buffer_reception [SIZE_ONE_SPACE + sizeof(uint8_t)+SIZE_INPUT_STAR + 1];
-  read(socketclient, buffer_reception, SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_INPUT_STAR);
+  size_t size_buffer_max = SIZE_ONE_SPACE + sizeof(uint8_t)+SIZE_INPUT_STAR;
+  char buffer_reception [size_buffer_max];
+  int count_read = read(socketclient, buffer_reception, size_buffer_max);
+  if(count_read != size_buffer_max)return -1;
+
   buffer_reception[SIZE_ONE_SPACE + sizeof(uint8_t)+SIZE_INPUT_STAR] = '\0';
  
   printf("-------%s\n", buffer_reception);
@@ -13,19 +16,11 @@ int sendSize(int socketclient){
   stars[3] = '\0';
   memmove(&id_partie, (buffer_reception+SIZE_ONE_SPACE), sizeof(uint8_t));
   memmove(stars, (buffer_reception+SIZE_ONE_SPACE+sizeof(uint8_t)), SIZE_INPUT_STAR);
-  printf("%u partie dans size \n", id_partie);
-  printf("%s partie dans size \n", stars);
 
   if(strcmp(stars, "***") != 0)return -1;
-  printf("avant le searche\n");
   struct game *game_courant = search_game(id_partie, _games);
-  if(game_courant == NULL){
-    return -1;
-  }else{
-      printf("bah c good\n");
-  }
-
-  printf("partie existe pas mais on passe \n");
+  if(game_courant == NULL) return -1;
+  
   size_t size_reponse = SIZE_INPUT_DEFAULT_SPACE+ sizeof(uint8_t) + (sizeof(uint16_t)*2 )+ 2 + SIZE_INPUT_STAR;
   char buffer_envoie[size_reponse];
   char * buffer_input = "SIZE! ";
@@ -43,14 +38,17 @@ int sendSize(int socketclient){
 }
 
 int sendList(int socketclient){
-  char buffer_reception[1 + sizeof(uint8_t)+SIZE_INPUT_STAR];
-  read(socketclient, buffer_reception, 1+sizeof(uint8_t)+SIZE_INPUT_STAR);
+
+  size_t size_buffer_max = SIZE_ONE_SPACE + sizeof(uint8_t)+SIZE_INPUT_STAR;
+  char buffer_reception [size_buffer_max];
+  int count_read = read(socketclient, buffer_reception, size_buffer_max);
+  if(count_read != size_buffer_max)return -1;
 
   uint8_t id_partie;
   char stars[4];
   stars[3] = '\0';
-  memmove(&id_partie, (buffer_reception+1), sizeof(uint8_t));
-  memmove(stars, (buffer_reception+1+sizeof(uint8_t)), SIZE_INPUT_STAR);
+  memmove(&id_partie, (buffer_reception+SIZE_ONE_SPACE), sizeof(uint8_t));
+  memmove(stars, (buffer_reception+SIZE_ONE_SPACE+sizeof(uint8_t)), SIZE_INPUT_STAR);
   printf("Id reconstitué: %d...\n", id_partie);
   if(strcmp(stars, "***") != 0)return -1;
 

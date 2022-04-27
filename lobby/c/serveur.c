@@ -80,7 +80,10 @@ int registerInput(struct player * player){
 
     char buffer[SIZE_INPUT_DEFAULT+1];
     buffer[SIZE_INPUT_DEFAULT] = '\0';
-    read(socketclient, buffer, SIZE_INPUT_DEFAULT);
+    int count = read(socketclient, buffer, SIZE_INPUT_DEFAULT);
+    if(count != SIZE_INPUT_DEFAULT){
+      registerInput(player);
+    }
 
     if(strcmp(buffer, CMD_NEW_PARTY) == 0){
         int rep_create = creategame(player, _games); 
@@ -103,37 +106,44 @@ int registerInput(struct player * player){
     //TODO: Command en partie : on devrait peut être separer en deux fonctions ?
     }else if(strcmp(buffer, CMD_UNREG) == 0){
 
+      int check_stars = readStars(socketclient);
+      if(check_stars == -1){
+        sendDunno(socketclient, "CMD UNREG READSTARS ERROR");
+        registerInput(player);
+      }
+
       if(player->status_game == IN_LOBBY){
-        sendDunno(socketclient);
+        sendDunno(socketclient, "UNREG ERREUR PLAYER EN LOBBY");
         registerInput(player);
       }
 
       u_int8_t id_partie = player->game_id;
       int rep_unreg = unregis(player, _games);
       if(rep_unreg == -1){
-        sendDunno(socketclient);
+        sendDunno(socketclient, "UNREG ERREUR UNREG PLAYER LIST");
         registerInput(player);
       }
       int rep_regOk = sendUnRegOk(socketclient, id_partie);
       if(rep_regOk == -1){
-        sendDunno(socketclient);
+        sendDunno(socketclient, "UNREG ERREUR UNREGOK FAIL");
         registerInput(player);
       }
 
       registerInput(player);
+      printf("Le client s'est bien desinscrit \n");
     }else if(strcmp(buffer, CMD_GAME) == 0){
 
       printf("avant readStars\n");
 
       int check_stars = readStars(socketclient);
       if(check_stars == -1){
-        sendDunno(socketclient);
+        sendDunno(socketclient, "CMD GAME READSTART ERROR");
         registerInput(player);
       }
       printf("OUi on est passé\n");
       int rep_party = sendgames(socketclient);
       if(rep_party == -1){
-        sendDunno(socketclient);
+        sendDunno(socketclient, "CMD GAME ENVOIE GAME ECHEC");
         registerInput(player);
       }
       printf("fin \n");
@@ -144,7 +154,7 @@ int registerInput(struct player * player){
 
       int rep_size = sendSize(socketclient);
       if(rep_size == -1){
-        sendDunno(socketclient);
+        sendDunno(socketclient, "CMD SIZE sendSIZE FAIL");
         registerInput(player);
       }
       registerInput(player);
@@ -153,14 +163,14 @@ int registerInput(struct player * player){
 
       int rep_list = sendList(socketclient);
       if(rep_list == -1){
-        sendDunno(socketclient);
+        sendDunno(socketclient,"CMD LIST sendLIst fail");
         registerInput(player);
       }
       registerInput(player);
 
     }else{
       perror("Erreur arguments non conforme");
-      sendDunno(socketclient);
+      sendDunno(socketclient, "ERREUR ENTREE INCONNUE");
       registerInput(player);
     }
   return 0;

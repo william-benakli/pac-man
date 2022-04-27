@@ -17,7 +17,7 @@ CPATH = lobby/c/
 CPATH_GAME = game/
 CPATH_UTILS = $(CPATH)utils/
 INCLUDE_DIR = include
-OUTPATH_C = lobby/c/out/
+OUTPATH_C = $(CPATH)out/
 
 
 #.SUFFIXES_C: .c .o
