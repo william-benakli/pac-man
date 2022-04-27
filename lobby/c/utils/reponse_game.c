@@ -8,8 +8,6 @@ int sendSize(int socketclient){
   if(count_read != size_buffer_max)return -1;
 
   buffer_reception[SIZE_ONE_SPACE + sizeof(uint8_t)+SIZE_INPUT_STAR] = '\0';
- 
-  printf("-------%s\n", buffer_reception);
   
   uint8_t id_partie;
   char stars[4];
@@ -49,7 +47,6 @@ int sendList(int socketclient){
   stars[3] = '\0';
   memmove(&id_partie, (buffer_reception+SIZE_ONE_SPACE), sizeof(uint8_t));
   memmove(stars, (buffer_reception+SIZE_ONE_SPACE+sizeof(uint8_t)), SIZE_INPUT_STAR);
-  printf("Id reconstitué: %d...\n", id_partie);
   if(strcmp(stars, "***") != 0)return -1;
 
   struct game *game_courant = search_game(id_partie, _games);

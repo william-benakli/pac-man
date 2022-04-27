@@ -64,15 +64,10 @@ int remove_game(struct game *rem_game, struct list_game *list){
 
 uint8_t size_game_available(struct list_game *list){
     struct list_game *copy = list;
-
     uint8_t nombre_party_available = 0;
-        if(copy->game == NULL){
-            return 0;
-        }
-    while(copy->next_game != NULL){
-        if (copy->game->status == STATUS_AVAILABLE){
-            nombre_party_available++;
-        } 
+    if(copy->game == NULL)return 0;
+    while(copy != NULL){
+        if (copy->game->status == STATUS_AVAILABLE)nombre_party_available++;
         copy = copy->next_game;
     }
     return nombre_party_available;
