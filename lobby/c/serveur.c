@@ -157,7 +157,6 @@ int registerInput(struct player * player){
         registerInput(player);
       }
       registerInput(player);
-
     }else{
       perror("Erreur arguments non conforme");
       sendDunno(socketclient);
