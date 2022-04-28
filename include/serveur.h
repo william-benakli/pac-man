@@ -34,6 +34,7 @@
 #define CMD_SIZE "SIZE?"
 #define CMD_LIST "LIST?"
 #define CMD_IQUIT "IQUIT"
+#define CMD_RIMOV "RIMOV"
 
 void *clientConnexion(void * client);
 int registerInput(struct player *player);

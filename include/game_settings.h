@@ -21,6 +21,7 @@ struct game{
     
     char **labyrinth;
     enum { STATUS_AVAILABLE, STATUS_UNAVAILABLE} status;
+    enum { ONGOING, WAITING} game_started;
     struct participant *joueurs;
 };
 
