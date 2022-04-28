@@ -7,8 +7,8 @@ int player_join(struct game *_game, struct player *player, struct participant *n
     new_player_ingame->player_ready = 0;
     new_player_ingame->tcp_sock = player->tcp_sock;
     new_player_ingame->udp_port = player->udp_port;
-    new_player_ingame->next = _game->joueurs;
-    _game->joueurs = new_player_ingame;
+    new_player_ingame->next = _game->participants;
+    _game->participants = new_player_ingame;
     _game->players++;
     return PLAYER_JOIN_SUCCESS;
 }
@@ -17,6 +17,7 @@ int register_game(struct player *client, char * identifiant, uint8_t room_id_gam
      
     struct game *target_game = search_game(room_id_game,games);
     if (target_game == NULL){
+        printf("party introuvable \n");
         return PLAYER_REGISTER_FAILURE;
     }
 
@@ -31,10 +32,15 @@ int register_game(struct player *client, char * identifiant, uint8_t room_id_gam
 }
 
 void * search_game(uint8_t id, struct list_game *list){
+
    struct list_game *copy = list;
-    while(copy->game != NULL){
-        if (copy->game->id_partie == id)return copy->game;
+    printf("entrée de search tout est ok\n");
+    while(copy != NULL){
+        if(copy->game != NULL){
+            if (copy->game->id_partie == id)return copy->game;
+        }else return NULL;
         copy = copy->next_game;
     }
+    printf("Sortie de searche tout est ok \n");
     return NULL;
 }

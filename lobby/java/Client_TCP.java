@@ -731,6 +731,7 @@ public class Client_TCP implements Runnable {
 			// Envoie msg - message en TCP
 			ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
 			for (int i = 0; i < str.length(); i++) {
+				
 				if (Character.isDigit(str.charAt(i)) && i >= 20) {
 					if (Check_int_value(str, i) > 255 || Check_int_value(str, i) < 0) {
 						System.out.println(

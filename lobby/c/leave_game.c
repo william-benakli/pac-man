@@ -2,13 +2,15 @@
 
 int playerleave(struct game *_game, struct player *player){
     struct game *copy = _game;
-    if (copy->joueurs->tcp_sock == player->tcp_sock){
-        _game->joueurs = _game->joueurs->next;
+    if (copy->participants->tcp_sock == player->tcp_sock){
+        _game->participants = _game->participants->next;
+        _game->players--;
         return GAME_LEAVE_SUCCESS;
     }
-    while(copy->joueurs->next->next != NULL){
-        if(copy->joueurs->next->tcp_sock == player->tcp_sock){
-            copy->joueurs->next = copy->joueurs->next->next;
+    while(copy->participants->next->next != NULL){
+        if(copy->participants->next->tcp_sock == player->tcp_sock){
+            copy->participants->next = copy->participants->next->next;
+            _game->players--;
             return GAME_LEAVE_SUCCESS;
         }
     }

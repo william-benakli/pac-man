@@ -1,8 +1,5 @@
 #include "../../include/movement.h"
 
-
-
-
 int ingame(struct player *player, struct list_game *_games){
     return 0;
 }
