@@ -15,6 +15,8 @@
 
 #include "list_game.h"
 #include "leave_game.h"
+#include "movement.h"
+#include "player_ingame.h"
 #include "utils/reponse_lobby.h"
 #include "utils/reponse_serveur.h"
 #include "utils/reponse_game.h"
@@ -25,6 +27,7 @@
 #define SIZE_INPUT_DEFAULT 5
 #define SIZE_INPUT_DEFAULT_SPACE 6 
 #define SIZE_INPUT_STAR 3
+#define SIZE_DISTANCE 3
 
 #define CMD_REGISTER "REGIS"
 #define CMD_START "START"
@@ -33,12 +36,17 @@
 #define CMD_UNREG "UNREG"
 #define CMD_SIZE "SIZE?"
 #define CMD_LIST "LIST?"
+
 #define CMD_IQUIT "IQUIT"
 #define CMD_RIMOV "RIMOV"
+#define CMD_UPMOV "UPMOV"
+#define CMD_DOMOV "DOMOV"
+#define CMD_LEMOV "LEMOV"
 
 void *clientConnexion(void * client);
 int registerInput(struct player *player);
 int readStars(int socketclient);
+void gameInput(struct participant * partcipant_ingame, struct game *game_courant);
 
 extern struct list_game *_games;
 //pthread_mutex_t verrou = PTHREAD_MUTEX_INITIALIZER;

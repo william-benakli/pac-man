@@ -134,7 +134,7 @@ int regisgame(struct player *client,struct list_game *games){
     return PLAYER_REGISTER_SUCCESS;
 }
 
-int sendStart(struct player *player, struct list_game *list){
+int start(struct player *player, struct list_game *list){
 
   if(player->status_game == IN_LOBBY){
     printf("Error player not register in game ");
@@ -142,11 +142,11 @@ int sendStart(struct player *player, struct list_game *list){
   }
 
   uint8_t gameid = player->game_id;
-  int rep_search = search_game(gameid, list);
-  if(rep_search == -1){
+  struct game * target_game = search_game(gameid, list);
+  if(target_game == NULL){
     printf("Error game not found ");
     return -1;
   }  
-  //mettre en attente le joueur
+
   return 0;
 }

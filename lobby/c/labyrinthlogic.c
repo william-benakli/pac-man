@@ -1,4 +1,4 @@
-#include "../include/labyrinthlogic.h"
+#include "../../include/labyrinthlogic.h"
 
 
 char  **initlabirynth(int x, int y){
@@ -133,11 +133,9 @@ void printlabyrinth(struct game *_game){
     }
 }
 
-
+/*
 int main(){
     
-    
-
     struct participant *player = (struct participant*) malloc(sizeof(struct participant));
     player->pos_x = 1; 
     player->pos_y = 1;
@@ -177,4 +175,4 @@ int main(){
     free(_game);
 
     return 0;
-}
+}*/

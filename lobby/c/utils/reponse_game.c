@@ -110,7 +110,7 @@ int sendRegOk(int socketclient, uint8_t id_partie){
   return count == (SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR) ? 0 : -1;
 }
 
-int sendglist(struct player *player, struct list_game *list){
+int sendGlist(struct player *player, struct list_game *list){
 
   int socketclient = player->tcp_sock;
   uint8_t gameid = player->game_id;

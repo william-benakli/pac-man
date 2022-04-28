@@ -55,3 +55,14 @@ int check_ready(struct game *_game){
     }
     return PLAYERS_READY;
 }
+
+void * search_player_in_game(struct game * target_game, struct player *player){
+    struct participant *participant_courant = target_game->participants;
+    while(participant_courant != NULL){
+        if(participant_courant->tcp_sock == player->tcp_sock){
+            return participant_courant;
+        }
+        participant_courant = participant_courant->next;
+    }
+    return NULL;
+}

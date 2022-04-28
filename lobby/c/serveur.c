@@ -160,12 +160,21 @@ int registerInput(struct player * player){
       registerInput(player);
     }else if(strcmp(buffer, CMD_START) == 0){
 
-      int rep_list = sendStart(socketclient);
+      int rep_list = start(player, _games);
       if(rep_list == -1){
         sendDunno(socketclient,"CMD START FAILED");
         registerInput(player);
       }
-      startGame(player);
+
+      //On recupere la partie
+      //On recupere le joueur dans la partie
+      struct game * target_game = search_game(player->game_id, _games);
+      if(target_game == NULL) registerInput(player);
+      
+      struct participant * partcipant_lobby = search_player_in_game(target_game, player);
+      if(partcipant_lobby == NULL) registerInput(player);
+
+      gameInput(partcipant_lobby, target_game);
     }else{
       perror("Erreur arguments non conforme");
       sendDunno(socketclient, "ERREUR ENTREE INCONNUE");
@@ -180,4 +189,58 @@ int readStars(int socketclient){
   int count = read(socketclient, stars, SIZE_INPUT_STAR);
   if(strcmp(stars, "***") != 0)return -1;
   return count == (SIZE_INPUT_STAR) ? 0 : -1 ;
+}
+
+void gameInput(struct participant * partcipant_ingame, struct game *game_courant){
+  int socketclient = partcipant_ingame->tcp_sock;
+  size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE+SIZE_DISTANCE+SIZE_INPUT_STAR;
+  char buffer[size_buffer];
+  int count = read(socketclient, buffer, size_buffer);
+  if(count != size_buffer){
+    gameInput(partcipant_ingame, game_courant);
+  }
+  
+  char direction[SIZE_INPUT_DEFAULT + 1];
+  direction[SIZE_INPUT_DEFAULT] = '\0';
+  char distance[SIZE_DISTANCE];
+  char stars[SIZE_INPUT_STAR];
+  stars[SIZE_INPUT_STAR] = '\0';
+
+  memmove(direction, buffer, SIZE_INPUT_DEFAULT);
+  memmove(distance, buffer+SIZE_INPUT_DEFAULT+SIZE_ONE_SPACE, SIZE_DISTANCE);
+  memmove(stars, buffer+SIZE_INPUT_DEFAULT+SIZE_ONE_SPACE+SIZE_DISTANCE, SIZE_INPUT_STAR);
+
+  if(strcmp("***", stars) != 0){
+    gameInput(partcipant_ingame, game_courant);
+  } //protocol pas respecté
+
+    if(strcmp(direction, CMD_RIMOV) == 0){
+      int rep_move = move(MOVERIGHT, distance, game_courant, partcipant_ingame);
+      if(rep_move == -1){
+        gameInput(partcipant_ingame, game_courant);
+      }
+    }else if(strcmp(direction, CMD_LEMOV) == 0){
+      int rep_move = move(MOVELEFT, distance, game_courant, partcipant_ingame);
+      if(rep_move == -1){
+        gameInput(partcipant_ingame, game_courant);
+      }
+    }else if(strcmp(direction, CMD_UPMOV) == 0){
+      int rep_move = move(MOVEUP, distance, game_courant, partcipant_ingame);
+      if(rep_move == -1){
+        gameInput(partcipant_ingame, game_courant);
+      }
+    }else if(strcmp(direction, CMD_DOMOV) == 0){
+      int rep_move = move(MOVEDOWN, distance, game_courant, partcipant_ingame);
+      if(rep_move == -1){
+        gameInput(partcipant_ingame, game_courant);
+      }
+
+/* Essayer de comprendre quand utiliser IQUIT */
+ //   }else if(strcmp(buffer, CMD_IQUIT) == 0){
+      //Premier verification toujours des personnes dans la partie
+      //Deuxieme verification quand on joueur prend un fantome s'il reste dans la partie
+    }else{
+      perror("Erreur arguments en partie non conforme");
+      gameInput(partcipant_ingame, game_courant);
+    }    
 }

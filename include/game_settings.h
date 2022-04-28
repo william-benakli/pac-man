@@ -28,6 +28,7 @@ struct game{
 
 
 int init_game(struct game *_game, uint16_t hauteur, uint16_t largeur);
+void * search_player_in_game(struct game * target_game, struct player *player);
 int free_game(struct game *game);
 int check_ready(struct game *_game);
 
