@@ -13,9 +13,17 @@ struct list_game * init_list_game(){
 }
 
 void free_list_game(struct list_game *games){
-    if(games->next_game != NULL)
-    //TODO à FINIR !
+    struct list_game *copy = games;
+    struct list_game *next = NULL;
+
+    while(copy != NULL){
+        next = copy->next_game;
+        copy = NULL;
+        free_game(copy->game);
+        copy= next;
+    }
     free(games);
+
 }
 
 //ajout un jeu a la fin de liste

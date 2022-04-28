@@ -18,5 +18,7 @@ struct participant{
 
 int init_player_participant(struct player player, struct participant participant, int udp_sock, int tcp_sock, 
                             int player_ready, int pos_x, int pos_y, int score);
+                            
+int free_participant(struct participant *premier);
 
 #endif

@@ -23,12 +23,15 @@ int sendSize(int socketclient){
   char buffer_envoie[size_reponse];
   char * buffer_input = "SIZE! ";
   
+  uint16_t hauteur = htons(game_courant->hauteur);
+  uint16_t largeur = htons(game_courant->largeur);
+
   memmove(buffer_envoie, buffer_input, SIZE_INPUT_DEFAULT_SPACE);
   memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE, &game_courant->id_partie, sizeof(uint8_t));
   memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), " ",  SIZE_ONE_SPACE);
-  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE, &game_courant->hauteur, sizeof(uint16_t));
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE, (&hauteur), sizeof(uint16_t));
   memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), " ",  SIZE_ONE_SPACE);
-  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+2+sizeof(uint16_t), &game_courant->largeur, sizeof(uint16_t));
+  memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+2+sizeof(uint16_t), (&largeur), sizeof(uint16_t));
   memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+2+(sizeof(uint16_t)*2), "***", SIZE_INPUT_STAR);
   
   int count = write(socketclient, buffer_envoie, size_reponse);
@@ -66,7 +69,7 @@ int sendList(int socketclient){
   memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(u_int8_t)+SIZE_ONE_SPACE,  &size_joueur, sizeof(u_int8_t));
   memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE+sizeof(u_int8_t)+SIZE_ONE_SPACE+sizeof(u_int8_t),  "***", SIZE_INPUT_STAR);
   
-  struct participant *participant_courant = game_courant->joueurs;
+  struct participant *participant_courant = game_courant->participants;
   int it_games = 0;
   while(participant_courant != NULL){
     memmove(buffer_envoie+size_list + (it_games*size_playr), "PLAYR ", SIZE_INPUT_DEFAULT_SPACE);
