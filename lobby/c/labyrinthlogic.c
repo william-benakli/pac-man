@@ -1,7 +1,6 @@
 #include "../include/labyrinthlogic.h"
 
 
-
 char  **initlabirynth(int x, int y){
     char **labyrinth = (char **) malloc(y * sizeof(char *));
     for (int i = 0; i < y; i++){

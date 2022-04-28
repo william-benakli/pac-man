@@ -32,7 +32,7 @@ int creategame(struct player * player, struct list_game * games){
     }
 
     struct game *new_game = malloc(sizeof(struct game));
-    int rep_init = init_game(new_game, 10, 10, NULL);
+    int rep_init = init_game(new_game, 10, 10);
     if(rep_init == -1){
       goto error_game;
     }
@@ -43,7 +43,6 @@ int creategame(struct player * player, struct list_game * games){
 
     int rep_join = register_game(player, identifiant, new_game->id_partie, _games);
     if(rep_join == -1)goto error_game;
-
 
     error_game: 
      free(new_game);
@@ -68,7 +67,7 @@ int sendgames(int socketclient){
 
   struct list_game *listgames_courant = _games;
 
-  if(listgames_courant->game != NULL){
+  if(listgames_courant->game != NULL){ 
       int it_games = 0;
       while(listgames_courant != NULL){
         if(listgames_courant->game->status == STATUS_AVAILABLE){
@@ -133,4 +132,21 @@ int regisgame(struct player *client,struct list_game *games){
     }
     
     return PLAYER_REGISTER_SUCCESS;
+}
+
+int sendStart(struct player *player, struct list_game *list){
+
+  if(player->status_game == IN_LOBBY){
+    printf("Error player not register in game ");
+    return -1; 
+  }
+
+  uint8_t gameid = player->game_id;
+  int rep_search = search_game(gameid, list);
+  if(rep_search == -1){
+    printf("Error game not found ");
+    return -1;
+  }  
+  //mettre en attente le joueur
+  return 0;
 }

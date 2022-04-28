@@ -158,6 +158,14 @@ int registerInput(struct player * player){
         registerInput(player);
       }
       registerInput(player);
+    }else if(strcmp(buffer, CMD_START) == 0){
+
+      int rep_list = sendStart(socketclient);
+      if(rep_list == -1){
+        sendDunno(socketclient,"CMD START FAILED");
+        registerInput(player);
+      }
+      startGame(player);
     }else{
       perror("Erreur arguments non conforme");
       sendDunno(socketclient, "ERREUR ENTREE INCONNUE");

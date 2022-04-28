@@ -2,6 +2,7 @@
 #define GAME_SETTINGS_H
 
 #include "player_ingame.h"
+#include "labyrinthlogic.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,7 +27,7 @@ struct game{
 };
 
 
-int init_game(struct game *_game, uint16_t hauteur, uint16_t largeur, char **labyrinth);
+int init_game(struct game *_game, uint16_t hauteur, uint16_t largeur);
 int free_game(struct game *game);
 int check_ready(struct game *_game);
 

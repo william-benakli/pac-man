@@ -109,3 +109,40 @@ int sendRegOk(int socketclient, uint8_t id_partie){
   int count = write(socketclient, buffer_reponse, SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR);
   return count == (SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR) ? 0 : -1;
 }
+
+int sendglist(struct player *player, struct list_game *list){
+
+  int socketclient = player->tcp_sock;
+  uint8_t gameid = player->game_id;
+  struct game *target_game = search_game(gameid, list);
+  if(target_game == NULL){
+    printf("Error game not found \n");
+    return -1;
+  }
+
+  uint8_t nombre_joueur = target_game->players; 
+
+  int size_glist = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR;
+  int size_plyr = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t)*2 + SIZE_ONE_SPACE + SIZE_INPUT_STAR;
+  int size_max = size_glist + nombre_joueur*(size_plyr);
+  char mess_game[size_max];
+
+  memmove(mess_game, "GLIS! ", SIZE_INPUT_DEFAULT_SPACE);
+  memmove(mess_game+(SIZE_INPUT_DEFAULT)+SIZE_ONE_SPACE, &nombre_joueur, sizeof(uint8_t));
+  memmove(mess_game+(SIZE_INPUT_DEFAULT) + SIZE_ONE_SPACE + sizeof(uint8_t), "***", SIZE_INPUT_STAR);
+
+  struct participant * participant_courant = target_game->participants;
+  int it_players = 0;
+  while(participant_courant != NULL){
+    memmove(mess_game+size_glist + (it_players*size_plyr), "GPLYR ", SIZE_INPUT_DEFAULT_SPACE);
+    memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE), participant_courant->identifiant, SIZE_IDENTIFIANT);
+    memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE)+ SIZE_IDENTIFIANT, " ", SIZE_ONE_SPACE);
+   // memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE)+ SIZE_IDENTIFIANT+SIZE_ONE_SPACE, participant_courant->pos_x, sizeof());
+    //memmove(mess_game+size_glist + (it_players*size_plyr)+(SIZE_INPUT_DEFAULT_SPACE)+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint8_t), "***", SIZE_INPUT_STAR);
+    it_players++;
+    participant_courant = participant_courant->next;
+  }
+  
+  int count =  write(socketclient, mess_game, size_max);
+  return count == size_max ? 0 : -1;
+}

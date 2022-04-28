@@ -2,14 +2,17 @@
 
 uint8_t id_games_static = 0;
 
-int init_game(struct game *_game, uint16_t hauteur, uint16_t largeur, char **labyrinth){
+int init_game(struct game *_game, uint16_t hauteur, uint16_t largeur){
     
     _game->id_partie = id_games_static; //TODO STATIC ALLOCATION OF ID 
     id_games_static++;
     _game->hauteur = hauteur;
     _game->largeur = largeur;
     _game->max_player = 0;
-    _game->labyrinth = labyrinth; //TODO: gerer le transision
+    _game->labyrinth = initlabirynth(hauteur, largeur);
+    if(_game->labyrinth == NULL){
+        return GAME_CREATION_FAILED;
+    }
     _game->participants = NULL;
     //TODO: METTRE UN VERROU
     if(id_games_static > 255){
