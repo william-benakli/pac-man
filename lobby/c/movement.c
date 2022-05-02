@@ -4,7 +4,7 @@ int ingame(struct player *player, struct list_game *_games){
     return 0;
 }
 
-int movest(int direction, char * distance, struct game * game, struct participant *player){
+int move(int direction, char * distance, struct game * game, struct participant *player){
     int movement = moveinlabyrinth(direction, atoi(distance), game, player);
     if (movement < 10){
         char sendbuffer[19];

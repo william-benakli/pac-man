@@ -34,19 +34,25 @@ int creategame(struct player * player, struct list_game * games){
     struct game *new_game = malloc(sizeof(struct game));
     int rep_init = init_game(new_game, 10, 10);
     if(rep_init == -1){
-      goto error_game;
+      printf("Erreur intialisation party\n");
+      free(new_game);
+      return -1;;
     }
 
     int rep_add = add_game(new_game, _games);
-    if(rep_add == -1)goto error_game;
+    if(rep_add == -1){
+      printf("Erreur add game\n");
+      free(new_game);
+      return -1;
+    }
     player->game_id = new_game->id_partie;
 
     int rep_join = register_game(player, identifiant, new_game->id_partie, _games);
-    if(rep_join == -1)goto error_game;
-
-    error_game: 
-     free(new_game);
-     return -1;
+    if(rep_join == -1){
+      printf("Erreur register game\n");
+      free(new_game);
+      return -1;
+    }
 
     printf("[CREATE GAME] Joueur %s Port %s\n", identifiant, port);
     return 0;
