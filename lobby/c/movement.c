@@ -4,9 +4,8 @@ int ingame(struct player *player, struct list_game *_games){
     return 0;
 }
 
-int move(int direction, char * distance, struct game *_game, struct participant *player){
-
-    int movement = moveinlabyrinth(direction, atoi(distance), _game, player);
+int move(int direction, char * distance, struct game * game, struct participant *player){
+    int movement = moveinlabyrinth(direction, atoi(distance), game, player);
     if (movement < 10){
         char sendbuffer[19];
         sprintf(sendbuffer,"MOVE! %03d %03d***",player->pos_x,player->pos_y);

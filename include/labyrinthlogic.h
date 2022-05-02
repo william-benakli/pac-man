@@ -1,7 +1,8 @@
 #ifndef LABYRINTH_LOGIC_H
 #define LABYRINTH_LOGIC_H
 
-#include "../include/game_settings.h"
+#include "movement.h"
+#include "game_settings.h"
 
 #define CASEVIDE = '0'
 #define MUR = '#'
@@ -17,6 +18,5 @@
 char  **initlabirynth(int x, int y);
 void freelabirynth(struct game *game);
 int moveinlabyrinth(int direction, int steps, struct game *game, struct participant *player);
-
 
 #endif

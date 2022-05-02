@@ -23,8 +23,8 @@ int sendSize(int socketclient){
   char buffer_envoie[size_reponse];
   char * buffer_input = "SIZE! ";
   
-  uint16_t hauteur = htons(game_courant->hauteur);
-  uint16_t largeur = htons(game_courant->largeur);
+  uint16_t hauteur = ntohs(game_courant->hauteur);
+  uint16_t largeur = ntohs(game_courant->largeur);
 
   memmove(buffer_envoie, buffer_input, SIZE_INPUT_DEFAULT_SPACE);
   memmove(buffer_envoie+SIZE_INPUT_DEFAULT_SPACE, &game_courant->id_partie, sizeof(uint8_t));
@@ -137,8 +137,12 @@ int sendGlist(struct player *player, struct list_game *list){
     memmove(mess_game+size_glist + (it_players*size_plyr), "GPLYR ", SIZE_INPUT_DEFAULT_SPACE);
     memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE), participant_courant->identifiant, SIZE_IDENTIFIANT);
     memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE)+ SIZE_IDENTIFIANT, " ", SIZE_ONE_SPACE);
-   // memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE)+ SIZE_IDENTIFIANT+SIZE_ONE_SPACE, participant_courant->pos_x, sizeof());
-    //memmove(mess_game+size_glist + (it_players*size_plyr)+(SIZE_INPUT_DEFAULT_SPACE)+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint8_t), "***", SIZE_INPUT_STAR);
+  /*  memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE)+ SIZE_IDENTIFIANT+SIZE_ONE_SPACE, , );
+    memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE)+ SIZE_IDENTIFIANT, " ", SIZE_ONE_SPACE);
+    memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE)+ SIZE_IDENTIFIANT+SIZE_ONE_SPACE, , );
+    memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE)+ SIZE_IDENTIFIANT, " ", SIZE_ONE_SPACE);
+    memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE)+ SIZE_IDENTIFIANT, " ", SIZE_ONE_SPACE);
+*/
     it_players++;
     participant_courant = participant_courant->next;
   }

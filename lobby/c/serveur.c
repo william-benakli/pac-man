@@ -154,7 +154,7 @@ int registerInput(struct player * player){
 
       int rep_list = sendList(socketclient);
       if(rep_list == -1){
-        sendDunno(socketclient,"CMD LIST sendLIst fail");
+        sendDunno(socketclient,"CMD LIST sendList fail");
         registerInput(player);
       }
       registerInput(player);

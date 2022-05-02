@@ -16,6 +16,7 @@
 #include "list_game.h"
 #include "leave_game.h"
 #include "movement.h"
+#include "labyrinthlogic.h"
 #include "player_ingame.h"
 #include "utils/reponse_lobby.h"
 #include "utils/reponse_serveur.h"
