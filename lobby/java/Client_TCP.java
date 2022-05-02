@@ -3,8 +3,10 @@ import java.io.*;
 import java.lang.*;
 import java.util.Scanner;
 import java.util.*;
-import java.nio.Buffer;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 
 public class Client_TCP implements Runnable {
 	Socket socket;
@@ -45,7 +47,6 @@ public class Client_TCP implements Runnable {
 				return;
 			}
 
-			
 			// CREER LE CLIENT UDP
 			System.out.println("Voici votre port_UDP: " + str_socket_UDP);
 			MulticastSocket client_udp = new MulticastSocket(Integer.valueOf(str_socket_UDP));
@@ -58,7 +59,6 @@ public class Client_TCP implements Runnable {
 
 			// LANCE LE THREAD UDP
 			t_udp.start();
-			
 
 			// POSITION DE DEBUT DE PARTIE
 			Command_posit(is);
@@ -575,6 +575,9 @@ public class Client_TCP implements Runnable {
 				}
 				for (int i = 0; i < msg_byte_OK.length; i++) {
 					byte b = (byte) msg_byte_OK[i];
+					byte[] dbytes = new byte[2];
+					ByteBuffer buffer;
+					int little_endian;
 					// Attention [SIZE!␣m␣h␣w***] h et w sur 2 bytes et m sur 1 byte
 					// et code en little endian (protocol)
 					switch (i) {
@@ -582,20 +585,22 @@ public class Client_TCP implements Runnable {
 						msg += String.valueOf((int) b);
 						break;
 					case 3:
-						byte[] dbyte_h = new byte[2];
-						dbyte_h[0] = (byte) msg_byte_OK[i];
-						dbyte_h[1] = (byte) msg_byte_OK[i + 1];
+						dbytes[0] = (byte) msg_byte_OK[i];
+						dbytes[1] = (byte) msg_byte_OK[i+1];
+						buffer = ByteBuffer.wrap(dbytes);
+						buffer.order(ByteOrder.BIG_ENDIAN);
+						little_endian = buffer.getShort();
+						msg += String.valueOf(little_endian);
 						i++;
-						int x_h = java.nio.ByteBuffer.wrap(dbyte_h).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
-						msg += String.valueOf(x_h);
 						break;
 					case 6:
-						byte[] dbyte_w = new byte[2];
-						dbyte_w[0] = (byte) msg_byte_OK[i];
-						dbyte_w[1] = (byte) msg_byte_OK[i + 1];
+						dbytes[0] = (byte) msg_byte_OK[i];
+						dbytes[1] = (byte) msg_byte_OK[i+1];
+						buffer = ByteBuffer.wrap(dbytes);
+						buffer.order(ByteOrder.BIG_ENDIAN);
+						little_endian = buffer.getShort();
+						msg += String.valueOf(little_endian);
 						i++;
-						int x_w = java.nio.ByteBuffer.wrap(dbyte_w).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
-						msg += String.valueOf(x_w);
 						break;
 					default:
 						msg += (char) b;
@@ -731,7 +736,7 @@ public class Client_TCP implements Runnable {
 			// Envoie msg - message en TCP
 			ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
 			for (int i = 0; i < str.length(); i++) {
-				
+
 				if (Character.isDigit(str.charAt(i)) && i >= 20) {
 					if (Check_int_value(str, i) > 255 || Check_int_value(str, i) < 0) {
 						System.out.println(
@@ -794,7 +799,6 @@ public class Client_TCP implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
 
 	// COMMANDE_READ: [GAMES␣n***]
 	public static void Command_games_number(InputStream is) {
@@ -1387,4 +1391,5 @@ public class Client_TCP implements Runnable {
 		}
 		return false;
 	}
+	
 }
