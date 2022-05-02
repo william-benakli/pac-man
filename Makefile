@@ -14,6 +14,7 @@ CLASSES_JAVA = \
 CC = gcc
 CFLAGS = -pthread -Wall
 CPATH = lobby/c/
+CPATH_H = include/
 CPATH_GAME = game/
 CPATH_UTILS = $(CPATH)utils/
 INCLUDE_DIR = include

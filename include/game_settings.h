@@ -1,12 +1,12 @@
 #ifndef GAME_SETTINGS_H
 #define GAME_SETTINGS_H
 
+#include "player_ingame.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include "player_ingame.h"
-#include "labyrinthlogic.h"
+
 
 #define GAME_CREATION_SUCCESS 0
 #define GAME_CREATION_FAILED -1 
