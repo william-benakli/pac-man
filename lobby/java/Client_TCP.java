@@ -7,7 +7,6 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-
 public class Client_TCP implements Runnable {
 	Socket socket;
 	static int is_the_game_started = 0;
@@ -40,18 +39,21 @@ public class Client_TCP implements Runnable {
 			System.out.println("LETS GO! Veuillez attendre que tous les joueurs soit prêts.");
 
 			// TOUS LES JOUEURS SONT PRETS
-			String str_socket_UDP = Command_welcome(is);
-			if (str_socket_UDP.equals("NOTINGAME")) {
+			String str_info_UDP = Command_welcome(is);
+			if (str_info_UDP.equals("NOTINGAME")) {
 				System.out.println("Vous n'êtes pas inscrit dans une partie vous allez être deconnecté.");
 				this.socket.close();
 				return;
 			}
 
+			// INFOS UDP
+			String str_socket_UDP = Check_udp_port(str_info_UDP);
+			String adress_ip_udp = Check_udp_ip(str_info_UDP);
+
 			// CREER LE CLIENT UDP
 			System.out.println("Voici votre port_UDP: " + str_socket_UDP);
 			MulticastSocket client_udp = new MulticastSocket(Integer.valueOf(str_socket_UDP));
 			// Adresses de classe D comprises entre 224.0.0.0 à 239.255.255.255
-			String adress_ip_udp = "225.1.2.4";
 			Client_UDP launcher_UDP = new Client_UDP(client_udp, adress_ip_udp);
 
 			// CREER LE THREAD UDP
@@ -81,6 +83,30 @@ public class Client_TCP implements Runnable {
 			e.printStackTrace();
 			return;
 		}
+	}
+
+	public static String Check_udp_port(String s) {
+		String res = "";
+		for(int i = 0; i < s.length(); i++) {
+			if(s.charAt(i) != '/') {
+				res += s.charAt(i);
+			}else 
+				break;
+		}
+		return res;
+	}
+
+	public static String Check_udp_ip(String s) {
+		String res = "";
+		for(int i = 0; i < s.length(); i++) {
+			if(s.charAt(i) == '/') {
+				for(int j = i+1; j<s.length(); j++) {
+					res+= s.charAt(j);
+				}
+				break;
+			}
+		}
+		return res;
 	}
 
 	public static boolean Check_valide_message(String s) {
@@ -541,7 +567,8 @@ public class Client_TCP implements Runnable {
 			for (int i = 0; i < str.length(); i++) {
 				if (Character.isDigit(str.charAt(i))) {
 					if (Check_int_value(str, i) > 255 || Check_int_value(str, i) < 0) {
-						System.out.println("Numero de partie invalide car sous uint8 on ne depasse pas 255 [SIZE?␣m***]");
+						System.out
+								.println("Numero de partie invalide car sous uint8 on ne depasse pas 255 [SIZE?␣m***]");
 						return;
 					}
 					byte_out.write((byte) Check_int_value(str, i));
@@ -586,7 +613,7 @@ public class Client_TCP implements Runnable {
 						break;
 					case 3:
 						dbytes[0] = (byte) msg_byte_OK[i];
-						dbytes[1] = (byte) msg_byte_OK[i+1];
+						dbytes[1] = (byte) msg_byte_OK[i + 1];
 						buffer = ByteBuffer.wrap(dbytes);
 						buffer.order(ByteOrder.BIG_ENDIAN);
 						little_endian = buffer.getShort();
@@ -595,7 +622,7 @@ public class Client_TCP implements Runnable {
 						break;
 					case 6:
 						dbytes[0] = (byte) msg_byte_OK[i];
-						dbytes[1] = (byte) msg_byte_OK[i+1];
+						dbytes[1] = (byte) msg_byte_OK[i + 1];
 						buffer = ByteBuffer.wrap(dbytes);
 						buffer.order(ByteOrder.BIG_ENDIAN);
 						little_endian = buffer.getShort();
@@ -620,7 +647,7 @@ public class Client_TCP implements Runnable {
 				System.out.println(msg);
 			}
 			System.out.println("J'ai reçu en TCP: " + msg);
-		} catch (Exception e) {	
+		} catch (Exception e) {
 			System.out.println("ERREUR SIZE");
 			e.printStackTrace();
 		}
@@ -888,16 +915,16 @@ public class Client_TCP implements Runnable {
 				}
 				for (int i = 0; i < msg_byte.length; i++) {
 					byte b = (byte) msg_byte[i];
-					if (i == 2 || i == 10) { // 1 byte (uint8)
+					if (i == 1 || i == 9) { // 1 byte (uint8)
 						msg += String.valueOf((int) b);
-					} else if (i == 4 || i == 7) { // 2 bytes (uint16)
+					} else if (i == 3 || i == 6) { // 2 bytes (uint16)
 						byte[] dbytes = new byte[2];
 						ByteBuffer buffer;
 						int little_endian;
-						dbytes[0] = (byte) msg_byte_OK[i];
-						dbytes[1] = (byte) msg_byte_OK[i+1];
+						dbytes[0] = (byte) msg_byte[i];
+						dbytes[1] = (byte) msg_byte[i + 1];
 						buffer = ByteBuffer.wrap(dbytes);
-						buffer.order(ByteOrder.BIG_ENDIAN);
+						buffer.order(ByteOrder.LITTLE_ENDIAN);
 						little_endian = buffer.getShort();
 						msg += String.valueOf(little_endian);
 						i++;
@@ -908,12 +935,13 @@ public class Client_TCP implements Runnable {
 				if (!Check_valide_message(msg)) {
 					System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[WELCO␣m␣h␣w␣f␣ip␣port***]_02");
 					System.out.println("MESSAGE RECU: " + msg);
-					return "ERREUR_[WELCO␣m␣h␣w␣f␣ip␣port***]_02";
+					return "NOTINGAME";
 				}
 				// Si tout s'est bien passé
 				System.out.println("J'ai reçu en TCP: " + msg);
 				String num_port = msg.substring(msg.length() - 7, msg.length() - 3);
-				return num_port;
+				String ip_udp = msg.substring(msg.length() - 23, msg.length() - 8);
+				return num_port + "/" + ip_udp;
 
 			} else if (msg.equals("DUNNO")) {
 				byte[] msg_byte_NO = new byte[3];
@@ -929,13 +957,11 @@ public class Client_TCP implements Runnable {
 			} else
 				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[WELCO␣m␣h␣w␣f␣ip␣port***]_01");
 			System.out.println("MESSAGE RECU: " + msg);
-			return "ERREUR_[WELCO␣m␣h␣w␣f␣ip␣port***]_01";
-		} catch (
-
-		Exception e) {
+			return "NOTINGAME";
+		} catch (Exception e) {
 			System.out.println("MESSAGE RECU ERREUR_TCP_[WELCO␣m␣h␣w␣f␣ip␣port***]");
 			// e.printStackTrace();
-			return "ERREUR_[WELCO␣m␣h␣w␣f␣ip␣port***]";
+			return "NOTINGAME";
 		}
 	}
 
@@ -1395,5 +1421,5 @@ public class Client_TCP implements Runnable {
 		}
 		return false;
 	}
-	
+
 }
