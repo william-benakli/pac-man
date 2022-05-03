@@ -158,8 +158,8 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
   char buffer_reponse[size_buffer];
   char * buffer_input = "WELCO ";
   uint8_t id_partie = game->id_partie;
-  uint16_t hauteur = game->hauteur;
-  uint16_t largeur = game->largeur;
+  uint16_t hauteur = ntohs(game->hauteur);
+  uint16_t largeur = ntohs(game->largeur);
   uint8_t nombre_fantome = game->nb_fantome;
   char * ip = "###.###.###.###";
   char * port = "1818";
