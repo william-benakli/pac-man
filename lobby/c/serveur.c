@@ -171,12 +171,12 @@ int registerInput(struct player * player){
       
       struct participant * partcipant_lobby = search_player_in_game(target_game, player);
       if(partcipant_lobby == NULL) registerInput(player);
-
         sendWelcome(target_game, partcipant_lobby, _games);
-        spawnFantomes(target_game);
         printf("Positiosement des fantomes\n");
+        spawnFantomes(target_game);
+       // printf("Positiosement du joueur\n");
         spawnJoueur(target_game, partcipant_lobby);
-        printf("Positiosement du joueur\n");
+        sendPosit(target_game, partcipant_lobby);
         gameInput(partcipant_lobby, target_game);
     }else{
       perror("Erreur arguments non conforme");

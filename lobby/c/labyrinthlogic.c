@@ -196,13 +196,17 @@ int spawnFantomes(struct game *game){
 
     int spawn_location_x = rand() % (largeur)-1;       // % => Reste de la division entière
     int spawn_location_y = rand() % (hauteur)-1;       // % => Reste de la division entière
-    int nombre_fantome_courant = 0;
+    uint8_t nombre_fantome_courant = 0;
+
+    printf("ici c'est ok\n");
 
     while(nombre_fantome_courant <= game->nb_fantome){
-
-        while(getElementAtPos(game, spawn_location_x, spawn_location_y) != '0'){
-            spawn_location_x = rand() % (largeur)-1;       // % => Reste de la division entière
-            spawn_location_y = rand() % (hauteur)-1;  
+        char c;
+        while(( c = getElementAtPos(game, spawn_location_x, spawn_location_y)) != '0'){
+        
+            spawn_location_x = rand() % (largeur);       // % => Reste de la division entière
+            spawn_location_y = rand() % (hauteur);  
+            printf("on entre ici 2 while %d et %d je trouve %c\n", spawn_location_x, spawn_location_y, c);
         }
 
         char fantom = 'f';
@@ -212,6 +216,7 @@ int spawnFantomes(struct game *game){
             return -1;
         }
         nombre_fantome_courant++;
+        printf("on entre ici premier while \n");
     }
 
     if(nombre_fantome_courant != game->nb_fantome)return -1; 

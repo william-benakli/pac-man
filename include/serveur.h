@@ -30,6 +30,8 @@
 #define SIZE_INPUT_STAR 3
 #define SIZE_DISTANCE 3
 #define SIZE_IP_ADRESSE 15
+#define SIZE_POS_Y 3
+#define SIZE_POS_X 3
 
 #define CMD_REGISTER "REGIS"
 #define CMD_START "START"

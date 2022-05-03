@@ -161,7 +161,7 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
   uint16_t hauteur = ntohs(game->hauteur);
   uint16_t largeur = ntohs(game->largeur);
   uint8_t nombre_fantome = game->nb_fantome;
-  char * ip = "###.###.###.###";
+  char * ip = "225.12.22.1###";
   char * port = "1818";
   char * stars = "***";
 
@@ -181,12 +181,40 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
 
   printf("%s\n", buffer_reponse);
 
-  if(participant == NULL)printf("participant NULL \n");
   int count = write(participant->tcp_sock, buffer_reponse, size_buffer);
   printf("tu as reçu %d et pas %ld", count, size_buffer);
   if(count != size_buffer){
     return -1;
   }
-
   return 0;
+}
+
+int sendPosit(struct game *game , struct participant *participant){
+  size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_POS_X + SIZE_POS_Y;
+  char buffer_reponse[size_buffer];
+  char * buffer_input = "POSIT ";
+  uint8_t id_partie = game->id_partie;
+  char pos_x[4];
+  char pos_y[4];
+  printf("%d\n", participant->pos_x);
+  sprintf(pos_x,"%03d",participant->pos_x);
+  printf("%c--------\n", pos_x[3]);
+  sprintf(pos_y,"%03d",participant->pos_y);
+  printf("%c--------\n", pos_y[3]);
+  printf("on est passé\n");
+  char *stars = "***";
+  memmove(buffer_reponse, buffer_input, SIZE_INPUT_DEFAULT_SPACE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE, &id_partie, sizeof(uint8_t));
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), " ", SIZE_ONE_SPACE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE, pos_x, SIZE_POS_X);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+SIZE_POS_X, " ", SIZE_ONE_SPACE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE, pos_y, SIZE_POS_Y);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE+SIZE_POS_Y, stars, SIZE_INPUT_STAR);
+  printf("memove ok\n");
+  int count = write(participant->tcp_sock, buffer_reponse, size_buffer);
+  if(count != size_buffer){
+    return -1;
+  }
+  return 0;
+
 }
