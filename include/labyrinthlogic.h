@@ -15,6 +15,9 @@
 
 #define NOMBRE_FANTOME 10
 
+#define FINISH 0
+#define NOT_FINISH 1
+
 char  **initlabirynth(int x, int y);
 void printlabyrinth(struct game *_game);
 void freelabirynth(struct game *game);
@@ -24,5 +27,7 @@ int spawnFantomes(struct game *game);
 char getElementAtPos(struct game *game, int x, int y);
 int setElementAtPos(struct game *game, char c, int x, int y);
 int setParticipantAtPos(struct game *game, struct participant *participant, int x, int y);
+int checkFinish(struct game *game);
+
 
 #endif

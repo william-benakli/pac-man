@@ -172,10 +172,10 @@ int registerInput(struct player * player){
       struct participant * partcipant_lobby = search_player_in_game(target_game, player);
       if(partcipant_lobby == NULL) registerInput(player);
 
-        sendWelcome(target_game, target_game);
-        spawnFantomes(target_game);
-        spawnJoueur(target_game, partcipant_lobby);
-        gameInput(partcipant_lobby, target_game);
+        sendWelcome(target_game, partcipant_lobby, _games);
+      //  spawnFantomes(target_game);
+       // spawnJoueur(target_game, partcipant_lobby);
+       // gameInput(partcipant_lobby, target_game);
     }else{
       perror("Erreur arguments non conforme");
       sendDunno(socketclient, "ERREUR ENTREE INCONNUE");

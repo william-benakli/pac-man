@@ -35,6 +35,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 ghostfound = 1;
                 game->labyrinth[player->pos_y][player->pos_x - i] = '0';
                 //TODO: ENVOYER UDP A TOUT LE MONDE
+                checkFinish(game);
             }
             stepsmoved++;
         }
@@ -59,6 +60,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 ghostfound = 1;
                 game->labyrinth[player->pos_y][player->pos_x + i] = '0';
                 //TODO: ENVOYER UDP A TOUT LE MONDE
+                checkFinish(game);
             }
             stepsmoved++;
         }
@@ -83,6 +85,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 ghostfound = 1;
                 game->labyrinth[player->pos_y - i][player->pos_x] = '0';
                 //TODO: ENVOYER UDP A TOUT LE MONDE
+                checkFinish(game);
             }
             stepsmoved++;
         }
@@ -107,6 +110,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 ghostfound = 1;
                 game->labyrinth[player->pos_y + i][player->pos_x] = '0';
                 //TODO: ENVOYER UDP A TOUT LE MONDE
+                checkFinish(game);
             }
             stepsmoved++;
         }
@@ -213,7 +217,17 @@ int spawnFantomes(struct game *game){
     return 0;
 }
 
-
+/*
+ Cette fonction sera appelé à deux moments: 
+  Quand un joueur va faire IQUIT 
+  Quand un fantome sera mangé
+*/
+int checkFinish(struct game *game){
+    if(game->nb_fantome > 0 || game->players >= 1){//ici on devra verifier 2
+        return FINISH;
+    }
+    return NOT_FINISH;
+}
 
 void printlabyrinth(struct game *_game){
     for (int i = 0; i < 5; i++){

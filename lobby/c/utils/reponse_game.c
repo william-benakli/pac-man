@@ -152,15 +152,41 @@ int sendGlist(struct player *player, struct list_game *list){
   return count == size_max ? 0 : -1;
 }
 
-int sendWelcome(struct game *game, struct list_game *list_game){
+int sendWelcome(struct game *game, struct participant *participant, struct list_game *list_game){
 
-  char buffer_reponse[SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR];
+  size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) *2 + sizeof(uint16_t)*2 + SIZE_IP_ADRESSE + SIZE_PORT + SIZE_INPUT_STAR + 5;
+  char buffer_reponse[size_buffer];
   char * buffer_input = "WELCO ";
-  char * stars = "***";
   uint8_t id_partie = game->id_partie;
   uint16_t hauteur = game->hauteur;
   uint16_t largeur = game->largeur;
-  uint8_t nombre_fantom = game->nb_fantome;
+  uint8_t nombre_fantome = game->nb_fantome;
+  char * ip = "###.###.###.###";
+  char * port = "1818";
+  char * stars = "***";
+
+  memmove(buffer_reponse, buffer_input, SIZE_INPUT_DEFAULT_SPACE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE, &id_partie, sizeof(uint8_t));
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), " ", SIZE_ONE_SPACE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE, &hauteur, sizeof(uint16_t));
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint16_t), " ", SIZE_ONE_SPACE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE, &largeur, sizeof(uint16_t));
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint16_t), " ", SIZE_ONE_SPACE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE, &nombre_fantome, sizeof(uint8_t));
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint8_t), " ", SIZE_ONE_SPACE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE, ip, SIZE_IP_ADRESSE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+SIZE_IP_ADRESSE, " ", SIZE_ONE_SPACE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+SIZE_IP_ADRESSE+SIZE_ONE_SPACE, port, SIZE_PORT);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint16_t)+SIZE_ONE_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+SIZE_IP_ADRESSE+SIZE_ONE_SPACE+SIZE_PORT, stars, SIZE_INPUT_STAR);
+
+  printf("%s\n", buffer_reponse);
+
+  if(participant == NULL)printf("participant NULL \n");
+  int count = write(participant->tcp_sock, buffer_reponse, size_buffer);
+  printf("tu as reçu %d et pas %ld", count, size_buffer);
+  if(count != size_buffer){
+    return -1;
+  }
 
   return 0;
 }
