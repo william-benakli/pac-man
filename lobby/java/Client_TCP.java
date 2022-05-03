@@ -892,11 +892,14 @@ public class Client_TCP implements Runnable {
 						msg += String.valueOf((int) b);
 					} else if (i == 4 || i == 7) { // 2 bytes (uint16)
 						byte[] dbyte_h = new byte[2];
-						dbyte_h[0] = (byte) msg_byte[i];
-						dbyte_h[1] = (byte) msg_byte[i + 1];
+						int little_endian;
+						dbytes[0] = (byte) msg_byte_OK[i];
+						dbytes[1] = (byte) msg_byte_OK[i+1];
+						buffer = ByteBuffer.wrap(dbytes);
+						buffer.order(ByteOrder.BIG_ENDIAN);
+						little_endian = buffer.getShort();
+						msg += String.valueOf(little_endian);
 						i++;
-						int x_h = java.nio.ByteBuffer.wrap(dbyte_h).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
-						msg += String.valueOf(x_h);
 					} else {
 						msg += (char) b;
 					}
