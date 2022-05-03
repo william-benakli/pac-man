@@ -87,10 +87,10 @@ public class Client_TCP implements Runnable {
 
 	public static String Check_udp_port(String s) {
 		String res = "";
-		for(int i = 0; i < s.length(); i++) {
-			if(s.charAt(i) != '/') {
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(i) != '/') {
 				res += s.charAt(i);
-			}else 
+			} else
 				break;
 		}
 		return res;
@@ -98,10 +98,13 @@ public class Client_TCP implements Runnable {
 
 	public static String Check_udp_ip(String s) {
 		String res = "";
-		for(int i = 0; i < s.length(); i++) {
-			if(s.charAt(i) == '/') {
-				for(int j = i+1; j<s.length(); j++) {
-					res+= s.charAt(j);
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(i) == '/') {
+				for (int j = i + 1; j < s.length(); j++) {
+					if (s.charAt(j) != '#') {
+						res += s.charAt(j);
+					}else
+						break;
 				}
 				break;
 			}
