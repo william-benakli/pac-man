@@ -32,22 +32,27 @@ int creategame(struct player * player, struct list_game * games){
     }
 
     struct game *new_game = malloc(sizeof(struct game));
-    int rep_init = init_game(new_game, 10, 10, NULL);
+    int rep_init = init_game(new_game, 10, 10);
     if(rep_init == -1){
-      goto error_game;
+      printf("Erreur intialisation party\n");
+      free(new_game);
+      return -1;;
     }
 
     int rep_add = add_game(new_game, _games);
-    if(rep_add == -1)goto error_game;
+    if(rep_add == -1){
+      printf("Erreur add game\n");
+      free(new_game);
+      return -1;
+    }
     player->game_id = new_game->id_partie;
 
     int rep_join = register_game(player, identifiant, new_game->id_partie, _games);
-    if(rep_join == -1)goto error_game;
-
-
-    error_game: 
-     free(new_game);
-     return -1;
+    if(rep_join == -1){
+      printf("Erreur register game\n");
+      free(new_game);
+      return -1;
+    }
 
     printf("[CREATE GAME] Joueur %s Port %s\n", identifiant, port);
     return 0;
@@ -68,7 +73,7 @@ int sendgames(int socketclient){
 
   struct list_game *listgames_courant = _games;
 
-  if(listgames_courant->game != NULL){
+  if(listgames_courant->game != NULL){ 
       int it_games = 0;
       while(listgames_courant != NULL){
         if(listgames_courant->game->status == STATUS_AVAILABLE){
@@ -82,7 +87,6 @@ int sendgames(int socketclient){
         listgames_courant = listgames_courant->next_game;
       }
   }
-  printf("Nombre de game jouable %d:\n", nombre_games);
   int count =  write(socketclient, mess_game, size_max);
   return count == size_max ? 0 : -1;
 }
@@ -133,4 +137,21 @@ int regisgame(struct player *client,struct list_game *games){
     }
     
     return PLAYER_REGISTER_SUCCESS;
+}
+
+int start(struct player *player, struct list_game *list){
+
+  if(player->status_game == IN_LOBBY){
+    printf("Error player not register in game ");
+    return -1; 
+  }
+
+  uint8_t gameid = player->game_id;
+  struct game * target_game = search_game(gameid, list);
+  if(target_game == NULL){
+    printf("Error game not found ");
+    return -1;
+  }  
+
+  return 0;
 }

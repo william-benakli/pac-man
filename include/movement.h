@@ -7,8 +7,6 @@
 #include "serveur.h"
 
 int ingame(struct player *player, struct list_game *_games);
-int move(int direction, struct game *_game, struct participant *player);
-
-
+int move(int direction, char * distance, struct game * game, struct participant *player);
 
 #endif
