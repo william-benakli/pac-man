@@ -19,6 +19,7 @@ struct game{
     uint8_t max_player;
     uint16_t hauteur;
     uint16_t largeur;
+    uint8_t nb_fantome;
     
     char **labyrinth;
     enum { STATUS_AVAILABLE, STATUS_UNAVAILABLE} status;

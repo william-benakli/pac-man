@@ -121,9 +121,99 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
         break;
     }
 
-    int ret = (ghostfound == 1) ? stepsmoved + FANTOME : stepsmoved;
+    int ret = (ghostfound == 1) ? stepsmoved + NOMBRE_FANTOME : stepsmoved;
     return ret;
 }
+
+char getElementAtPos(struct game *game, int x, int y){
+    if(game->labyrinth == NULL){
+        return '-';
+    }
+    return game->labyrinth[x][y];
+}
+
+int setParticipantAtPos(struct game *game, struct participant *participant, int x, int y){
+    if(game->labyrinth == NULL){
+        return -1;
+    }
+    game->labyrinth[x][y] = '1';
+    participant->pos_x = x;
+    participant->pos_y = y;
+    return 0;
+}
+
+int setElementAtPos(struct game *game, char c, int x, int y){
+    if(game->labyrinth == NULL){
+        return -1;
+    }
+    if(c == '0' || c == 'f' || c == '#' || c == '1'){
+        game->labyrinth[x][y] = c;
+    }else{
+        return -1;
+    }
+    return 0;
+}
+
+int spawnJoueur(struct game *game, struct participant *participant){
+    
+    //random le labyrinth jusqu'a trouver une case ou il n'y pas 
+    //de fantom de mur ou de joueur donc une case avec 0;
+
+    uint16_t largeur = game->largeur;
+    uint16_t hauteur = game->hauteur;
+
+    int spawn_location_x = rand() % (largeur)-1;       // % => Reste de la division entière
+    int spawn_location_y = rand() % (hauteur)-1;       // % => Reste de la division entière
+
+    int possibilite = 0;
+
+    while(getElementAtPos(game, spawn_location_x, spawn_location_y) != 0){
+        spawn_location_x = rand() % (largeur)-1;       // % => Reste de la division entière
+        spawn_location_y = rand() % (hauteur)-1;  
+        if(possibilite > largeur*largeur){
+            printf("Aucune place disponibile dans un temps acceptable \n");
+            return -1;
+        }
+        possibilite++;
+    }
+
+    char reponse = setParticipantAtPos(game, participant, spawn_location_x, spawn_location_y);
+    if(reponse == '-'){
+        printf("Ajout du participan problematique\n");
+        return -1;
+    }
+    return 0;
+}
+
+int spawnFantomes(struct game *game){
+
+    uint16_t largeur = game->largeur;
+    uint16_t hauteur = game->hauteur;
+
+    int spawn_location_x = rand() % (largeur)-1;       // % => Reste de la division entière
+    int spawn_location_y = rand() % (hauteur)-1;       // % => Reste de la division entière
+    int nombre_fantome_courant = 0;
+
+    while(nombre_fantome_courant <= NOMBRE_FANTOME){
+        while(getElementAtPos(game, spawn_location_x, spawn_location_y) != 0){
+            spawn_location_x = rand() % (largeur)-1;       // % => Reste de la division entière
+            spawn_location_y = rand() % (hauteur)-1;  
+        }
+
+        char fantom = 'f';
+        char reponse = setElementAtPos(game, fantom, spawn_location_x, spawn_location_y);
+        if(reponse == '-'){
+            printf("Ajout des fantomes problematique\n");
+            return -1;
+        }
+        nombre_fantome_courant++;
+    }
+
+    if(nombre_fantome_courant != NOMBRE_FANTOME)return -1; 
+    return 0;
+}
+
+
 
 void printlabyrinth(struct game *_game){
     for (int i = 0; i < 5; i++){

@@ -4,6 +4,7 @@ struct list_game * _games;
 
 int main(int argc, char const *argv[]) {
   _games = init_list_game();
+   srand(time(NULL));
 
   int port = atoi(argv[1]);
   if(port == 0){
@@ -80,11 +81,8 @@ int registerInput(struct player * player){
 
     char buffer[SIZE_INPUT_DEFAULT+1];
     buffer[SIZE_INPUT_DEFAULT] = '\0';
-    int count = read(socketclient, buffer, SIZE_INPUT_DEFAULT);
-    if(count != SIZE_INPUT_DEFAULT){
-      registerInput(player);
-    }
-
+    read(socketclient, buffer, SIZE_INPUT_DEFAULT);
+    
     if(strcmp(buffer, CMD_NEW_PARTY) == 0){
         int rep_create = creategame(player, _games); 
         if(rep_create == -1){
@@ -143,7 +141,7 @@ int registerInput(struct player * player){
       registerInput(player);
     }else if(strcmp(buffer, CMD_SIZE) == 0){
 
-      int rep_size = sendSize(socketclient);
+      int rep_size = sendSize(socketclient, _games);
       if(rep_size == -1){
         sendDunno(socketclient, "CMD SIZE sendSIZE FAIL");
         registerInput(player);
@@ -152,7 +150,7 @@ int registerInput(struct player * player){
 
     }else if(strcmp(buffer, CMD_LIST) == 0){
 
-      int rep_list = sendList(socketclient);
+      int rep_list = sendList(socketclient, _games);
       if(rep_list == -1){
         sendDunno(socketclient,"CMD LIST sendList fail");
         registerInput(player);
@@ -174,7 +172,10 @@ int registerInput(struct player * player){
       struct participant * partcipant_lobby = search_player_in_game(target_game, player);
       if(partcipant_lobby == NULL) registerInput(player);
 
-      gameInput(partcipant_lobby, target_game);
+        sendWelcome(target_game, target_game);
+        spawnFantomes(target_game);
+        spawnJoueur(target_game, partcipant_lobby);
+        gameInput(partcipant_lobby, target_game);
     }else{
       perror("Erreur arguments non conforme");
       sendDunno(socketclient, "ERREUR ENTREE INCONNUE");
@@ -191,7 +192,10 @@ int readStars(int socketclient){
   return count == (SIZE_INPUT_STAR) ? 0 : -1 ;
 }
 
-void gameInput(struct participant * partcipant_ingame, struct game *game_courant){
+void gameInput(struct participant *partcipant_ingame, struct game *game_courant){
+
+  printlabyrinth(game_courant);
+
   int socketclient = partcipant_ingame->tcp_sock;
   size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE+SIZE_DISTANCE+SIZE_INPUT_STAR;
   char buffer[size_buffer];

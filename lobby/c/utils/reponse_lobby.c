@@ -87,7 +87,6 @@ int sendgames(int socketclient){
         listgames_courant = listgames_courant->next_game;
       }
   }
-  printf("Nombre de game jouable %d:\n", nombre_games);
   int count =  write(socketclient, mess_game, size_max);
   return count == size_max ? 0 : -1;
 }

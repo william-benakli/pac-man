@@ -1,22 +1,6 @@
 #ifndef SERVEUR_H
 #define SERVEUR_H
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <time.h>
-#include <pthread.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
 
-#include "list_game.h"
-#include "leave_game.h"
-#include "utils/reponse_lobby.h"
-#include "utils/reponse_serveur.h"
-#include "utils/reponse_game.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -25,9 +9,10 @@
 #include <pthread.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "list_game.h"
 #include "leave_game.h"
@@ -35,6 +20,7 @@
 #include "utils/reponse_serveur.h"
 #include "utils/reponse_game.h"
 #include "movement.h"
+#include "labyrinthlogic.h"
 
 #define SIZE_ONE_SPACE 1
 #define SIZE_IDENTIFIANT 8

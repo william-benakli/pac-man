@@ -14,6 +14,7 @@ int init_game(struct game *_game, uint16_t hauteur, uint16_t largeur){
     if(_game->labyrinth == NULL){
         return GAME_CREATION_FAILED;
     }
+    _game->nb_fantome = 10; // mettre en aléatoire
     _game->participants = NULL;
     //TODO: METTRE UN VERROU
     if(id_games_static > 255){
