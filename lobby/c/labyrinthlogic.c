@@ -171,18 +171,18 @@ int spawnJoueur(struct game *game, struct participant *participant){
 
     int possibilite = 0;
 
-    while(getElementAtPos(game, spawn_location_x, spawn_location_y) != 0){
+    while(getElementAtPos(game, spawn_location_x, spawn_location_y) != '0'){
         spawn_location_x = rand() % (largeur)-1;       // % => Reste de la division entière
         spawn_location_y = rand() % (hauteur)-1;  
-        if(possibilite > largeur*largeur){
+        if(possibilite > largeur*hauteur){
             printf("Aucune place disponibile dans un temps acceptable \n");
             return -1;
         }
         possibilite++;
     }
 
-    char reponse = setParticipantAtPos(game, participant, spawn_location_x, spawn_location_y);
-    if(reponse == '-'){
+    int reponse = setParticipantAtPos(game, participant, spawn_location_x, spawn_location_y);
+    if(reponse == -1){
         printf("Ajout du participan problematique\n");
         return -1;
     }
@@ -198,22 +198,23 @@ int spawnFantomes(struct game *game){
     int spawn_location_y = rand() % (hauteur)-1;       // % => Reste de la division entière
     int nombre_fantome_courant = 0;
 
-    while(nombre_fantome_courant <= NOMBRE_FANTOME){
-        while(getElementAtPos(game, spawn_location_x, spawn_location_y) != 0){
+    while(nombre_fantome_courant <= game->nb_fantome){
+
+        while(getElementAtPos(game, spawn_location_x, spawn_location_y) != '0'){
             spawn_location_x = rand() % (largeur)-1;       // % => Reste de la division entière
             spawn_location_y = rand() % (hauteur)-1;  
         }
 
         char fantom = 'f';
-        char reponse = setElementAtPos(game, fantom, spawn_location_x, spawn_location_y);
-        if(reponse == '-'){
+        int reponse = setElementAtPos(game, fantom, spawn_location_x, spawn_location_y);
+        if(reponse == -1){
             printf("Ajout des fantomes problematique\n");
             return -1;
         }
         nombre_fantome_courant++;
     }
 
-    if(nombre_fantome_courant != NOMBRE_FANTOME)return -1; 
+    if(nombre_fantome_courant != game->nb_fantome)return -1; 
     return 0;
 }
 
