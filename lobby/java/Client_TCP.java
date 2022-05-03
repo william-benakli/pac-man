@@ -891,7 +891,8 @@ public class Client_TCP implements Runnable {
 					if (i == 2 || i == 10) { // 1 byte (uint8)
 						msg += String.valueOf((int) b);
 					} else if (i == 4 || i == 7) { // 2 bytes (uint16)
-						byte[] dbyte_h = new byte[2];
+						byte[] dbytes = new byte[2];
+						ByteBuffer buffer;
 						int little_endian;
 						dbytes[0] = (byte) msg_byte_OK[i];
 						dbytes[1] = (byte) msg_byte_OK[i+1];
