@@ -927,7 +927,7 @@ public class Client_TCP implements Runnable {
 						dbytes[0] = (byte) msg_byte[i];
 						dbytes[1] = (byte) msg_byte[i + 1];
 						buffer = ByteBuffer.wrap(dbytes);
-						buffer.order(ByteOrder.LITTLE_ENDIAN);
+						buffer.order(ByteOrder.BIG_ENDIAN);
 						little_endian = buffer.getShort();
 						msg += String.valueOf(little_endian);
 						i++;
