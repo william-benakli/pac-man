@@ -189,16 +189,17 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
   return 0;
 }
 
-int sendPosit(struct game *game , struct participant *participant){
+int sendPosit(int client_socket, struct game *game , struct participant *participant){
   size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_POS_X + SIZE_POS_Y;
   char buffer_reponse[size_buffer];
   char * buffer_input = "POSIT ";
   uint8_t id_partie = game->id_partie;
   char pos_x[4];
   char pos_y[4];
-  printf("%d\n", participant->pos_x);
+
   sprintf(pos_x,"%03d",participant->pos_x);
   printf("%c--------\n", pos_x[3]);
+
   sprintf(pos_y,"%03d",participant->pos_y);
   printf("%c--------\n", pos_y[3]);
   printf("on est passé\n");
@@ -211,7 +212,10 @@ int sendPosit(struct game *game , struct participant *participant){
   memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE, pos_y, SIZE_POS_Y);
   memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE+SIZE_POS_Y, stars, SIZE_INPUT_STAR);
   printf("memove ok\n");
-  int count = write(participant->tcp_sock, buffer_reponse, size_buffer);
+  
+  //BUG CLIENT TCP pas BON DU COUP ??
+  printf("Le client tcp %d\n", participant->tcp_sock);
+  int count = write(client_socket, buffer_reponse, size_buffer);
   if(count != size_buffer){
     return -1;
   }

@@ -174,9 +174,9 @@ int registerInput(struct player * player){
         sendWelcome(target_game, partcipant_lobby, _games);
         printf("Positiosement des fantomes\n");
         spawnFantomes(target_game);
-       // printf("Positiosement du joueur\n");
+        printf("Positiosement du joueur\n");
         spawnJoueur(target_game, partcipant_lobby);
-        sendPosit(target_game, partcipant_lobby);
+        sendPosit(socketclient, target_game, partcipant_lobby);
         gameInput(partcipant_lobby, target_game);
     }else{
       perror("Erreur arguments non conforme");
@@ -196,6 +196,8 @@ int readStars(int socketclient){
 
 void gameInput(struct participant *partcipant_ingame, struct game *game_courant){
 
+  printlabyrinth(game_courant);
+
   int socketclient = partcipant_ingame->tcp_sock;
   size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE+SIZE_DISTANCE+SIZE_INPUT_STAR;
   char buffer[size_buffer];
@@ -204,7 +206,6 @@ void gameInput(struct participant *partcipant_ingame, struct game *game_courant)
     gameInput(partcipant_ingame, game_courant);
   }
   
-  printlabyrinth(game_courant);
 
   char direction[SIZE_INPUT_DEFAULT + 1];
   direction[SIZE_INPUT_DEFAULT] = '\0';

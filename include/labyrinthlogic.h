@@ -18,7 +18,7 @@
 #define FINISH 0
 #define NOT_FINISH 1
 
-char  **initlabirynth(int x, int y);
+char  **initlabirynth(uint16_t x, uint16_t y);
 void printlabyrinth(struct game *_game);
 void freelabirynth(struct game *game);
 int moveinlabyrinth(int direction, int steps, struct game *game, struct participant *player);

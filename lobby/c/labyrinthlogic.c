@@ -1,9 +1,15 @@
 #include "../../include/labyrinthlogic.h"
 
-char  **initlabirynth(int x, int y){
+char  **initlabirynth(uint16_t x, uint16_t y){
     char **labyrinth = (char **) malloc(y * sizeof(char *));
-    for (int i = 0; i < y; i++){
+    for (uint16_t i = 0; i < y; i++){
         labyrinth[i] = (char *) malloc(x * sizeof(char));
+    }
+
+    for (uint16_t i = 0; i < y; i++){
+        for (uint16_t j = 0; j < x; j++){
+            labyrinth[i][j]= '0';
+        } 
     }
     return labyrinth;
 }
@@ -169,11 +175,13 @@ int spawnJoueur(struct game *game, struct participant *participant){
     int spawn_location_x = rand() % (largeur)-1;       // % => Reste de la division entière
     int spawn_location_y = rand() % (hauteur)-1;       // % => Reste de la division entière
 
-    int possibilite = 0;
+    uint16_t possibilite = 0;
 
-    while(getElementAtPos(game, spawn_location_x, spawn_location_y) != '0'){
+    char c = getElementAtPos(game, spawn_location_x, spawn_location_y);
+    while(c != '0'){
         spawn_location_x = rand() % (largeur)-1;       // % => Reste de la division entière
         spawn_location_y = rand() % (hauteur)-1;  
+        c = getElementAtPos(game, spawn_location_x, spawn_location_y);
         if(possibilite > largeur*hauteur){
             printf("Aucune place disponibile dans un temps acceptable \n");
             return -1;
@@ -198,15 +206,14 @@ int spawnFantomes(struct game *game){
     int spawn_location_y = rand() % (hauteur)-1;       // % => Reste de la division entière
     uint8_t nombre_fantome_courant = 0;
 
-    printf("ici c'est ok\n");
-
     while(nombre_fantome_courant <= game->nb_fantome){
-        char c;
-        while(( c = getElementAtPos(game, spawn_location_x, spawn_location_y)) != '0'){
-        
+
+        char c = getElementAtPos(game, spawn_location_x, spawn_location_y);
+        while( c != '0'){
             spawn_location_x = rand() % (largeur);       // % => Reste de la division entière
             spawn_location_y = rand() % (hauteur);  
             printf("on entre ici 2 while %d et %d je trouve %c\n", spawn_location_x, spawn_location_y, c);
+            c = getElementAtPos(game, spawn_location_x, spawn_location_y);
         }
 
         char fantom = 'f';
@@ -235,10 +242,15 @@ int checkFinish(struct game *game){
     return NOT_FINISH;
 }
 
-void printlabyrinth(struct game *_game){
-    for (int i = 0; i < 5; i++){
-        printf("%s\n",_game->labyrinth[i]);
+void printlabyrinth(struct game *game){
+    printf("------------------\n");
+    for (uint16_t i = 0; i < game->hauteur; i++){
+            for (uint16_t j = 0; j < game->largeur; j++){
+                printf("| %c",game->labyrinth[i][j]);
+            }
+            printf("\n");
     }
+    printf("--------------------\n");
 }
 
 /*
