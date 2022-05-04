@@ -190,7 +190,7 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
 }
 
 int sendPosit(int client_socket, struct game *game , struct participant *participant){
-  size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE + SIZE_IDENTIFIANT + SIZE_POS_X + SIZE_POS_Y;
+  size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE + SIZE_IDENTIFIANT + SIZE_ONE_SPACE + SIZE_POS_X +  SIZE_ONE_SPACE +SIZE_POS_Y + SIZE_INPUT_STAR;
   char buffer_reponse[size_buffer];
   char * buffer_input = "POSIT ";
   char * id_joueur = participant->identifiant;
@@ -202,6 +202,7 @@ int sendPosit(int client_socket, struct game *game , struct participant *partici
 
   sprintf(pos_y,"%03d",participant->pos_y);
   printf("%c--------\n", pos_y[3]);
+
   printf("on est passé\n");
   char *stars = "***";
   memmove(buffer_reponse, buffer_input, SIZE_INPUT_DEFAULT_SPACE);

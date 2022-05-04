@@ -122,6 +122,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
         }
         game->labyrinth[player->pos_y + stepsmoved][player->pos_x] = '1';
         if(stepsmoved != 0){
+            printf("on change la valeur de 0\n");
             game->labyrinth[player->pos_y][player->pos_x] = '0';
         }
         player->pos_y = player->pos_y + stepsmoved;
@@ -244,8 +245,8 @@ int checkFinish(struct game *game){
 
 void printlabyrinth(struct game *game){
     printf("------------------\n");
-    for (uint16_t i = 0; i < game->hauteur; i++){
-            for (uint16_t j = 0; j < game->largeur; j++){
+    for (uint16_t i = 0; i < game->largeur; i++){
+            for (uint16_t j = 0; j < game->hauteur; j++){
                 printf("| %c",game->labyrinth[i][j]);
             }
             printf("\n");
