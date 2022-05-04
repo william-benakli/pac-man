@@ -177,7 +177,7 @@ int registerInput(struct player * player){
         printf("Positiosement du joueur\n");
         spawnJoueur(target_game, partcipant_lobby);
         sendPosit(socketclient, target_game, partcipant_lobby);
-        gameInput(partcipant_lobby, target_game);
+        gameInput(socketclient, partcipant_lobby, target_game);
     }else{
       perror("Erreur arguments non conforme");
       sendDunno(socketclient, "ERREUR ENTREE INCONNUE");
@@ -194,60 +194,67 @@ int readStars(int socketclient){
   return count == (SIZE_INPUT_STAR) ? 0 : -1 ;
 }
 
-void gameInput(struct participant *partcipant_ingame, struct game *game_courant){
+void gameInput(int socketclient, struct participant *partcipant_ingame, struct game *game_courant){
 
   printlabyrinth(game_courant);
 
-  int socketclient = partcipant_ingame->tcp_sock;
+  //int socketclient = partcipant_ingame->tcp_sock;
   size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE+SIZE_DISTANCE+SIZE_INPUT_STAR;
   char buffer[size_buffer];
   int count = read(socketclient, buffer, size_buffer);
+  printf("j'ai lu count : %d et il fallait lire %ld", count, size_buffer);
+
   if(count != size_buffer){
-    gameInput(partcipant_ingame, game_courant);
+    printf("on entre ici à l'infint \n");
+    gameInput(socketclient, partcipant_ingame, game_courant);
   }
   
-
+  printf("on est sortie de la verife\n");
   char direction[SIZE_INPUT_DEFAULT + 1];
   direction[SIZE_INPUT_DEFAULT] = '\0';
   char distance[SIZE_DISTANCE];
-  char stars[SIZE_INPUT_STAR];
+  char stars[SIZE_INPUT_STAR+1];
   stars[SIZE_INPUT_STAR] = '\0';
 
   memmove(direction, buffer, SIZE_INPUT_DEFAULT);
   memmove(distance, buffer+SIZE_INPUT_DEFAULT+SIZE_ONE_SPACE, SIZE_DISTANCE);
   memmove(stars, buffer+SIZE_INPUT_DEFAULT+SIZE_ONE_SPACE+SIZE_DISTANCE, SIZE_INPUT_STAR);
 
+  printf("%s start\n", stars);
   if(strcmp("***", stars) != 0){
-    gameInput(partcipant_ingame, game_courant);
+    printf("on est entré ici ***\n");
+    gameInput(socketclient, partcipant_ingame, game_courant);
   } //protocol pas respecté
-
-    if(strcmp(direction, CMD_RIMOV) == 0){
+  printf("%s envoyé par le client [%s] atoi: %d\n ", distance, buffer, atoi(distance));
+ if(strcmp(direction, CMD_RIMOV) == 0){
+      printf("on entre ici\n");
+      
       int rep_move = move(MOVERIGHT, distance, game_courant, partcipant_ingame);
       if(rep_move == -1){
-        gameInput(partcipant_ingame, game_courant);
+    gameInput(socketclient, partcipant_ingame, game_courant);
       }
     }else if(strcmp(direction, CMD_LEMOV) == 0){
       int rep_move = move(MOVELEFT, distance, game_courant, partcipant_ingame);
       if(rep_move == -1){
-        gameInput(partcipant_ingame, game_courant);
+    gameInput(socketclient, partcipant_ingame, game_courant);
       }
     }else if(strcmp(direction, CMD_UPMOV) == 0){
       int rep_move = move(MOVEUP, distance, game_courant, partcipant_ingame);
       if(rep_move == -1){
-        gameInput(partcipant_ingame, game_courant);
+    gameInput(socketclient, partcipant_ingame, game_courant);
       }
     }else if(strcmp(direction, CMD_DOMOV) == 0){
       int rep_move = move(MOVEDOWN, distance, game_courant, partcipant_ingame);
       if(rep_move == -1){
-        gameInput(partcipant_ingame, game_courant);
+    gameInput(socketclient, partcipant_ingame, game_courant);
       }
 
-/* Essayer de comprendre quand utiliser IQUIT */
+/* Essayer de comprendre quand utiliser IQUIT 
  //   }else if(strcmp(buffer, CMD_IQUIT) == 0){
       //Premier verification toujours des personnes dans la partie
-      //Deuxieme verification quand on joueur prend un fantome s'il reste dans la partie
+      //Deuxieme verification quand on joueur prend un fantome s'il reste dans la partie*/
     }else{
       perror("Erreur arguments en partie non conforme");
-      gameInput(partcipant_ingame, game_courant);
+    gameInput(socketclient, partcipant_ingame, game_courant);
     }    
 }

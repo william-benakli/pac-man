@@ -5,6 +5,7 @@ int ingame(struct player *player, struct list_game *_games){
 }
 
 int move(int direction, char * distance, struct game * game, struct participant *player){
+    printf("VALEUR ------- %d et %s\n", atoi(distance), distance);
     int movement = moveinlabyrinth(direction, atoi(distance), game, player);
     if (movement < 10){
         char sendbuffer[19];

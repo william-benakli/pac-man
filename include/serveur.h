@@ -50,7 +50,8 @@
 void *clientConnexion(void * client);
 int registerInput(struct player *player);
 int readStars(int socketclient);
-void gameInput(struct participant * partcipant_ingame, struct game *game_courant);
+void gameInput(int socketclient, struct participant *partcipant_ingame, struct game *game_courant);
+
 
 extern struct list_game *_games;
 //pthread_mutex_t verrou = PTHREAD_MUTEX_INITIALIZER;

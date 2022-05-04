@@ -190,10 +190,10 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
 }
 
 int sendPosit(int client_socket, struct game *game , struct participant *participant){
-  size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_POS_X + SIZE_POS_Y;
+  size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE + SIZE_IDENTIFIANT + SIZE_POS_X + SIZE_POS_Y;
   char buffer_reponse[size_buffer];
   char * buffer_input = "POSIT ";
-  uint8_t id_partie = game->id_partie;
+  char * id_joueur = participant->identifiant;
   char pos_x[4];
   char pos_y[4];
 
@@ -205,12 +205,12 @@ int sendPosit(int client_socket, struct game *game , struct participant *partici
   printf("on est passé\n");
   char *stars = "***";
   memmove(buffer_reponse, buffer_input, SIZE_INPUT_DEFAULT_SPACE);
-  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE, &id_partie, sizeof(uint8_t));
-  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t), " ", SIZE_ONE_SPACE);
-  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE, pos_x, SIZE_POS_X);
-  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+SIZE_POS_X, " ", SIZE_ONE_SPACE);
-  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE, pos_y, SIZE_POS_Y);
-  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+sizeof(uint8_t)+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE+SIZE_POS_Y, stars, SIZE_INPUT_STAR);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE, id_joueur, SIZE_IDENTIFIANT);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+SIZE_IDENTIFIANT, " ", SIZE_ONE_SPACE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE, pos_x, SIZE_POS_X);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_POS_X, " ", SIZE_ONE_SPACE);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE, pos_y, SIZE_POS_Y);
+  memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE+SIZE_POS_Y, stars, SIZE_INPUT_STAR);
   printf("memove ok\n");
   
   //BUG CLIENT TCP pas BON DU COUP ??
