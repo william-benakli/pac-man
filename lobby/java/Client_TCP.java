@@ -52,6 +52,7 @@ public class Client_TCP implements Runnable {
 
 			// CREER LE CLIENT UDP
 			System.out.println("Voici votre port_UDP: " + str_socket_UDP);
+			System.out.println("Voici votre ip_UDP: " + adress_ip_udp);
 			MulticastSocket client_udp = new MulticastSocket(Integer.valueOf(str_socket_UDP));
 			// Adresses de classe D comprises entre 224.0.0.0 à 239.255.255.255
 			Client_UDP launcher_UDP = new Client_UDP(client_udp, adress_ip_udp);
@@ -75,7 +76,8 @@ public class Client_TCP implements Runnable {
 			}
 			// FERMETURE DES SOCKETS FIN DE LA PARTIE
 			socket.close();
-
+			System.out.println("Votre partie est fini vous êtes allez être déconnecté.");
+			return;
 		} catch (Exception e) {
 			if (!hostAvailabilityCheck(socket.getInetAddress().toString(), socket.getPort())) {
 				System.out.println("Le serveur est deconnecte_TCP.");
@@ -103,7 +105,7 @@ public class Client_TCP implements Runnable {
 				for (int j = i + 1; j < s.length(); j++) {
 					if (s.charAt(j) != '#') {
 						res += s.charAt(j);
-					}else
+					} else
 						break;
 				}
 				break;
@@ -968,7 +970,7 @@ public class Client_TCP implements Runnable {
 		}
 	}
 
-	// COMMANDE_READ: [POSIT␣id␣x␣y***]
+	// COMMANDE_READ: [POSIT␣id␣x␣y***] 25 bytes
 	// id 8 bytes
 	// x et y 3 bytes (char)
 	public static void Command_posit(InputStream is) {
@@ -1029,7 +1031,7 @@ public class Client_TCP implements Runnable {
 				byte b = (byte) msg_byte_OK[i];
 				msg += (char) b;
 			}
-			if (msg.equals("MOVE!")) { // [MOVE!␣x␣y***]
+			if (msg.equals("MOVE!")) { // [MOVE!␣x␣y***] 16 bytes
 				byte[] msg_byte = new byte[11];
 				if ((read = is.read(msg_byte)) != -1) {
 					receptacle = new String(msg_byte, 0, read);
@@ -1044,7 +1046,7 @@ public class Client_TCP implements Runnable {
 				}
 				// Si tout s'est bien passé
 				System.out.println("J'ai reçu en TCP: " + msg);
-			} else if (msg.equals("MOVEF")) { // [MOVEF␣x␣y␣p***]
+			} else if (msg.equals("MOVEF")) { // [MOVEF␣x␣y␣p***] 21 bytes
 				byte[] msg_byte = new byte[16];
 				if ((read = is.read(msg_byte)) != -1) {
 					receptacle = new String(msg_byte, 0, read);

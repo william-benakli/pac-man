@@ -211,7 +211,7 @@ int sendPosit(int client_socket, struct game *game , struct participant *partici
   memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_POS_X, " ", SIZE_ONE_SPACE);
   memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE, pos_y, SIZE_POS_Y);
   memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE+SIZE_POS_Y, stars, SIZE_INPUT_STAR);
-  
+    
   //BUG CLIENT TCP pas BON DU COUP ??
   int count = write(client_socket, buffer_reponse, size_buffer);
 

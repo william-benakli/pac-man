@@ -3,11 +3,11 @@
 int move(int direction, char * distance, struct game * game, struct participant *player){
     int movement = moveinlabyrinth(direction, atoi(distance), game, player);
     if (movement < 10){
-        char sendbuffer[20];
+        char sendbuffer[17];
         sprintf(sendbuffer,"MOVE! %03d %03d***",player->pos_x,player->pos_y);
-        sendbuffer[19] = '\0';
+        sendbuffer[16] = '\0';
         printf("[GAME] envoie TCP %s\n", sendbuffer);
-        int sent = send(player->tcp_sock,sendbuffer,19,0);
+        int sent = send(player->tcp_sock,sendbuffer,16,0);
         if (sent < 0){
             perror("send function failed in move function in movement.c");
             return -1;
