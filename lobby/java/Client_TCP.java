@@ -52,6 +52,7 @@ public class Client_TCP implements Runnable {
 
 			// CREER LE CLIENT UDP
 			System.out.println("Voici votre port_UDP: " + str_socket_UDP);
+			System.out.println("Voici votre ip_UDP: " + adress_ip_udp);
 			MulticastSocket client_udp = new MulticastSocket(Integer.valueOf(str_socket_UDP));
 			// Adresses de classe D comprises entre 224.0.0.0 à 239.255.255.255
 			Client_UDP launcher_UDP = new Client_UDP(client_udp, adress_ip_udp);
@@ -75,7 +76,8 @@ public class Client_TCP implements Runnable {
 			}
 			// FERMETURE DES SOCKETS FIN DE LA PARTIE
 			socket.close();
-
+			System.out.println("Votre partie est fini vous êtes allez être déconnecté.");
+			return;
 		} catch (Exception e) {
 			if (!hostAvailabilityCheck(socket.getInetAddress().toString(), socket.getPort())) {
 				System.out.println("Le serveur est deconnecte_TCP.");
