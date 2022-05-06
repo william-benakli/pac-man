@@ -27,6 +27,11 @@ int gameInput(int socketclient, struct participant *partcipant_ingame, struct ga
         }
     }
 
+    if(strcmp(buffer, "RIMOV") != 0 || strcmp(buffer, "UPMOV") != 0 || strcmp(buffer, "DOMOV") != 0 || strcmp(buffer, "LEMOV") !=0){
+        sendDunno(socketclient, "ERROR NOT GOOD SYNTAXE");
+        continue;
+    }
+    
     size_t size_buffer_snd = SIZE_ONE_SPACE + SIZE_DISTANCE + SIZE_INPUT_STAR;
     char buffer_movement[size_buffer_snd + 1];
     buffer_movement[size_buffer_snd] = '\0';
