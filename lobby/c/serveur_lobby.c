@@ -82,7 +82,7 @@ int select_action(struct player * player, char *buffer){
     }
   return 0;
   }
-  
+
 int waiting_players(struct player *player){
     struct game * game_courant = search_game(player->game_id, _games);
     if(game_courant == NULL) return -1;
@@ -90,14 +90,16 @@ int waiting_players(struct player *player){
     struct participant * partcipant_lobby = search_player_in_game(game_courant, player);
     if(partcipant_lobby == NULL) return -1;
 
-    while(check_ready(game_courant) == 0 && game_courant->players > 2);
+    while(check_ready(game_courant) == PLAYERS_NOT_READY && game_courant->players < 2){
+        sleep(1);
+    }
+    spawnFantomes(game_courant);
     launch_game(game_courant, partcipant_lobby, _games);
     return 0;
 }
 
 void launch_game(struct game * game_courant, struct participant * partcipant_lobby, struct list_game *_games){
     sendWelcome(game_courant, partcipant_lobby, _games);
-    spawnFantomes(game_courant);
     spawnJoueur(game_courant, partcipant_lobby);
     sendPosit(partcipant_lobby->tcp_sock, game_courant, partcipant_lobby);
     gameInput(partcipant_lobby->tcp_sock, partcipant_lobby, game_courant);

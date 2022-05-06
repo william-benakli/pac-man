@@ -34,13 +34,11 @@ int register_game(struct player *client, char * identifiant, uint8_t room_id_gam
 void * search_game(uint8_t id, struct list_game *list){
 
    struct list_game *copy = list;
-    printf("entrée de search tout est ok\n");
     while(copy != NULL){
         if(copy->game != NULL){
             if (copy->game->id_partie == id)return copy->game;
         }else return NULL;
         copy = copy->next_game;
     }
-    printf("Sortie de searche tout est ok \n");
     return NULL;
 }

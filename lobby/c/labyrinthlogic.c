@@ -49,7 +49,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
             }
             stepsmoved++;
         }
-        game->labyrinth[player->pos_y][player->pos_x - stepsmoved] = '1';
+        game->labyrinth[player->pos_y][player->pos_x - stepsmoved] = 'p';
         if(stepsmoved != 0){
             game->labyrinth[player->pos_y][player->pos_x] = '0';
         }
@@ -74,9 +74,9 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
             }
             stepsmoved++;
         }
-        game->labyrinth[player->pos_y][player->pos_x + stepsmoved] = '1';
+        game->labyrinth[player->pos_y][player->pos_x + stepsmoved] = 'p';
         if(stepsmoved != 0){
-            game->labyrinth[player->pos_y][player->pos_x] = '@';
+            game->labyrinth[player->pos_y][player->pos_x] = '0';
         }
         player->pos_x = player->pos_x + stepsmoved;
         break;
@@ -99,7 +99,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
             }
             stepsmoved++;
         }
-        game->labyrinth[player->pos_y - stepsmoved][player->pos_x] = '1';
+        game->labyrinth[player->pos_y - stepsmoved][player->pos_x] = 'p';
         if(stepsmoved != 0){
             game->labyrinth[player->pos_y][player->pos_x] = '0';
         }
@@ -124,7 +124,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
             }
             stepsmoved++;
         }
-        game->labyrinth[player->pos_y + stepsmoved][player->pos_x] = '1';
+        game->labyrinth[player->pos_y + stepsmoved][player->pos_x] = 'p';
         if(stepsmoved != 0){
             printf("on change la valeur de 0\n");
             game->labyrinth[player->pos_y][player->pos_x] = '0';
@@ -152,7 +152,7 @@ int setParticipantAtPos(struct game *game, struct participant *participant, int 
         return -1;
     }
     printf("placement du joueur  x: %d  y: %d\n", x,y);
-    game->labyrinth[y][x] = '1';
+    game->labyrinth[y][x] = 'p';
     participant->pos_x = x;
     participant->pos_y = y;
     return 0;
@@ -162,7 +162,7 @@ int setElementAtPos(struct game *game, char c, int x, int y){
     if(game->labyrinth == NULL){
         return -1;
     }
-    if(c == '0' || c == 'f' || c == '#' || c == '1'){
+    if(c == '0' || c == 'f' || c == '#' || c == 'p'){
         game->labyrinth[x][y] = c;
     }else{
         return -1;
@@ -231,7 +231,16 @@ void printlabyrinth(struct game *game){
     printf("------------------\n");
     for (uint16_t i = 0; i < game->largeur; i++){
             for (uint16_t j = 0; j < game->hauteur; j++){
-                printf("| %c",game->labyrinth[i][j]);
+                char c = game->labyrinth[i][j];
+                if(c == '#'){
+                    printf("█");
+                }else if(c == 'f'){
+                    printf("✦");
+                }else if(c == '0'){
+                    printf("_");
+                }else{
+                    printf("◉");
+                }
             }
             printf("\n");
     }

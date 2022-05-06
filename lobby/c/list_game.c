@@ -26,7 +26,6 @@ void free_list_game(struct list_game *games){
 
 }
 
-//ajout un jeu a la fin de liste
 int add_game(struct game *addgame, struct list_game *list){
     //pthread_mutex_lock(&verrou);
 

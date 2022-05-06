@@ -47,10 +47,8 @@ int free_participant(struct participant *premier){
 int check_ready(struct game *_game){
     
     struct participant *cpy = _game->participants;
-    
     while (cpy != NULL){
         if (cpy->player_ready == 0){
-            //TODO: snprintf le pseudo de ceux qui sont pas prets sur un buffer
             return PLAYERS_NOT_READY;
         }
         cpy = cpy->next;

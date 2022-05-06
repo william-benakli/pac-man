@@ -53,8 +53,6 @@ int creategame(struct player * player, struct list_game * games){
       free(new_game);
       return -1;
     }
-
-    printf("[CREATE GAME] Joueur %s Port %s\n", identifiant, port);
     return 0;
 }
 
