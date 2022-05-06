@@ -161,8 +161,8 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
   uint16_t hauteur = ntohs(game->hauteur);
   uint16_t largeur = ntohs(game->largeur);
   uint8_t nombre_fantome = game->nb_fantome;
-  char * ip = "225.12.22.1###";
-  char * port = "1818";
+  char * ip = "225.12.22.1###";//TODO: IP A REVOIR
+  char * port = "1818"; // TODO: PORT à REVOIR
   char * stars = "***";
 
   memmove(buffer_reponse, buffer_input, SIZE_INPUT_DEFAULT_SPACE);
@@ -182,7 +182,6 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
   printf("%s\n", buffer_reponse);
 
   int count = write(participant->tcp_sock, buffer_reponse, size_buffer);
-  printf("tu as reçu %d et pas %ld", count, size_buffer);
   if(count != size_buffer){
     return -1;
   }
@@ -190,7 +189,7 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
 }
 
 int sendPosit(int client_socket, struct game *game , struct participant *participant){
-  size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE + SIZE_IDENTIFIANT + SIZE_ONE_SPACE + SIZE_POS_X +  SIZE_ONE_SPACE +SIZE_POS_Y + SIZE_INPUT_STAR;
+  size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE + SIZE_IDENTIFIANT + SIZE_ONE_SPACE + SIZE_POS_X + SIZE_ONE_SPACE +SIZE_POS_Y + SIZE_INPUT_STAR;
   char buffer_reponse[size_buffer];
   char * buffer_input = "POSIT ";
   char * id_joueur = participant->identifiant;
@@ -212,14 +211,12 @@ int sendPosit(int client_socket, struct game *game , struct participant *partici
   memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_POS_X, " ", SIZE_ONE_SPACE);
   memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE, pos_y, SIZE_POS_Y);
   memmove(buffer_reponse+SIZE_INPUT_DEFAULT_SPACE+SIZE_IDENTIFIANT+SIZE_ONE_SPACE+SIZE_POS_X+SIZE_ONE_SPACE+SIZE_POS_Y, stars, SIZE_INPUT_STAR);
-  printf("memove ok\n");
   
   //BUG CLIENT TCP pas BON DU COUP ??
-  printf("Le client tcp %d\n", participant->tcp_sock);
   int count = write(client_socket, buffer_reponse, size_buffer);
+
   if(count != size_buffer){
     return -1;
   }
   return 0;
-
 }

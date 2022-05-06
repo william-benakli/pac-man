@@ -21,6 +21,8 @@
 #include "utils/reponse_game.h"
 #include "movement.h"
 #include "labyrinthlogic.h"
+#include "serveur_lobby.h"
+#include "serveur_game.h"
 
 #define SIZE_ONE_SPACE 1
 #define SIZE_IDENTIFIANT 8
@@ -48,9 +50,7 @@
 #define CMD_LEMOV "LEMOV"
 
 void *clientConnexion(void * client);
-int registerInput(struct player *player);
 int readStars(int socketclient);
-void gameInput(int socketclient, struct participant *partcipant_ingame, struct game *game_courant);
 
 
 extern struct list_game *_games;

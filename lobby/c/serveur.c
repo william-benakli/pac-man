@@ -12,13 +12,11 @@ int main(int argc, char const *argv[]) {
     exit(EXIT_FAILURE);
   }
   
-//TODO verifier le socket de connexion DATAGRAM 
   int connexion = socket(PF_INET,SOCK_STREAM,0);
   struct sockaddr_in address_sock;
   address_sock.sin_family= AF_INET;
   address_sock.sin_port= htons(port);
   address_sock.sin_addr.s_addr= htonl(INADDR_ANY);
-
 
   int r = bind(connexion, (struct sockaddr *)&address_sock ,sizeof(struct  sockaddr_in));
   if(r == -1){
@@ -51,140 +49,19 @@ void *clientConnexion(void * client_connect){
   int rep_party = sendgames(socket);
   if(rep_party == -1){
     perror("Erreur games invalide");
-    goto erreur;
+    goto close;
   }
 
-  int reponse_register = registerInput((struct player *)client_connect);
-
-  if(reponse_register == -1)goto erreur;
-  else if(reponse_register == 0)goto success;
-  
+  registerInput((struct player *)client_connect);
   close(socket);
   free(client_connect);
   return NULL;
-
-  erreur:
+  
+  close: 
     close(socket);
     free(client_connect);
-    exit(EXIT_FAILURE);
-    return NULL;
-
-  success:
-    close(socket);
-    free(client_connect);
-    exit(EXIT_SUCCESS);
     return NULL;
 }
-
-int registerInput(struct player * player){
-    int socketclient = player->tcp_sock;
-
-    char buffer[SIZE_INPUT_DEFAULT+1];
-    buffer[SIZE_INPUT_DEFAULT] = '\0';
-    read(socketclient, buffer, SIZE_INPUT_DEFAULT);
-    
-    if(strcmp(buffer, CMD_NEW_PARTY) == 0){
-        int rep_create = creategame(player, _games); 
-        if(rep_create == -1){
-          sendRegNo(socketclient);
-          registerInput(player);
-        }else{
-          sendRegOk(socketclient, player->game_id);
-          registerInput(player);
-        }
-    }else if(strcmp(buffer, CMD_REGISTER) == 0){
-        int rep_regis = regisgame(player, _games); 
-        if(rep_regis == -1){
-          sendRegNo(socketclient);
-          registerInput(player);
-        }else{
-          sendRegOk(socketclient, player->game_id);
-          registerInput(player);
-        } 
-    //TODO: Command en partie : on devrait peut être separer en deux fonctions ?
-    }else if(strcmp(buffer, CMD_UNREG) == 0){
-
-      int check_stars = readStars(socketclient);
-      if(check_stars == -1){
-        sendDunno(socketclient, "CMD UNREG READSTARS ERROR");
-        registerInput(player);
-      }
-
-      if(player->status_game == IN_LOBBY){
-        sendDunno(socketclient, "UNREG ERREUR PLAYER EN LOBBY");
-        registerInput(player);
-      }
-
-      u_int8_t id_partie = player->game_id;
-      int rep_unreg = unregis(player, _games);
-      if(rep_unreg == -1){
-        sendDunno(socketclient, "UNREG ERREUR UNREG PLAYER LIST");
-        registerInput(player);
-      }
-      int rep_regOk = sendUnRegOk(socketclient, id_partie);
-      if(rep_regOk == -1){
-        sendDunno(socketclient, "UNREG ERREUR UNREGOK FAIL");
-        registerInput(player);
-      }
-      registerInput(player);
-    }else if(strcmp(buffer, CMD_GAME) == 0){
-      int check_stars = readStars(socketclient);
-      if(check_stars == -1){
-        sendDunno(socketclient, "CMD GAME READSTART ERROR");
-        registerInput(player);
-      }
-      int rep_party = sendgames(socketclient);
-      if(rep_party == -1){
-        sendDunno(socketclient, "CMD GAME ENVOIE GAME ECHEC");
-        registerInput(player);
-      }
-      registerInput(player);
-    }else if(strcmp(buffer, CMD_SIZE) == 0){
-
-      int rep_size = sendSize(socketclient, _games);
-      if(rep_size == -1){
-        sendDunno(socketclient, "CMD SIZE sendSIZE FAIL");
-        registerInput(player);
-      }
-      registerInput(player);
-
-    }else if(strcmp(buffer, CMD_LIST) == 0){
-
-      int rep_list = sendList(socketclient, _games);
-      if(rep_list == -1){
-        sendDunno(socketclient,"CMD LIST sendList fail");
-        registerInput(player);
-      }
-      registerInput(player);
-    }else if(strcmp(buffer, CMD_START) == 0){
-
-      int rep_list = start(player, _games);
-      if(rep_list == -1){
-        sendDunno(socketclient,"CMD START FAILED");
-        registerInput(player);
-      }
-
-      //On recupere la partie
-      //On recupere le joueur dans la partie
-      struct game * target_game = search_game(player->game_id, _games);
-      if(target_game == NULL) registerInput(player);
-      
-      struct participant * partcipant_lobby = search_player_in_game(target_game, player);
-      if(partcipant_lobby == NULL) registerInput(player);
-        sendWelcome(target_game, partcipant_lobby, _games);
-        printf("Positiosement des fantomes\n");
-        spawnFantomes(target_game);
-        printf("Positiosement du joueur\n");
-        spawnJoueur(target_game, partcipant_lobby);
-        sendPosit(socketclient, target_game, partcipant_lobby);
-        gameInput(socketclient, partcipant_lobby, target_game);
-    }else{
-      perror("Erreur arguments non conforme");
-      sendDunno(socketclient, "ERREUR ENTREE INCONNUE");
-      registerInput(player);
-    }
-  return 0;
-  }
 
 int readStars(int socketclient){
   char stars[4];
@@ -192,69 +69,4 @@ int readStars(int socketclient){
   int count = read(socketclient, stars, SIZE_INPUT_STAR);
   if(strcmp(stars, "***") != 0)return -1;
   return count == (SIZE_INPUT_STAR) ? 0 : -1 ;
-}
-
-void gameInput(int socketclient, struct participant *partcipant_ingame, struct game *game_courant){
-
-  printlabyrinth(game_courant);
-
-  //int socketclient = partcipant_ingame->tcp_sock;
-  size_t size_buffer = SIZE_INPUT_DEFAULT_SPACE+SIZE_DISTANCE+SIZE_INPUT_STAR;
-  char buffer[size_buffer];
-  int count = read(socketclient, buffer, size_buffer);
-  printf("j'ai lu count : %d et il fallait lire %ld", count, size_buffer);
-
-  if(count != size_buffer){
-    printf("on entre ici à l'infint \n");
-    gameInput(socketclient, partcipant_ingame, game_courant);
-  }
-  
-  printf("on est sortie de la verife\n");
-  char direction[SIZE_INPUT_DEFAULT + 1];
-  direction[SIZE_INPUT_DEFAULT] = '\0';
-  char distance[SIZE_DISTANCE];
-  char stars[SIZE_INPUT_STAR+1];
-  stars[SIZE_INPUT_STAR] = '\0';
-
-  memmove(direction, buffer, SIZE_INPUT_DEFAULT);
-  memmove(distance, buffer+SIZE_INPUT_DEFAULT+SIZE_ONE_SPACE, SIZE_DISTANCE);
-  memmove(stars, buffer+SIZE_INPUT_DEFAULT+SIZE_ONE_SPACE+SIZE_DISTANCE, SIZE_INPUT_STAR);
-
-  printf("%s start\n", stars);
-  if(strcmp("***", stars) != 0){
-    printf("on est entré ici ***\n");
-    gameInput(socketclient, partcipant_ingame, game_courant);
-  } //protocol pas respecté
-  printf("%s envoyé par le client [%s] atoi: %d\n ", distance, buffer, atoi(distance));
- if(strcmp(direction, CMD_RIMOV) == 0){
-      printf("on entre ici\n");
-      
-      int rep_move = move(MOVERIGHT, distance, game_courant, partcipant_ingame);
-      if(rep_move == -1){
-    gameInput(socketclient, partcipant_ingame, game_courant);
-      }
-    }else if(strcmp(direction, CMD_LEMOV) == 0){
-      int rep_move = move(MOVELEFT, distance, game_courant, partcipant_ingame);
-      if(rep_move == -1){
-    gameInput(socketclient, partcipant_ingame, game_courant);
-      }
-    }else if(strcmp(direction, CMD_UPMOV) == 0){
-      int rep_move = move(MOVEUP, distance, game_courant, partcipant_ingame);
-      if(rep_move == -1){
-    gameInput(socketclient, partcipant_ingame, game_courant);
-      }
-    }else if(strcmp(direction, CMD_DOMOV) == 0){
-      int rep_move = move(MOVEDOWN, distance, game_courant, partcipant_ingame);
-      if(rep_move == -1){
-    gameInput(socketclient, partcipant_ingame, game_courant);
-      }
-
-/* Essayer de comprendre quand utiliser IQUIT 
- //   }else if(strcmp(buffer, CMD_IQUIT) == 0){
-      //Premier verification toujours des personnes dans la partie
-      //Deuxieme verification quand on joueur prend un fantome s'il reste dans la partie*/
-    }else{
-      perror("Erreur arguments en partie non conforme");
-    gameInput(socketclient, partcipant_ingame, game_courant);
-    }    
 }

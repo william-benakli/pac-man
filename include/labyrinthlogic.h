@@ -27,7 +27,7 @@ int spawnFantomes(struct game *game);
 char getElementAtPos(struct game *game, int x, int y);
 int setElementAtPos(struct game *game, char c, int x, int y);
 int setParticipantAtPos(struct game *game, struct participant *participant, int x, int y);
-int checkFinish(struct game *game);
+int check_endgame(struct game *game);
 
 
 #endif

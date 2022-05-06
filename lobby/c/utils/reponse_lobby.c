@@ -139,7 +139,7 @@ int regisgame(struct player *client,struct list_game *games){
     return PLAYER_REGISTER_SUCCESS;
 }
 
-int start(struct player *player, struct list_game *list){
+int player_game_accept(struct player *player, struct list_game *list){
 
   if(player->status_game == IN_LOBBY){
     printf("Error player not register in game ");

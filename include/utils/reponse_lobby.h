@@ -6,6 +6,6 @@
 int creategame(struct player * player, struct list_game * games);
 int sendgames(int socketclient);
 int regisgame(struct player *client,struct list_game *games);
-int start(struct player *player, struct list_game *list);
+int player_game_accept(struct player *player, struct list_game *list);
 
 #endif
