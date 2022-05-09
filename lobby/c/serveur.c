@@ -2,7 +2,10 @@
 
 struct list_game * _games;
 
+
+int __UDP_PORT;
 int main(int argc, char const *argv[]) {
+  __UDP_PORT = 8000;
   _games = init_list_game();
    srand(time(NULL));
 
@@ -35,7 +38,7 @@ int main(int argc, char const *argv[]) {
     struct sockaddr_in caller;
     socklen_t size = sizeof(caller);
     int socketclient = accept(connexion,(struct sockaddr *)&caller,&size);
-    init_player(client_connexion, socketclient);
+    init_player(client_connexion, socketclient, &caller);
     pthread_t client;
     pthread_create(&client,NULL, clientConnexion, client_connexion);
   }

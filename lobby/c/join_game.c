@@ -1,15 +1,18 @@
 #include "../../include/join_game.h"
 
 int player_join(struct game *_game, struct player *player, struct participant *new_player_ingame){
+    pthread_mutex_lock(&(_game->game_lock));
     new_player_ingame->pos_x = 0;
     new_player_ingame->pos_y = 0;
     new_player_ingame->score = 0;
     new_player_ingame->player_ready = 0;
     new_player_ingame->tcp_sock = player->tcp_sock;
     new_player_ingame->udp_port = player->udp_port;
+    new_player_ingame->address = player->player_address;
     new_player_ingame->next = _game->participants;
     _game->participants = new_player_ingame;
     _game->players++;
+    pthread_mutex_unlock(&(_game->game_lock));
     return PLAYER_JOIN_SUCCESS;
 }
 
@@ -33,6 +36,7 @@ int register_game(struct player *client, char * identifiant, uint8_t room_id_gam
 
 void * search_game(uint8_t id, struct list_game *list){
 
+    //VEROUS ICI
    struct list_game *copy = list;
     while(copy != NULL){
         if(copy->game != NULL){

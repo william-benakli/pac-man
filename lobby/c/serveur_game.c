@@ -27,6 +27,22 @@ int gameInput(int socketclient, struct participant *partcipant_ingame, struct ga
         }
     }
 
+    if (strcmp(buffer,"MALL?") == 0){
+      char message_buffer[200];
+      int test_mall = get_mall_message(socketclient,message_buffer);
+      if (test_mall != 0){
+        printf("erreur remplir le buffer de message ligne 34 fichier serveur_game.c\n");
+        continue;
+      }
+      test_mall = broadcast_message(game_courant,message_buffer);
+      if (test_mall != 0){
+        printf("erreur envoyer le buffer de message ligne 38 fichier serveur_game.c\n");
+        continue;
+      }
+      int bytes_sent = send(socketclient,"MALL!***",9 * sizeof(char),0);
+    }
+
+
     if(strcmp(buffer, "RIMOV") != 0 || strcmp(buffer, "UPMOV") != 0 || strcmp(buffer, "DOMOV") != 0 || strcmp(buffer, "LEMOV") !=0){
         sendDunno(socketclient, "ERROR NOT GOOD SYNTAXE");
         continue;

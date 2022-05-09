@@ -19,14 +19,17 @@ char  **initlabirynth(uint16_t x, uint16_t y){
 }
 
 void freelabirynth(struct game *game){
+    pthread_mutex_lock(&(game->game_lock));
     for (int i = 0; i < game->hauteur; i++){
         free(game->labyrinth[i]);
     }
     free(game->labyrinth);
+    pthread_mutex_unlock(&(game->game_lock));
 }
 
 
 int moveinlabyrinth(int direction, int steps, struct game *game, struct participant *player){
+    pthread_mutex_lock(&(game->game_lock));
     int stepsmoved = 0;
     int ghostfound = 0;
     switch (direction)
@@ -137,36 +140,47 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
     }
 
     int ret = (ghostfound == 1) ? stepsmoved + NOMBRE_FANTOME : stepsmoved;
+    pthread_mutex_unlock(&(game->game_lock));
     return ret;
 }
 
 char getElementAtPos(struct game *game, int x, int y){
+    pthread_mutex_lock(&(game->game_lock));
     if(game->labyrinth == NULL){
+        pthread_mutex_unlock(&(game->game_lock));
         return '-';
     }
+    pthread_mutex_unlock(&(game->game_lock));
     return game->labyrinth[x][y];
 }
 
 int setParticipantAtPos(struct game *game, struct participant *participant, int x, int y){
+    pthread_mutex_lock(&(game->game_lock));
     if(game->labyrinth == NULL){
+        pthread_mutex_unlock(&(game->game_lock));
         return -1;
     }
     printf("placement du joueur  x: %d  y: %d\n", x,y);
     game->labyrinth[y][x] = 'p';
     participant->pos_x = x;
     participant->pos_y = y;
+    pthread_mutex_unlock(&(game->game_lock));
     return 0;
 }
 
 int setElementAtPos(struct game *game, char c, int x, int y){
+    pthread_mutex_lock(&(game->game_lock));
     if(game->labyrinth == NULL){
+        pthread_mutex_unlock(&(game->game_lock));
         return -1;
     }
     if(c == '0' || c == 'f' || c == '#' || c == 'p'){
         game->labyrinth[x][y] = c;
     }else{
+        pthread_mutex_unlock(&(game->game_lock));
         return -1;
     }
+    pthread_mutex_unlock(&(game->game_lock));
     return 0;
 }
 
@@ -216,7 +230,9 @@ int spawnFantomes(struct game *game){
         if(reponse == -1)return -1;
         nombre_fantome_courant++;
     }
-    if(nombre_fantome_courant != game->nb_fantome)return -1; 
+    if(nombre_fantome_courant != game->nb_fantome) {
+        return -1; 
+    }
     return 0;
 }
 
