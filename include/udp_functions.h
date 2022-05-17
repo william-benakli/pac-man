@@ -1,11 +1,10 @@
 #ifndef UDP_FUNCTIONS_H
 #define UDP_FUNCTIONS_H
 
-#define ADDRESS_MULTICAST "250.0.0.1"
-extern int __UDP_PORT;
-
 #include "serveur.h"
 
+#define ADDRESS_MULTICAST "250.0.0.1"
+extern int __UDP_PORT;
 
 int broadcast_message(struct game *_game, char *buf);
 int score_message(struct game *_game, struct participant *player, int fantom_x , int fantom_y);

@@ -1,8 +1,8 @@
 #ifndef GAME_SETTINGS_H
 #define GAME_SETTINGS_H
 
-#include "udp_functions.h"
 #include "player_ingame.h"
+#include "udp_functions.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

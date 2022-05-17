@@ -271,7 +271,3 @@ void printlabyrinth(struct game *game){
     }
     printf("--------------------\n");
 }
-
-int main(){
-    return 0;
-}
