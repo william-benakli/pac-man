@@ -13,10 +13,11 @@ struct participant{
     int pos_x;
     int pos_y;
     int score; 
-    struct participant *next; 
+    struct participant *next;
+    char *address;
 };
 
-int init_player_participant(struct player player, struct participant participant, int udp_sock, int tcp_sock, 
-                            int player_ready, int pos_x, int pos_y, int score);
+//int init_player_participant(struct player player, struct participant participant, int udp_sock, int tcp_sock, 
+//                            int player_ready, int pos_x, int pos_y, int score);
 
 #endif

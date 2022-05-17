@@ -23,6 +23,7 @@
 #include "labyrinthlogic.h"
 #include "serveur_lobby.h"
 #include "serveur_game.h"
+#include "udp_functions.h"
 
 #define SIZE_ONE_SPACE 1
 #define SIZE_IDENTIFIANT 8

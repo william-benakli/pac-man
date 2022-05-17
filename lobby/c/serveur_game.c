@@ -11,6 +11,9 @@ int gameInput(int socketclient, struct participant *partcipant_ingame, struct ga
 
     int count_fst = read(socketclient, buffer, size_buffer_first);
 
+    if(count_fst == 0)return -1;//TODO verifier
+    
+
     if(count_fst != size_buffer_first){
       printf("[GAME] Erreur de taille count: [%d] / buffer: [%ld] #1\n", count_fst, size_buffer_first);
       return -1;
@@ -25,6 +28,42 @@ int gameInput(int socketclient, struct participant *partcipant_ingame, struct ga
         }else{
             break;
         }
+    }
+
+   
+    if (strcmp(buffer,"MALL?") == 0){
+      char message_buffer[200];
+      int test_mall = get_mall_message(socketclient,message_buffer);
+      if (test_mall != 0){
+        printf("erreur remplir le buffer de message ligne 34 fichier serveur_game.c\n");
+        send(socketclient,"NMALL***",9 * sizeof(char),0);
+        continue;
+      }
+      test_mall = broadcast_message(game_courant,message_buffer);
+      if (test_mall != 0){
+        printf("erreur envoyer le buffer de message ligne 38 fichier serveur_game.c\n");
+        send(socketclient,"NMALL***",9 * sizeof(char),0);
+        continue;
+      }
+      send(socketclient,"MALL!***",9 * sizeof(char),0);
+    }
+
+    if (strcmp(buffer,"SEND?") == 0){
+      char target_identifiant[8];
+      char message_buffer[200];
+      int test_private = get_private_message(socketclient,target_identifiant,message_buffer);
+      if (test_private != 0){
+        printf("erreur remplir le buffer de message ligne 50 fichier serveur_game.c\n");
+        send(socketclient,"NSEND***",9 * sizeof(char),0);
+        continue;
+      }
+      test_private = private_message(game_courant,target_identifiant,message_buffer,partcipant_ingame);
+      if (test_private != 0){
+        printf("erreur remplir le buffer de message ligne 56 fichier serveur_game.c\n");
+        send(socketclient,"NSEND***",9 * sizeof(char),0);
+        continue;
+      }
+      send(socketclient,"MALL!***",9 * sizeof(char),0);
     }
 
     if(strcmp(buffer, "RIMOV") != 0 || strcmp(buffer, "UPMOV") != 0 || strcmp(buffer, "DOMOV") != 0 || strcmp(buffer, "LEMOV") !=0){
