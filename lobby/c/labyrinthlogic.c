@@ -47,7 +47,9 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
             if (game->labyrinth[player->pos_y][player->pos_x - i] == 'f'){
                 ghostfound = 1;
                 game->labyrinth[player->pos_y][player->pos_x - i] = '0';
-                //TODO: ENVOYER UDP A TOUT LE MONDE
+                player->score++;
+                game->nb_fantome--;
+                score_message(game,player,player->pos_x - i,player->pos_y);
                 check_endgame(game);
             }
             stepsmoved++;
@@ -72,7 +74,9 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
             if (game->labyrinth[player->pos_y][player->pos_x + i] == 'f'){
                 ghostfound = 1;
                 game->labyrinth[player->pos_y][player->pos_x + i] = '0';
-                //TODO: ENVOYER UDP A TOUT LE MONDE
+                player->score++;
+                game->nb_fantome--;
+                score_message(game,player,player->pos_x + i,player->pos_y);
                 check_endgame(game);
             }
             stepsmoved++;
@@ -97,7 +101,9 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
             if (game->labyrinth[player->pos_y - i][player->pos_x] == 'f'){
                 ghostfound = 1;
                 game->labyrinth[player->pos_y - i][player->pos_x] = '0';
-                //TODO: ENVOYER UDP A TOUT LE MONDE
+                player->score++;
+                game->nb_fantome--;
+                score_message(game,player,player->pos_x,player->pos_y - i);
                 check_endgame(game);
             }
             stepsmoved++;
@@ -122,7 +128,9 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
             if (game->labyrinth[player->pos_y + i][player->pos_x] == 'f'){
                 ghostfound = 1;
                 game->labyrinth[player->pos_y + i][player->pos_x] = '0';
-                //TODO: ENVOYER UDP A TOUT LE MONDE
+                player->score++;
+                game->nb_fantome--;
+                score_message(game,player,player->pos_x,player->pos_y + i);
                 check_endgame(game);
             }
             stepsmoved++;
@@ -238,6 +246,7 @@ int spawnFantomes(struct game *game){
 
 int check_endgame(struct game *game){
     if(game->nb_fantome <= 0 || game->players == 0){//TODO: ici on devra verifier 2
+        game->status = STATUS_UNAVAILABLE; 
         return FINISH;
     }
     return NOT_FINISH;
@@ -261,4 +270,8 @@ void printlabyrinth(struct game *game){
             printf("\n");
     }
     printf("--------------------\n");
+}
+
+int main(){
+    return 0;
 }
