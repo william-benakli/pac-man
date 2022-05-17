@@ -5,6 +5,7 @@
 #include "join_game.h"
 #include "labyrinthlogic.h"
 #include "serveur.h"
+#include "game_settings.h"
 
 int move(int direction, char * distance, struct game * game, struct participant *player);
 

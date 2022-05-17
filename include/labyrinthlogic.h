@@ -2,6 +2,7 @@
 #define LABYRINTH_LOGIC_H
 
 #include "../include/game_settings.h"
+#include "udp_functions.h"
 
 #define CASEVIDE '0'
 #define MUR '#'
