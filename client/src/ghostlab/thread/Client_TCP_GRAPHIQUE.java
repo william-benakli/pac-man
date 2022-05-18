@@ -11,12 +11,14 @@ import java.net.MulticastSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 
 public class Client_TCP_GRAPHIQUE implements Runnable {
 	Socket socket;
 	static int is_the_game_started = 0;
 	static int is_the_game_ended = 0;
 
+	ArrayList <Game> list = new ArrayList<Game>();
 	VueClient client_vue;
 
 	public Client_TCP_GRAPHIQUE(Socket sock) {
