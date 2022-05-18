@@ -148,7 +148,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
         break;
     }
 
-    int ret = (ghostfound == 1) ? stepsmoved + NOMBRE_FANTOME : stepsmoved;
+    int ret = (ghostfound == 1) ? 0 : 1;
     pthread_mutex_unlock(&verrou2);
     return ret;
 }

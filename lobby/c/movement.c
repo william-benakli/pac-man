@@ -2,7 +2,7 @@
 
 int move(int direction, char * distance, struct game * game, struct participant *player){
     int movement = moveinlabyrinth(direction, atoi(distance), game, player);
-    if (movement < 10){
+    if (movement != 0){
         char sendbuffer[17];
         sprintf(sendbuffer,"MOVE! %03d %03d***",player->pos_x,player->pos_y);
         printf("[GAME] envoie TCP %s\n", sendbuffer);
