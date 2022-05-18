@@ -59,6 +59,7 @@ int remove_game(struct game *rem_game, struct list_game *list){
 
     if(copy->game->id_partie == rem_game->id_partie){
         list->next_game = list->next_game->next_game;
+        pthread_mutex_unlock(&(list->list_lock));
         return GAME_REMOVED_SUCCESSFULLY;
     }
 
