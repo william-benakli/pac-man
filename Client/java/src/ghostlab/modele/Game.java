@@ -1,4 +1,4 @@
-package modele;
+package src.ghostlab.modele;
 
 public class Game {
 

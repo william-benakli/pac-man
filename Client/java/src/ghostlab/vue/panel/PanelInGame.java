@@ -1,8 +1,8 @@
-package vue.panel;
+package src.ghostlab.vue.panel;
 
-import modele.Game;
-import vue.CreateGraphicsUtils;
-import vue.graphics.JPanelGraphiqueBuilder;
+import src.ghostlab.modele.Game;
+import src.ghostlab.vue.CreateGraphicsUtils;
+import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,7 +1,7 @@
-package vue;
+package src.ghostlab.vue;
 
-import vue.graphics.FontGraphiqueBuilder;
-import vue.panel.PanelLobby;
+import src.ghostlab.vue.graphics.FontGraphiqueBuilder;
+import src.ghostlab.vue.panel.PanelLobby;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +9,7 @@ import java.awt.*;
 public class VueClient extends JFrame {
 
     public static JPanel panel_courant = new JPanel();
+
     public static Font font;
 
     public VueClient() throws Exception {

@@ -1,4 +1,4 @@
-package vue.graphics;
+package src.ghostlab.vue.graphics;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

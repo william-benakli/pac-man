@@ -1,3 +1,8 @@
+package src.ghostlab.thread;
+
+import src.ghostlab.vue.VueClient;
+
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,12 +11,13 @@ import java.net.MulticastSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Scanner;
 
 public class Client_TCP_GRAPHIQUE implements Runnable {
 	Socket socket;
 	static int is_the_game_started = 0;
 	static int is_the_game_ended = 0;
+
+	VueClient client_vue;
 
 	public Client_TCP_GRAPHIQUE(Socket sock) {
 		this.socket = sock;
@@ -20,10 +26,20 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 	public void run() {
 		try {
 			// PARAMETRAGE POUR CLIENT TCP
-			Scanner sc = new Scanner(System.in);
 			InputStream is = socket.getInputStream();
 			OutputStream os = socket.getOutputStream();
 			String msg;
+
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						client_vue = new VueClient();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+				}
+			});
 
 			// Recois msg - message en TCP: [GAMES␣n***]
 			Command_games_number(is);
@@ -70,8 +86,8 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 				System.out.println("\nInfo_commandes_reponses? tapez: INFOS***");
 				System.out.println("Info_variables? tapez: VARSE***");
 				System.out.print("Votre msg TCP: ");
-				msg = sc.nextLine();
-				Command_Check_in_game(msg, is, os);
+			//	msg = sc.nextLine();
+		//		Command_Check_in_game(msg, is, os);
 			}
 			// FERMETURE DES SOCKETS FIN DE LA PARTIE
 			socket.close();

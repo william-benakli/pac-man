@@ -1,12 +1,11 @@
-package vue.panel;
+package src.ghostlab.vue.panel;
 
-import modele.Game;
-import vue.CreateGraphicsUtils;
-import vue.VueClient;
+import src.ghostlab.modele.Game;
+import src.ghostlab.vue.CreateGraphicsUtils;
+import src.ghostlab.vue.VueClient;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 

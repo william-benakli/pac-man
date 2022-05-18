@@ -1,4 +1,4 @@
-package vue.graphics;
+package src.ghostlab.vue.graphics;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;

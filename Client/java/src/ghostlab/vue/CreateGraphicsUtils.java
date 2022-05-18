@@ -1,11 +1,9 @@
-package vue;
+package src.ghostlab.vue;
 
-import vue.graphics.FontGraphiqueBuilder;
-import vue.graphics.JButtonGraphiqueBuilder;
-import vue.graphics.JPanelGraphiqueBuilder;
+import src.ghostlab.vue.graphics.JButtonGraphiqueBuilder;
+import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class CreateGraphicsUtils {

@@ -1,12 +1,10 @@
-package vue.panel;
+package src.ghostlab.vue.panel;
 
-import modele.Game;
-import vue.CreateGraphicsUtils;
-import vue.VueClient;
-import vue.graphics.JPanelGraphiqueBuilder;
+import src.ghostlab.vue.CreateGraphicsUtils;
+import src.ghostlab.vue.VueClient;
+import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
 
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 
 public class PanelCreateGame extends JPanelGraphiqueBuilder {
