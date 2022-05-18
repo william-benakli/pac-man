@@ -5,6 +5,7 @@ public class Game {
     private Player player;
     private int id_game; //m
     private int hauteur, largeur;//h w
+    private int fantome; // f
     private String ip_partie;//ip de la partie
     private char[][] labyrinth_to_parcour;
 
