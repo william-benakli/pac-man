@@ -13,7 +13,8 @@ int gameInput(int socketclient, struct participant *partcipant_ingame, struct ga
 
     if(count_fst == 0)return -1;//TODO verifier
     
-
+    printf("%s\n",buffer);
+    printf("hi, %d\n", count_fst);
     if(count_fst != size_buffer_first){
       printf("[GAME] Erreur de taille count: [%d] / buffer: [%ld] #1\n", count_fst, size_buffer_first);
       return -1;
@@ -66,7 +67,7 @@ int gameInput(int socketclient, struct participant *partcipant_ingame, struct ga
       send(socketclient,"MALL!***",9 * sizeof(char),0);
     }
 
-    if(strcmp(buffer, "RIMOV") != 0 || strcmp(buffer, "UPMOV") != 0 || strcmp(buffer, "DOMOV") != 0 || strcmp(buffer, "LEMOV") !=0){
+    if(strcmp(buffer, "RIMOV") != 0 && strcmp(buffer, "UPMOV") != 0 && strcmp(buffer, "DOMOV") != 0 && strcmp(buffer, "LEMOV") !=0){
         sendDunno(socketclient, "ERROR NOT GOOD SYNTAXE");
         continue;
     }
