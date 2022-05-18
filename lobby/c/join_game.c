@@ -1,7 +1,7 @@
 #include "../../include/join_game.h"
 
 int player_join(struct game *_game, struct player *player, struct participant *new_player_ingame){
-    pthread_mutex_lock(&(_game->game_lock));
+    pthread_mutex_lock(&verrou2);
     new_player_ingame->pos_x = 0;
     new_player_ingame->pos_y = 0;
     new_player_ingame->score = 0;
@@ -12,7 +12,7 @@ int player_join(struct game *_game, struct player *player, struct participant *n
     new_player_ingame->next = _game->participants;
     _game->participants = new_player_ingame;
     _game->players++;
-    pthread_mutex_unlock(&(_game->game_lock));
+    pthread_mutex_unlock(&verrou2);
     return PLAYER_JOIN_SUCCESS;
 }
 
@@ -36,13 +36,17 @@ int register_game(struct player *client, char * identifiant, uint8_t room_id_gam
 
 void * search_game(uint8_t id, struct list_game *list){
 
-    //VEROUS ICI
+   pthread_mutex_lock(&verrou1);
    struct list_game *copy = list;
     while(copy != NULL){
         if(copy->game != NULL){
-            if (copy->game->id_partie == id)return copy->game;
-        }else return NULL;
+            if (copy->game->id_partie == id){
+                pthread_mutex_unlock(&verrou1);
+                return copy->game;
+            }
+        }
         copy = copy->next_game;
     }
+    pthread_mutex_unlock(&verrou1);
     return NULL;
 }

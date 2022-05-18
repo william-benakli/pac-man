@@ -1,6 +1,7 @@
 #ifndef GAME_SETTINGS_H
 #define GAME_SETTINGS_H
 
+#include "udp_functions.h"
 #include "player_ingame.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,12 +26,11 @@ struct game{
 
     int port_udp; 
     char *address_udp;
-    
+
     char **labyrinth;
-    enum { STATUS_AVAILABLE, STATUS_UNAVAILABLE} status;
+    enum {STATUS_AVAILABLE, STATUS_UNAVAILABLE} status;
     struct participant *participants;
 
-    pthread_mutex_t game_lock;
 };
 
 int init_game(struct game * game, uint16_t hauteur, uint16_t largeur);
