@@ -90,7 +90,9 @@ int waiting_players(struct player *player){
     struct participant * partcipant_lobby = search_player_in_game(game_courant, player);
     if(partcipant_lobby == NULL) return -1;
 
-    while(check_ready(game_courant) == PLAYERS_NOT_READY && game_courant->players < 2){
+    partcipant_lobby->player_ready = 1;
+
+    while(check_ready(game_courant) == PLAYERS_NOT_READY || game_courant->players < 2){
         sleep(1);
     }
     spawnFantomes(game_courant);
