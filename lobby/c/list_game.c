@@ -9,6 +9,7 @@ struct list_game * init_list_game(){
     struct list_game * game = malloc(sizeof(struct list_game));
     game->game = NULL;
     game->next_game=NULL;
+    pthread_mutex_init(&(game->list_lock),NULL);
     return game;
 }
 
@@ -27,7 +28,7 @@ void free_list_game(struct list_game *games){
 }
 
 int add_game(struct game *addgame, struct list_game *list){
-    //pthread_mutex_lock(&verrou);
+    pthread_mutex_lock(&(list->list_lock));
 
         struct list_game *copy = list;
         if(copy->game == NULL){
@@ -43,11 +44,13 @@ int add_game(struct game *addgame, struct list_game *list){
 
         copy->next_game = list_next;
 
+    pthread_mutex_unlock(&(list->list_lock));
     return GAME_CREATED_SUCCESSFULLY;
 }
 
 //supprime un jeu de liste
 int remove_game(struct game *rem_game, struct list_game *list){
+    pthread_mutex_lock(&(list->list_lock));
     struct list_game *copy = list;
 
     if(copy->game == NULL){
@@ -56,6 +59,7 @@ int remove_game(struct game *rem_game, struct list_game *list){
 
     if(copy->game->id_partie == rem_game->id_partie){
         list->next_game = list->next_game->next_game;
+        pthread_mutex_unlock(&(list->list_lock));
         return GAME_REMOVED_SUCCESSFULLY;
     }
 
@@ -65,11 +69,12 @@ int remove_game(struct game *rem_game, struct list_game *list){
             return GAME_REMOVED_SUCCESSFULLY;
         }
     }
-
+    pthread_mutex_unlock(&(list->list_lock));
     return GAME_FAILED_REMOVAL;
 }
 
 uint8_t size_game_available(struct list_game *list){
+    pthread_mutex_lock(&(list->list_lock));
     struct list_game *copy = list;
     uint8_t nombre_party_available = 0;
     if(copy->game == NULL)return 0;
@@ -77,5 +82,6 @@ uint8_t size_game_available(struct list_game *list){
         if (copy->game->status == STATUS_AVAILABLE)nombre_party_available++;
         copy = copy->next_game;
     }
+    pthread_mutex_unlock(&(list->list_lock));
     return nombre_party_available;
 }

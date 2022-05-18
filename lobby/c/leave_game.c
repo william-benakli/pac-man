@@ -1,19 +1,23 @@
 #include "../../include/leave_game.h"
 
 int playerleave(struct game *_game, struct player *player){
+    pthread_mutex_lock(&(_game->game_lock));
     struct game *copy = _game;
     if (copy->participants->tcp_sock == player->tcp_sock){
         _game->participants = _game->participants->next;
         _game->players--;
+        pthread_mutex_unlock(&(_game->game_lock));
         return GAME_LEAVE_SUCCESS;
     }
     while(copy->participants->next->next != NULL){
         if(copy->participants->next->tcp_sock == player->tcp_sock){
             copy->participants->next = copy->participants->next->next;
             _game->players--;
+            pthread_mutex_unlock(&(_game->game_lock));
             return GAME_LEAVE_SUCCESS;
         }
     }
+    pthread_mutex_unlock(&(_game->game_lock));
     return GAME_LEAVE_FAILURE;
 }
 

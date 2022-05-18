@@ -2,11 +2,12 @@
 #define LABYRINTH_LOGIC_H
 
 #include "../include/game_settings.h"
+#include "udp_functions.h"
 
-#define CASEVIDE = '0'
-#define MUR = '#'
-#define JOUEUR = '1'
-#define FANTOME = 'f'
+#define CASEVIDE '0'
+#define MUR '#'
+#define JOUEUR '1'
+#define FANTOME 'f'
 
 #define MOVELEFT 1 
 #define MOVERIGHT 2 

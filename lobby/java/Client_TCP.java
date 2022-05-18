@@ -8,7 +8,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class Client_TCP implements Runnable {
-
 	Socket socket;
 	static int is_the_game_started = 0;
 	static int is_the_game_ended = 0;
