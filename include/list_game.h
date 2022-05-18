@@ -2,7 +2,6 @@
 #define LIST_GAME_H
 
 #include "game_settings.h"
-#include <pthread.h>
 
 struct list_game{
     struct game *game;

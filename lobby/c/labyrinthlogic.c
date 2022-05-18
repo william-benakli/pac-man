@@ -1,4 +1,5 @@
 #include "../../include/labyrinthlogic.h"
+#include "../../include/utils/variables_mutex.h"
 
 char  **initlabirynth(uint16_t x, uint16_t y){
     char **labyrinth = (char **) malloc(y * sizeof(char *));
@@ -19,17 +20,17 @@ char  **initlabirynth(uint16_t x, uint16_t y){
 }
 
 void freelabirynth(struct game *game){
-    pthread_mutex_lock(&(game->game_lock));
+    pthread_mutex_lock(&verrou2);
     for (int i = 0; i < game->hauteur; i++){
         free(game->labyrinth[i]);
     }
     free(game->labyrinth);
-    pthread_mutex_unlock(&(game->game_lock));
+    pthread_mutex_unlock(&verrou2);
 }
 
 
 int moveinlabyrinth(int direction, int steps, struct game *game, struct participant *player){
-    pthread_mutex_lock(&(game->game_lock));
+    pthread_mutex_lock(&verrou2);
     int stepsmoved = 0;
     int ghostfound = 0;
     switch (direction)
@@ -148,47 +149,47 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
     }
 
     int ret = (ghostfound == 1) ? stepsmoved + NOMBRE_FANTOME : stepsmoved;
-    pthread_mutex_unlock(&(game->game_lock));
+    pthread_mutex_unlock(&verrou2);
     return ret;
 }
 
 char getElementAtPos(struct game *game, int x, int y){
-    pthread_mutex_lock(&(game->game_lock));
+    pthread_mutex_lock(&verrou2);
     if(game->labyrinth == NULL){
-        pthread_mutex_unlock(&(game->game_lock));
+        pthread_mutex_unlock(&verrou2);
         return '-';
     }
-    pthread_mutex_unlock(&(game->game_lock));
+    pthread_mutex_unlock(&verrou2);
     return game->labyrinth[x][y];
 }
 
 int setParticipantAtPos(struct game *game, struct participant *participant, int x, int y){
-    pthread_mutex_lock(&(game->game_lock));
+    pthread_mutex_lock(&verrou2);
     if(game->labyrinth == NULL){
-        pthread_mutex_unlock(&(game->game_lock));
+        pthread_mutex_unlock(&verrou2);
         return -1;
     }
     printf("placement du joueur  x: %d  y: %d\n", x,y);
     game->labyrinth[y][x] = 'p';
     participant->pos_x = x;
     participant->pos_y = y;
-    pthread_mutex_unlock(&(game->game_lock));
+    pthread_mutex_unlock(&verrou2);
     return 0;
 }
 
 int setElementAtPos(struct game *game, char c, int x, int y){
-    pthread_mutex_lock(&(game->game_lock));
+    pthread_mutex_lock(&verrou2);
     if(game->labyrinth == NULL){
-        pthread_mutex_unlock(&(game->game_lock));
+        pthread_mutex_unlock(&verrou2);
         return -1;
     }
     if(c == '0' || c == 'f' || c == '#' || c == 'p'){
         game->labyrinth[x][y] = c;
     }else{
-        pthread_mutex_unlock(&(game->game_lock));
+        pthread_mutex_unlock(&verrou2);
         return -1;
     }
-    pthread_mutex_unlock(&(game->game_lock));
+    pthread_mutex_unlock(&verrou2);
     return 0;
 }
 

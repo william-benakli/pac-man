@@ -1,4 +1,5 @@
 #include "../../include/list_game.h"
+#include "../../include/utils/variables_mutex.h"
 
 #define GAME_CREATED_SUCCESSFULLY 0 
 #define GAME_FAILED_CREATION 1

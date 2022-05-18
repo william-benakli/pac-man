@@ -1,5 +1,6 @@
 #include "../../include/game_settings.h"
 #include "../../include/serveur.h"
+#include "../../include/utils/variables_mutex.h"
 
 uint8_t id_games_static = 0;
 

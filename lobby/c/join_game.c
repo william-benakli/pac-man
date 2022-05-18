@@ -1,4 +1,5 @@
 #include "../../include/join_game.h"
+#include "../../include/utils/variables_mutex.h"
 
 int player_join(struct game *_game, struct player *player, struct participant *new_player_ingame){
     pthread_mutex_lock(&verrou2);
