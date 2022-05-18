@@ -1,6 +1,8 @@
 package vue;
 
+import vue.graphics.FontGraphiqueBuilder;
 import vue.graphics.JButtonGraphiqueBuilder;
+import vue.graphics.JPanelGraphiqueBuilder;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -22,8 +24,37 @@ public class CreateGraphicsUtils {
         return jButton;
     }
 
+    public static JPanelGraphiqueBuilder createPanelImage(String chemin){
+        final JPanelGraphiqueBuilder jPanel = new JPanelGraphiqueBuilder(chemin);
+        return jPanel;
+    }
+
+    public static JLabel createLabelWithFont(String nom){
+        final JLabel jLabel = new JLabel(nom);
+        jLabel.setFont(VueClient.font);
+        return jLabel;
+    }
+
+    public static JLabel createLabelWithFont(String nom, Color color){
+        final JLabel jLabel = new JLabel(nom);
+        jLabel.setFont(VueClient.font);
+        jLabel.setForeground(color);
+        return jLabel;
+    }
+
+    public static JTextArea createTextArea(int w, int h){
+        final JTextArea jTextArea = new JTextArea();
+        jTextArea.setEnabled(false);
+        jTextArea.setFont(VueClient.font);
+        jTextArea.setForeground(Color.white);
+        jTextArea.setBackground(Color.GRAY);
+        jTextArea.setBounds(0,0, w,h);
+        return jTextArea;
+    }
+
     public static JTextField createJtextField(){
         final JTextField jTextField = new JTextField();
+        jTextField.setFont(VueClient.font);
         jTextField.setBounds(1,1,1,1);
         return jTextField;
     }
@@ -34,38 +65,4 @@ public class CreateGraphicsUtils {
     }
 
 
-    public static JTabbedPane createJTabbedPane(JPanel ... listComposant) {
-        final JTabbedPane jTabbedPane = new JTabbedPane();
-        for(JPanel panel : listComposant) jTabbedPane.addTab(panel.getName(), panel);
-        return jTabbedPane;
-    }
-
-    public static JPanel createJpanel(String name, JComponent ... listComposant) {
-        final JPanel jpanel = new JPanel();
-        jpanel.setBorder(BorderFactory.createTitledBorder(name));
-        for(JComponent panel : listComposant) jpanel.add(panel);
-        return jpanel;
-    }
-    //Surgchage de la fonciton
-    public static JPanel createJpanel(JComponent ... listComposant) {
-        final JPanel jpanel = new JPanel();
-        for(JComponent panel : listComposant) jpanel.add(panel);
-        return jpanel;
-    }
-
-    public static JLabel createJLabel(String text) {
-        final JLabel label = new JLabel();
-        label.setText(text);
-        label.setSize(120, 120);
-        return label;
-    }
-
-    public static JPanel createJpanel(GridLayout grid, JComponent ... listComposant) {
-        final JPanel jpanel = new JPanel();
-        jpanel.setLayout(grid);
-        for(JComponent panel : listComposant) {
-            jpanel.add(panel);
-        }
-        return jpanel;
-    }
 }

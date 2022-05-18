@@ -1,6 +1,7 @@
 package vue;
 
-import vue.panel.PanelConnection;
+import vue.graphics.FontGraphiqueBuilder;
+import vue.panel.PanelLobby;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.*;
 public class VueClient extends JFrame {
 
     public static JPanel panel_courant = new JPanel();
+    public static Font font;
 
     public VueClient() throws Exception {
         this.setTitle("Projet Reseau - CatchGhost");
@@ -16,11 +18,14 @@ public class VueClient extends JFrame {
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
-      //  this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("icon.jpg")).getImage());
-        VueClient.setPanel(new PanelConnection());
+        final FontGraphiqueBuilder builderFont = new FontGraphiqueBuilder(10f);
+        font = builderFont.getFont();
+        this.setIconImage(new ImageIcon("ressources/icon/logo.png").getImage());
+        VueClient.setPanel(new PanelLobby());
         this.setContentPane(panel_courant);
         this.setVisible(true);
         this.setLayout(new BorderLayout());
+
     }
 
     public static void setPanel(JPanel panel){

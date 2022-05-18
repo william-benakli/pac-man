@@ -25,4 +25,11 @@ public class Player {
     public static Player createPlayer(String identifant, int x, int y){
         return new Player(identifant, x, y);
     }
+
+    public void setPoX(int x) {
+        this.x = x;
+    }
+    public void setPoY(int y) {
+        this.y = y;
+    }
 }
