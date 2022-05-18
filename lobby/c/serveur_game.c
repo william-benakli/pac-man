@@ -2,7 +2,7 @@
 
 int gameInput(int socketclient, struct participant *partcipant_ingame, struct game *game_courant){
 
-  while(check_endgame(game_courant) == NOT_FINISH){
+  while(1){
     printlabyrinth(game_courant);
 
     size_t size_buffer_first = SIZE_INPUT_DEFAULT;
@@ -11,8 +11,14 @@ int gameInput(int socketclient, struct participant *partcipant_ingame, struct ga
 
     int count_fst = read(socketclient, buffer, size_buffer_first);
 
-    if(count_fst == 0)return -1;//TODO verifier
-    
+    if(count_fst == 0){
+      return -1;
+    }
+
+    if(game_courant->status == STATUS_UNAVAILABLE){
+        sendGodBye(socketclient);
+        break;
+    }    
 
     if(count_fst != size_buffer_first){
       printf("[GAME] Erreur de taille count: [%d] / buffer: [%ld] #1\n", count_fst, size_buffer_first);
@@ -97,7 +103,7 @@ int gameInput(int socketclient, struct participant *partcipant_ingame, struct ga
   }
 
   /*SORTIE DU BREAK */
-  sendGodBye(socketclient);
+
   free(partcipant_ingame);
   close(socketclient);
   return 0;

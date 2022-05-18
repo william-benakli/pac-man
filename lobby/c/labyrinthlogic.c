@@ -245,10 +245,25 @@ int spawnFantomes(struct game *game){
 }
 
 int check_endgame(struct game *game){
-    if(game->nb_fantome <= 0 || game->players == 0){//TODO: ici on devra verifier 2
-        game->status = STATUS_UNAVAILABLE; 
+    pthread_mutex_lock(&(game->game_lock));
+    if(game->nb_fantome <= 0 || game->players ==1){//TODO: ici on devra verifier 2
+        if(game->status == STATUS_AVAILABLE){
+            struct participant *winner;
+            if (find_winner(game,winner) == -1){
+                pthread_mutex_unlock(&(game->game_lock)); 
+                return NOT_FINISH;
+            }
+            end_message(game,winner);
+            game->status = STATUS_UNAVAILABLE;
+        }
+        pthread_mutex_unlock(&(game->game_lock)); 
         return FINISH;
     }
+
+    if(game->players == 0){
+
+    }
+    pthread_mutex_unlock(&(game->game_lock));
     return NOT_FINISH;
 }
 
@@ -270,4 +285,24 @@ void printlabyrinth(struct game *game){
             printf("\n");
     }
     printf("--------------------\n");
+}
+
+int find_winner(struct game *_game, struct participant *winner){
+
+    if (_game->participants == NULL){
+        return -1;
+    }
+    struct game *copy = _game;
+    int winning_score = _game->participants->score;
+    winner = _game->participants;
+
+    while(copy->participants != NULL){
+        if(copy->participants->score > winning_score){
+            winning_score = copy->participants->score;
+            winner = copy->participants;
+        }
+        copy->participants = copy->participants->next;
+    }
+
+    return 0;
 }
