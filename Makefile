@@ -3,12 +3,10 @@ JFLAGS = -g
 JC = javac
 .SUFFIXES: .java .class
 .java.class:
-	$(JC) $(JFLAGS) -cp lobby/java $<
+	$(JC) $(JFLAGS) -cp client/ $<
 
 CLASSES_JAVA = \
-        lobby/java/Client_TCP.java\
-        lobby/java/Client_UDP.java\
-	lobby/java/Client_Main.java
+		client/src/ghostlab/Client_Main.java\
 
 # COMPILATION DES FICHIERS C #########################
 CC = gcc
@@ -38,6 +36,7 @@ c: $(CLASSES_C)
 # NETOYAGE DES FICHIERS INUTILES #####################
 clean:
 	$(RM) lobby/c/-f *.o
-	$(RM) lobby/java/*.class
+	$(RM) -r client/src/ghostlab/*.class
+	$(RM) -r client/src/ghostlab/vue/*.class
 
 ######################################################
