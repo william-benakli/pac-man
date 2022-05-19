@@ -1,5 +1,6 @@
 package src.ghostlab.vue.panel;
 
+import src.ghostlab.thread.Client_TCP_GRAPHIQUE;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.VueClient;
 import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
@@ -31,7 +32,7 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
         this.reponse_list_size = CreateGraphicsUtils.createTextArea(70, 70);
         this.reponse_list_size.append("Aucun message pour le moment...");
         this.reponse_commande = CreateGraphicsUtils.createLabelWithFont("Reponse du serveur", Color.ORANGE);
-        this.game_selectlabel = CreateGraphicsUtils.createLabelWithFont("Création d'une nouvelle game", Color.WHITE);
+        this.game_selectlabel = CreateGraphicsUtils.createLabelWithFont("Creeation d'une nouvelle game", Color.WHITE);
 
         GroupLayout LayoutPrincpal = new GroupLayout(this);
 
@@ -88,5 +89,22 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
             VueClient.setPanel(new PanelLobby());
         });
 
+        this.size_game.addActionListener(e->{
+            Client_TCP_GRAPHIQUE.Command_Check("LIST?" + "***",VueClient.is, VueClient.os, reponse_list_size);
+        });
+
+        this.list_game.addActionListener(e->{
+            Client_TCP_GRAPHIQUE.Command_Check("LIST?" + "***",VueClient.is, VueClient.os, reponse_list_size);
+        });
+
+        this.unreg.addActionListener(e -> {
+            Client_TCP_GRAPHIQUE.Command_Check("UNREG "+ "***",VueClient.is, VueClient.os, reponse_list_size);
+
+        });
+
+        this.regis_game.addActionListener(e -> {
+            Client_TCP_GRAPHIQUE.Command_Check("NEWPL " + identifiant + " " + port + "***",VueClient.is, VueClient.os, reponse_list_size);
+
+        });
     }
 }

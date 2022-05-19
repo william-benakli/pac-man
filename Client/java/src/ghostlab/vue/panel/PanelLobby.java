@@ -1,6 +1,7 @@
 package src.ghostlab.vue.panel;
 
 import src.ghostlab.modele.Game;
+import src.ghostlab.thread.Client_TCP_GRAPHIQUE;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.VueClient;
 import src.ghostlab.vue.graphics.JButtonGraphiqueBuilder;
@@ -62,8 +63,7 @@ public class PanelLobby extends JPanelGraphiqueBuilder {
 
     public void actionListerners(){
         refresh_game.addActionListener(event->{
-            //controller.send(Games?);
-            VueClient.setPanel(new PanelInGame(Game.createGame(0,8,7,0, "12.151.02151.0212")));
+            Client_TCP_GRAPHIQUE.Command_Check("GAME?", VueClient.is, VueClient.os, null);
         });
 
         add_game.addActionListener(event->{

@@ -1,6 +1,7 @@
 package src.ghostlab.vue.panel;
 
 import src.ghostlab.modele.Game;
+import src.ghostlab.thread.Client_TCP_GRAPHIQUE;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.VueClient;
 import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
@@ -87,11 +88,26 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
         actionListerner();
     }
 
-    public void actionListerner(){
-        this.back.addActionListener(event->{
+    public void actionListerner() {
+        this.back.addActionListener(event -> {
             VueClient.setPanel(new PanelLobby());
         });
 
+        this.size_game.addActionListener(e->{
+            Client_TCP_GRAPHIQUE.Command_Check("SIZE? " + game.getIdGame() + "***", VueClient.is, VueClient.os, reponse_list_size);
+        });
+
+        this.list_game.addActionListener(e->{
+            Client_TCP_GRAPHIQUE.Command_Check("LIST? " + game.getIdGame() + "***", VueClient.is, VueClient.os, reponse_list_size);
+        });
+
+        this.unreg.addActionListener(e -> {
+            Client_TCP_GRAPHIQUE.Command_Check("UNREG " + game.getIdGame() + "***", VueClient.is, VueClient.os, reponse_list_size);
+        });
+
+        this.regis_game.addActionListener(e -> {
+            Client_TCP_GRAPHIQUE.Command_Check("REGIS " + game.getIdGame() + "***", VueClient.is, VueClient.os, reponse_list_size);
+        });
     }
 
 }

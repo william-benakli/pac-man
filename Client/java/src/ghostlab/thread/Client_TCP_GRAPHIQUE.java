@@ -2,6 +2,7 @@ package src.ghostlab.thread;
 
 import src.ghostlab.vue.VueClient;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,10 +31,10 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 			OutputStream os = socket.getOutputStream();
 			String msg;
 
-			EventQueue.invokeLater(new Runnable() {
+			EventQueue.invokeLater(	new Runnable() {
 				public void run() {
 					try {
-						client_vue = new VueClient();
+						client_vue = new VueClient(socket);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -276,7 +277,7 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 
 	// VEIRIFIE LA COMMANDE PUIS REDIRIGE VERS LA BONNE METHODE (AVANT LE DEBUT DE
 	// LA PARTIE)
-	public static void Command_Check(String msg, InputStream is, OutputStream os) {
+	public static void Command_Check(String msg, InputStream is, OutputStream os, JTextArea area) {
 		String lecture = "";
 		String commande = "";
 		int pos_lecture = 0;
@@ -300,19 +301,19 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 						help_understand_lobby();
 						break;
 					case "NEWPL":
-						Command_new_player(lecture, is, os);
+						Command_new_player(lecture, is, os, area);
 						break;
 					case "REGIS":
-						Command_regis_player(lecture, is, os);
+						Command_regis_player(lecture, is, os, area);
 						break;
 					case "UNREG":
-						Command_unreg_player(lecture, is, os);
+						Command_unreg_player(lecture, is, os, area);
 						break;
 					case "SIZE?":
-						Command_size_player(lecture, is, os);
+						Command_size_player(lecture, is, os, area);
 						break;
 					case "LIST?":
-						Command_list_player(lecture, is, os);
+						Command_list_player(lecture, is, os, area);
 						break;
 					case "GAME?":
 						try {
@@ -381,7 +382,7 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 	}
 
 	// VEIRIFIE LA COMMANDE PUIS REDIRIGE VERS LA BONNE METHODE (PENDANT LA PARTIE)
-	public static void Command_Check_in_game(String msg, InputStream is, OutputStream os) {
+	public static void Command_Check_in_game(String msg, InputStream is, OutputStream os, JTextArea area) {
 		String lecture = "";
 		String commande = "";
 		int pos_lecture = 0;
@@ -405,29 +406,29 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 						help_understand_in_game();
 						break;
 					case "UPMOV":
-						check_move_in_game(lecture, is, os);
+						check_move_in_game(lecture, is, os, area);
 						break;
 					case "DOMOV":
-						check_move_in_game(lecture, is, os);
+						check_move_in_game(lecture, is, os, area);
 						break;
 					case "LEMOV":
-						check_move_in_game(lecture, is, os);
+						check_move_in_game(lecture, is, os, area);
 						break;
 					case "RIMOV":
-						check_move_in_game(lecture, is, os);
+						check_move_in_game(lecture, is, os, area);
 						break;
 					case "IQUIT":
 						quit_in_game(lecture, is, os);
 						is_the_game_ended = 1;
 						return;
 					case "GLIS?":
-						glist_in_game(lecture, is, os);
+						glist_in_game(lecture, is, os, area);
 						break;
 					case "MALL?":
-						msg_all_in_game(lecture, is, os);
+						msg_all_in_game(lecture, is, os, area);
 						break;
 					case "SEND?":
-						msg_send_in_game(lecture, is, os);
+						msg_send_in_game(lecture, is, os, area);
 						break;
 					default:
 						System.out.println("COMMANDE NON RECONNUE! (COMMAND_CHECK_IN_GAME)");
@@ -483,7 +484,7 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 	}
 
 	// COMMANDE_SEND: [LIST?␣m***] m sur un byte
-	public static void Command_list_player(String str, InputStream is, OutputStream os) {
+	public static void Command_list_player(String str, InputStream is, OutputStream os, JTextArea reponse) {
 		try {
 			// Envoie msg - message en TCP
 			ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
@@ -580,7 +581,7 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 	}
 
 	// COMMANDE_SEND: [SIZE?␣m***] m sur un byte
-	public static void Command_size_player(String str, InputStream is, OutputStream os) {
+	public static void Command_size_player(String str, InputStream is, OutputStream os, JTextArea reponse) {
 		try {
 			// Envoie msg - message en TCP
 			ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
@@ -674,7 +675,7 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 	}
 
 	// COMMANDE_SEND: [UNREG***]
-	public static void Command_unreg_player(String str, InputStream is, OutputStream os) {
+	public static void Command_unreg_player(String str, InputStream is, OutputStream os, JTextArea reponse) {
 		try {
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
@@ -726,12 +727,10 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 	}
 
 	// COMMANDE_SEND: [NEWPL␣id␣port***]
-	public static void Command_new_player(String str, InputStream is, OutputStream os) {
+	public static void Command_new_player(String str, InputStream is, OutputStream os, JTextArea area) {
 		try {
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
-			System.out.println("J'ai envoye en TCP: " + str);
-
 			// Recois msg - message en TCP
 			String msg = "";
 			String receptacle = null;
@@ -767,10 +766,9 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 					msg += (char) b;
 				}
 			} else {
-				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[NEWPL␣id␣port***]");
-				System.out.println("MESSAGE RECU: " + msg);
+				area.setText("Erreur : " + msg);
 			}
-			System.out.println("J'ai reçu en TCP: " + msg);
+			area.setText(msg);
 		} catch (Exception e) {
 			System.out.println("ERREUR NEWPL");
 			e.printStackTrace();
@@ -778,7 +776,7 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 	}
 
 	// COMMANDE_SEND: [REGIS␣id␣port␣m***] m en byte
-	public static void Command_regis_player(String str, InputStream is, OutputStream os) {
+	public static void Command_regis_player(String str, InputStream is, OutputStream os, JTextArea reponse) {
 		try {
 			// Envoie msg - message en TCP
 			ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
@@ -837,10 +835,10 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 					msg += (char) b;
 				}
 			} else {
-				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[REGIS␣id␣port␣m***]");
-				System.out.println("MESSAGE RECU: " + msg);
+				reponse.setText("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[REGIS␣id␣port␣m***]");
+				reponse.setText(msg);
 			}
-			System.out.println("J'ai reçu en TCP: " + msg);
+			reponse.setText(msg);
 		} catch (Exception e) {
 			System.out.println("ERREUR REGIS");
 			e.printStackTrace();
@@ -1028,7 +1026,7 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 	}
 
 	// COMMAND_SEND: [UPMOV␣d***],[DOMOV␣d***],[LEMOV␣d***] et [RIMOV␣d***]
-	public static void check_move_in_game(String str, InputStream is, OutputStream os) {
+	public static void check_move_in_game(String str, InputStream is, OutputStream os, JTextArea reponse) {
 		try {
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
@@ -1173,7 +1171,7 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 	}
 
 	// COMMAND_SEND: [GLIS?***]
-	public static void glist_in_game(String str, InputStream is, OutputStream os) {
+	public static void glist_in_game(String str, InputStream is, OutputStream os, JTextArea reponse) {
 		try {
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
@@ -1271,7 +1269,7 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 	}
 
 	// COMMAND_SEND: [MALL?␣mess***]
-	public static void msg_all_in_game(String str, InputStream is, OutputStream os) {
+	public static void msg_all_in_game(String str, InputStream is, OutputStream os, JTextArea reponse) {
 		try {
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
@@ -1345,7 +1343,7 @@ public class Client_TCP_GRAPHIQUE implements Runnable {
 	}
 
 	// COMMAND_SEND: [SEND?␣id␣mess***]
-	public static void msg_send_in_game(String str, InputStream is, OutputStream os) {
+	public static void msg_send_in_game(String str, InputStream is, OutputStream os, JTextArea reponse) {
 		try {
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
