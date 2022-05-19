@@ -50,7 +50,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 game->labyrinth[player->pos_y][player->pos_x - i] = '0';
                 player->score++;
                 game->nb_fantome--;
-                score_message(game,player,player->pos_x - i,player->pos_y);
+                //score_message(game,player,player->pos_x - i,player->pos_y);
                 check_endgame(game);
             }
             stepsmoved++;
@@ -64,7 +64,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
 
     case MOVERIGHT: 
        for(int i = 1; i <= steps; i++){
-           if(player->pos_y + i > game->largeur -1){
+           if(player->pos_x + i > game->largeur -1){
                 break;
             } 
             if (game->labyrinth[player->pos_y][player->pos_x + i] != '0'){
@@ -77,7 +77,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 game->labyrinth[player->pos_y][player->pos_x + i] = '0';
                 player->score++;
                 game->nb_fantome--;
-                score_message(game,player,player->pos_x + i,player->pos_y);
+                //score_message(game,player,player->pos_x + i,player->pos_y);
                 check_endgame(game);
             }
             stepsmoved++;
@@ -104,7 +104,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 game->labyrinth[player->pos_y - i][player->pos_x] = '0';
                 player->score++;
                 game->nb_fantome--;
-                score_message(game,player,player->pos_x,player->pos_y - i);
+                //score_message(game,player,player->pos_x,player->pos_y - i);
                 check_endgame(game);
             }
             stepsmoved++;
@@ -131,7 +131,7 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 game->labyrinth[player->pos_y + i][player->pos_x] = '0';
                 player->score++;
                 game->nb_fantome--;
-                score_message(game,player,player->pos_x,player->pos_y + i);
+                //score_message(game,player,player->pos_x,player->pos_y + i);
                 check_endgame(game);
             }
             stepsmoved++;
