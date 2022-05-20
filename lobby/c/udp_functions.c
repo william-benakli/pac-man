@@ -1,6 +1,6 @@
 #include "../../include/udp_functions.h"
 
-int broadcast_message(struct game *_game, char *buf) {
+int mutilcast_message(struct game *_game, char *buf) {
 
 	int sock = socket(PF_INET, SOCK_DGRAM, 0);
 	struct addrinfo *first_info;
@@ -9,21 +9,17 @@ int broadcast_message(struct game *_game, char *buf) {
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_DGRAM;
 
-	/* SERT A RIEN FULL BUG TODO: DELETE 
-	 char portbuffer[5];
-	 int bytes_written = sprintf(portbuffer, "%d", _game->port_udp);
-	 if (bytes_written < 0) {
-	 return -1;
-	 }
-	 */
-
-	char private_buffer[strlen(buf) + 9];
-	int bytes_written = sprintf(private_buffer, "MALL %s+++", buf);
+	char private_buffer[strlen(buf) + 4];
+	int bytes_written = sprintf(private_buffer, "%s+++", buf);
 	if (bytes_written < 0) {
 		return -1;
 	}
 
-	int r = getaddrinfo(_game->address_udp, "9999", &hints, &first_info);
+	char port[5];
+	sprintf(port, "%d", _game->port_udp);
+	int r = getaddrinfo(_game->address_udp, port, &hints, &first_info);
+
+	// private_buffer[strlen(private_buffer)] = '\0';
 
 	printf("LE PORT UDP DE LA GAME: %s\n", _game->address_udp);
 	printf("LE STRLEN: %ld\n", strlen(buf));
@@ -37,52 +33,55 @@ int broadcast_message(struct game *_game, char *buf) {
 					(socklen_t) sizeof(struct sockaddr_in));
 		}
 	}
+
 	return 0;
 }
 
 int score_message(struct game *_game, struct participant *player, int fantom_x,
 		int fantom_y) {
-	char score_buffer[30];
-	int bytes_written = sprintf(score_buffer, "SCORE %s %04d %03d %03d+++",
+	char score_buffer[27];
+	int bytes_written = sprintf(score_buffer, "SCORE %s %04d %03d %03d",
 			player->identifiant, player->score, fantom_x, fantom_y);
 	if (bytes_written < 0) {
 		return -1;
 	}
-	int ret = broadcast_message(_game, score_buffer);
+
+	int ret = mutilcast_message(_game, score_buffer);
+
 	return ret;
 }
 
 int ghost_message(struct game *_game, int fantom_x, int fantom_y) {
-	char ghost_buffer[20];
-	int bytes_written = sprintf(ghost_buffer, "GHOST %03d %03d+++", fantom_x,
+	char ghost_buffer[14];
+	int bytes_written = sprintf(ghost_buffer, "GHOST %03d %03d", fantom_x,
 			fantom_y);
 	if (bytes_written < 0) {
 		return -1;
 	}
-	int ret = broadcast_message(_game, ghost_buffer);
+	int ret = mutilcast_message(_game, ghost_buffer);
 	return ret;
 }
 
 int end_message(struct game *_game, struct participant *winner) {
-	char end_buffer[30];
-	int bytes_written = sprintf(end_buffer, "ENDGA %s %04d+++",
+	char end_buffer[28];
+	int bytes_written = sprintf(end_buffer, "ENDGA %s %04d",
 			winner->identifiant, winner->score);
 	if (bytes_written < 0) {
 		return -1;
 	}
-	int ret = broadcast_message(_game, end_buffer);
+	int ret = mutilcast_message(_game, end_buffer);
 	return ret;
 }
 
 int group_message(struct game *_game, struct participant *sender,
 		char *message) {
 	char message_buffer[220];
-	int bytes_written = sprintf(message_buffer, "MESSA %s %s+++",
+	int bytes_written = sprintf(message_buffer, "MESSA %s %s",
 			sender->identifiant, message);
 	if (bytes_written < 0) {
 		return -1;
 	}
-	int ret = broadcast_message(_game, message_buffer);
+	int ret = mutilcast_message(_game, message_buffer);
 	return ret;
 }
 
@@ -111,16 +110,15 @@ int private_message(struct game *_game, char *target_identifiant, char *message,
 		return -1;
 	}
 
-	/* SERT A RIEN FULL BUG TODO: DELETE 
 	 char portbuffer[5];
 	 bytes_written = sprintf(portbuffer, "%d", copy_players->udp_port);
 	 if (bytes_written < 0) {
-	 return -1;
+	 	return -1;
 	 }
-	 */
+	 
 
-	// private_buffer[strlen(private_buffer)] = '\0';
-	int r = getaddrinfo(copy_players->address, "9999", &hints, &first_info);
+	//private_buffer[strlen(private_buffer)] = '\0';
+	int r = getaddrinfo(copy_players->address, portbuffer, &hints, &first_info);
 	printf("LE PORT UDP DU JOUEUR: %s\n", copy_players->address);
 	printf("LE STRLEN: %ld\n", strlen(private_buffer));
 	printf("LE BUFFER: %s\n", private_buffer);
@@ -133,6 +131,7 @@ int private_message(struct game *_game, char *target_identifiant, char *message,
 					(socklen_t) sizeof(struct sockaddr_in));
 		}
 	}
+
 	return 0;
 
 }

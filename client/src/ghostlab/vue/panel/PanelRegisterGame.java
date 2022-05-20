@@ -121,7 +121,6 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
 
         this.regis_game.addActionListener(e -> {
             if(partie_join){
-
                 VueClient.setPanel(new PanelWaiting());
                 //mettre en attente le client
             }else{

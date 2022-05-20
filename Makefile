@@ -26,7 +26,7 @@ OUTPATH_C = $(CPATH)out/
 CLASSES_C = $(CPATH)movement.c $(CPATH)labyrinthlogic.c $(CPATH)serveur.c $(CPATH)player_lobby.c $(CPATH)join_game.c $(CPATH)leave_game.c $(CPATH)list_game.c $(CPATH)game.c $(CPATH_UTILS)reponse_game.c $(CPATH_UTILS)reponse_lobby.c $(CPATH_UTILS)reponse_serveur.c $(CPATH)serveur_game.c $(CPATH)serveur_lobby.c $(CPATH)udp_functions.c  
 
 # LANCE LA COMPILATION DES FICHIERS ##################
-default: java c
+default: c
 
 java: $(CLASSES_JAVA:.java=.class)
 #c: $(CLASSES_C:.c=.o)

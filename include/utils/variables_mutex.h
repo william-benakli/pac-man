@@ -3,6 +3,6 @@
 
 #include <pthread.h>
 
-pthread_mutex_t verrou1;
-pthread_mutex_t verrou2;
+extern pthread_mutex_t verrou1;
+extern pthread_mutex_t verrou2;
 #endif

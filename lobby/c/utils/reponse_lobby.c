@@ -46,6 +46,7 @@ int creategame(struct player * player, struct list_game * games){
       return -1;
     }
     player->game_id = new_game->id_partie;
+    player->udp_port = atoi(port);
 
     int rep_join = register_game(player, identifiant, new_game->id_partie, _games);
     if(rep_join == -1){

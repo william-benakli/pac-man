@@ -17,8 +17,9 @@ int init_game(struct game *_game, uint16_t hauteur, uint16_t largeur){
     }
     _game->nb_fantome = 2 + rand() %10; // mettre en aléatoire
     _game->participants = NULL;
-    _game->port_udp = ++__UDP_PORT;
+    _game->port_udp = __UDP_PORT++;
     _game->address_udp = ADDRESS_MULTICAST;
+    _game->isGhost = NO;
     if(id_games_static > 255){
         return GAME_CREATION_FAILED;
    }

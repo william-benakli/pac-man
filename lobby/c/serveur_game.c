@@ -3,7 +3,8 @@
 int gameInput(int socketclient, struct participant *partcipant_ingame,
 		struct game *game_courant) {
 
-	while (check_endgame(game_courant) == NOT_FINISH) {
+	//while (check_endgame(game_courant) == NOT_FINISH) {
+  while (1) {
 		printlabyrinth(game_courant);
 
 		size_t size_buffer_first = SIZE_INPUT_DEFAULT;
@@ -11,6 +12,10 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 		buffer[size_buffer_first] = '\0';
 
 		int count_fst = read(socketclient, buffer, size_buffer_first);
+
+    if(game_courant->status == STATUS_UNAVAILABLE){
+      break;
+    }
 
 		if (count_fst == 0)
 			return -1; //TODO verifier
@@ -44,19 +49,19 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 			if (test_mall != 0) {
 				printf(
 						"erreur remplir le buffer de message ligne 34 fichier serveur_game.c\n");
-				send(socketclient, "NMALL***", 9 * sizeof(char), 0);
+				send(socketclient, "NMALL***", 8 * sizeof(char), 0);
 				continue;
 			}
 			
-			test_mall = broadcast_message(game_courant, message_buffer);
+			test_mall = mutilcast_message(game_courant, message_buffer);
 			
 			if (test_mall != 0) {
 				printf(
 						"erreur envoyer le buffer de message ligne 38 fichier serveur_game.c\n");
-				send(socketclient, "NMALL***", 9 * sizeof(char), 0);
+				send(socketclient, "NMALL***", 8 * sizeof(char), 0);
 				continue;
 			}
-			send(socketclient, "MALL!***", 9 * sizeof(char), 0);
+			send(socketclient, "MALL!***", 8 * sizeof(char), 0);
 			continue;
 		}
 
@@ -75,7 +80,7 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 			if (test_private != 0) {
 				printf(
 						"erreur remplir le buffer de message ligne 50 fichier serveur_game.c\n");
-				send(socketclient, "NSEND***", 9 * sizeof(char), 0);
+				send(socketclient, "NSEND***", 8 * sizeof(char), 0);
 				continue;
 			}
 
@@ -85,10 +90,10 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 			if (test_private != 0) {
 				printf(
 						"erreur remplir le buffer de message ligne 56 fichier serveur_game.c\n");
-				send(socketclient, "NSEND***", 9 * sizeof(char), 0);
+				send(socketclient, "NSEND***", 8 * sizeof(char), 0);
 				continue;
 			}
-			send(socketclient, "SEND!***", 9 * sizeof(char), 0);
+			send(socketclient, "SEND!***", 8 * sizeof(char), 0);
 			continue;
 		}
 
@@ -132,6 +137,8 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 	sendGodBye(socketclient);
 	free(partcipant_ingame);
 	close(socketclient);
+	pthread_exit(NULL);
+
 	return 0;
 }
 

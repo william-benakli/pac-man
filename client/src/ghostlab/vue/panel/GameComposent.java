@@ -1,6 +1,5 @@
 package src.ghostlab.vue.panel;
 
-import src.ghostlab.modele.Game;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.VueClient;
 
