@@ -13,8 +13,6 @@
 #define PLAYERS_READY 1
 #define PLAYERS_NOT_READY 0
 
-
-
 struct game{
     uint8_t id_partie;
     uint8_t players;
@@ -25,12 +23,11 @@ struct game{
 
     int port_udp; 
     char *address_udp;
-    
+
     char **labyrinth;
-    enum { STATUS_AVAILABLE, STATUS_UNAVAILABLE} status;
+    enum {STATUS_AVAILABLE, STATUS_UNAVAILABLE} status;
     struct participant *participants;
 
-    pthread_mutex_t game_lock;
 };
 
 int init_game(struct game * game, uint16_t hauteur, uint16_t largeur);
