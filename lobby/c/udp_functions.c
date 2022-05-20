@@ -17,8 +17,8 @@ int broadcast_message(struct game *_game, char *buf) {
 	 }
 	 */
 
-	char private_buffer[strlen(buf) + 8];
-	int bytes_written = sprintf(private_buffer, "MALL %s+++", buf);
+	char private_buffer[strlen(buf) + 4];
+	int bytes_written = sprintf(private_buffer, "%s+++", buf);
 	if (bytes_written < 0) {
 		return -1;
 	}
@@ -45,13 +45,15 @@ int broadcast_message(struct game *_game, char *buf) {
 
 int score_message(struct game *_game, struct participant *player, int fantom_x,
 		int fantom_y) {
-	char score_buffer[30];
-	int bytes_written = sprintf(score_buffer, "SCORE %s %04d %03d %03d+++",
+	char score_buffer[27];
+	int bytes_written = sprintf(score_buffer, "SCORE %s %04d %03d %03d",
 			player->identifiant, player->score, fantom_x, fantom_y);
 	if (bytes_written < 0) {
 		return -1;
 	}
+	
 	int ret = broadcast_message(_game, score_buffer);
+	
 	return ret;
 }
 
