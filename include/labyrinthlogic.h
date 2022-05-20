@@ -29,6 +29,6 @@ char getElementAtPos(struct game *game, int x, int y);
 int setElementAtPos(struct game *game, char c, int x, int y);
 int setParticipantAtPos(struct game *game, struct participant *participant, int x, int y);
 int check_endgame(struct game *game);
-
+struct participant* find_winner(struct game *game);
 
 #endif

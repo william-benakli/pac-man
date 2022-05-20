@@ -3,7 +3,8 @@
 int gameInput(int socketclient, struct participant *partcipant_ingame,
 		struct game *game_courant) {
 
-	while (check_endgame(game_courant) == NOT_FINISH) {
+	//while (check_endgame(game_courant) == NOT_FINISH) {
+  while (1) {
 		printlabyrinth(game_courant);
 
 		size_t size_buffer_first = SIZE_INPUT_DEFAULT;
@@ -11,6 +12,10 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 		buffer[size_buffer_first] = '\0';
 
 		int count_fst = read(socketclient, buffer, size_buffer_first);
+
+    if(game_courant->status == STATUS_UNAVAILABLE){
+      break;
+    }
 
 		if (count_fst == 0)
 			return -1; //TODO verifier
