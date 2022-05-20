@@ -161,8 +161,11 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
   uint16_t hauteur = ntohs(game->hauteur);
   uint16_t largeur = ntohs(game->largeur);
   uint8_t nombre_fantome = game->nb_fantome;
-  char * ip = "225.12.22.1###";//TODO: IP A REVOIR
-  char * port = "1818"; // TODO: PORT à REVOIR
+  participant->address = "225.1.2.4";
+  game -> address_udp = "225.1.2.4";
+  //participant->udp_port = 9999;
+  char * ip = "225.1.2.4######";//TODO: IP A REVOIR
+  char * port = "9999"; // TODO: PORT à REVOIR
   char * stars = "***";
 
   memmove(buffer_reponse, buffer_input, SIZE_INPUT_DEFAULT_SPACE);

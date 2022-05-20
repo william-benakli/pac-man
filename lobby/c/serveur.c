@@ -1,10 +1,14 @@
 #include "../../include/serveur.h"
-
+#include "../../include/utils/variables_mutex.h"
 struct list_game * _games;
 
 
 int __UDP_PORT;
+pthread_mutex_t verrou1;
+pthread_mutex_t verrou2;
 int main(int argc, char const *argv[]) {
+  pthread_mutex_init(&verrou1,NULL);
+  pthread_mutex_init(&verrou2,NULL);
   __UDP_PORT = 8000;
   _games = init_list_game();
    srand(time(NULL));

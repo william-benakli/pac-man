@@ -55,6 +55,5 @@ int readStars(int socketclient);
 
 
 extern struct list_game *_games;
-//pthread_mutex_t verrou = PTHREAD_MUTEX_INITIALIZER;
 
 #endif
