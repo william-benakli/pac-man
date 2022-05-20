@@ -1,6 +1,7 @@
 package src.ghostlab.vue.panel;
 
 import src.ghostlab.modele.Game;
+import src.ghostlab.thread.Client_TCP_GRAPHIQUE;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.VueClient;
 import src.ghostlab.vue.graphics.JButtonGraphiqueBuilder;
@@ -8,6 +9,8 @@ import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+
 
 public class PanelLobby extends JPanelGraphiqueBuilder {
 
@@ -31,14 +34,7 @@ public class PanelLobby extends JPanelGraphiqueBuilder {
         games_selection.setBackground(new Color(9,9,9));
         games_selection.setLayout(new GridLayout(3,3));
 
-       for(int i = 0; i < 15; i++){
-           JPanel game_courant = new GameComposent(Game.createGame(i,8,7,5, "12.151.02151.0212"));
-           game_courant.setPreferredSize(new Dimension(20, 20));
-           game_courant.setMaximumSize(new Dimension(20, 20));
-           game_courant.setSize(new Dimension(20, 20));
-           games_selection.add(game_courant);
-       }
-
+        affichePartie();
         /*X*/
         mainLayout.setHorizontalGroup(
                 mainLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -60,10 +56,29 @@ public class PanelLobby extends JPanelGraphiqueBuilder {
         updateUI();
     }
 
+    public void affichePartie(){
+        games_selection.removeAll();
+        ArrayList<Integer> list = Client_TCP_GRAPHIQUE.list_id_game;
+        list.toString();
+        if(list.size() > 1){
+            list.forEach(e->{
+                JPanel game_courant = new GameComposent(e);
+                game_courant.setPreferredSize(new Dimension(20, 20));
+                game_courant.setMaximumSize(new Dimension(20, 20));
+                game_courant.setSize(new Dimension(20, 20));
+                games_selection.add(game_courant);
+            });
+        }else{
+            games_selection.add(CreateGraphicsUtils.createLabelWithFont("Aucune partie existante, essayez de rafraichir", Color.ORANGE));
+        }
+ 
+        
+    }
     public void actionListerners(){
         refresh_game.addActionListener(event->{
-            //controller.send(Games?);
-            VueClient.setPanel(new PanelInGame(Game.createGame(0,8,7,0, "12.151.02151.0212")));
+            //Client_TCP_GRAPHIQUE.Command_Check("GAME?", VueClient.is, VueClient.os, null);
+            Client_TCP_GRAPHIQUE.Command_Check("GAME?***", VueClient.is, VueClient.os, null);
+            affichePartie();
         });
 
         add_game.addActionListener(event->{

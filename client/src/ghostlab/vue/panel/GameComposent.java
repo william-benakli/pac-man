@@ -11,15 +11,15 @@ import java.awt.event.MouseEvent;
 
 public class GameComposent extends JPanel implements MouseInputListener {
 
-    private Game game_select;
+    private int game_select;
     private JLabel name_game;
 
     private boolean hover;
     private int w,h;
 
-    public GameComposent(Game game_select){
+    public GameComposent(int game_select){
         this.game_select = game_select;
-        this.name_game = CreateGraphicsUtils.createLabelWithFont(" Game n-" + game_select.getIdGame(), Color.WHITE);
+        this.name_game = CreateGraphicsUtils.createLabelWithFont(" Game n-" + game_select, Color.WHITE);
         this.setLayout(new BorderLayout());
         this.add(name_game, BorderLayout.CENTER);
         this.w = this.getWidth();
@@ -31,7 +31,7 @@ public class GameComposent extends JPanel implements MouseInputListener {
         addMouseMotionListener(this);
     }
 
-    public Game getGame_select(){
+    public int getGame_select(){
         return game_select;
     }
 

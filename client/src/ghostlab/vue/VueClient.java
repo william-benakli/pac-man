@@ -5,14 +5,24 @@ import src.ghostlab.vue.panel.PanelLobby;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 public class VueClient extends JFrame {
 
     public static JPanel panel_courant = new JPanel();
 
     public static Font font;
+    public static Socket socket;
+    public static InputStream is;
+    public static OutputStream os;
 
-    public VueClient() throws Exception {
+    public VueClient(Socket socket) throws Exception {
+        this.socket = socket;
+        this.is = socket.getInputStream();
+        this.os = socket.getOutputStream();
+
         this.setTitle("Projet Reseau - CatchGhost");
         this.setSize(1280, 720);
         this.setPreferredSize(new Dimension(1280, 720));
@@ -26,7 +36,6 @@ public class VueClient extends JFrame {
         this.setContentPane(panel_courant);
         this.setVisible(true);
         this.setLayout(new BorderLayout());
-
     }
 
     public static void setPanel(JPanel panel){
@@ -35,16 +44,5 @@ public class VueClient extends JFrame {
         panel_courant.updateUI();
     }
 
-    public static void main(String []args){
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new VueClient();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-    }
+   
 }

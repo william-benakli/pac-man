@@ -3,7 +3,8 @@ package src.ghostlab.vue.panel;
 import src.ghostlab.modele.Game;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
-
+import src.ghostlab.thread.Client_TCP_GRAPHIQUE;
+import src.ghostlab.vue.VueClient;
 import javax.swing.*;
 import java.awt.*;
 
@@ -31,7 +32,7 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         this.msg_privetextlabel = CreateGraphicsUtils.createLabelWithFont("Msg", Color.ORANGE);
         this.pasdeplacementlabel = CreateGraphicsUtils.createLabelWithFont("Pas", Color.ORANGE);
         this.idplayerlabel = CreateGraphicsUtils.createLabelWithFont("Id", Color.ORANGE);
-
+        
         this.laby_panel = new JPanel();
         this.in_laby_panel = new JPanel();
 
@@ -39,8 +40,8 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         this.down = CreateGraphicsUtils.createJButtonImage("ressources/button/down_button.png");
         this.right = CreateGraphicsUtils.createJButtonImage("ressources/button/right_button.png");
         this.left = CreateGraphicsUtils.createJButtonImage("ressources/button/left_button.png");
-        this.pasdeplacementext = new JTextField();
-
+        this.pasdeplacementext = new JTextField("001");
+        
         this.quit = CreateGraphicsUtils.createJButtonImage("ressources/button/iquit_button.png");
         this.sendpv = CreateGraphicsUtils.createJButtonImage("ressources/button/send_button.png");
         this.sendmulti = CreateGraphicsUtils.createJButtonImage("ressources/button/send_button.png");
@@ -189,6 +190,48 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
 
     }
 
+
+    //    private JButton up,down,right,left,quit,sendpv,sendmulti, glist;
+
+    public void actionListerner(){
+        up.addActionListener(event->{
+            Client_TCP_GRAPHIQUE.Command_Check_in_game("UPMOV "+ pasdeplacementext.getText() + "***",VueClient.is, VueClient.os, reponserveurtextarea);
+            refresh_laby(game);
+        });
+        down.addActionListener(event->{
+            Client_TCP_GRAPHIQUE.Command_Check_in_game("DOMOV "+ pasdeplacementext.getText() + "***",VueClient.is, VueClient.os, reponserveurtextarea);
+            refresh_laby(game);
+        });
+        right.addActionListener(event->{
+            Client_TCP_GRAPHIQUE.Command_Check_in_game("RIMOV "+ pasdeplacementext.getText() + "***",VueClient.is, VueClient.os, reponserveurtextarea);
+            refresh_laby(game);
+        });
+        left.addActionListener(event->{
+            Client_TCP_GRAPHIQUE.Command_Check_in_game("LEMOV "+ pasdeplacementext.getText() + "***",VueClient.is, VueClient.os, reponserveurtextarea);
+            refresh_laby(game);
+        });
+
+        sendmulti.addActionListener(event->{
+            Client_TCP_GRAPHIQUE.Command_Check_in_game("MALL? "+ msgmulticast.getText() + "***",VueClient.is, VueClient.os, multicasttextarea);
+        });
+        
+        sendpv.addActionListener(event->{
+            if(idplayerlabel.getText().length() != 8 ){
+                Client_TCP_GRAPHIQUE.Command_Check_in_game("SEND? "+ idplayerpvtext.getText() + " " + msgprive.getText() + "***",VueClient.is, VueClient.os, msgpvtextarea);
+            }else{
+                msgpvtextarea.setText("Identifiant incorrect.");
+            }
+
+        });
+
+        quit.addActionListener(event->{
+            Client_TCP_GRAPHIQUE.Command_Check_in_game("IQUIT***",VueClient.is, VueClient.os, null);
+        });
+        
+        glist.addActionListener(event->{
+            Client_TCP_GRAPHIQUE.Command_Check_in_game("GLIST?***",VueClient.is, VueClient.os, reponserveurtextarea);
+        });
+    }
     }
 
 

@@ -25,6 +25,7 @@ public class Client_Main {
 			// int port_udp = Integer.valueOf(args[1]);
 			String adress_ip_tcp = args[1];
 			// String adress_ip_udp = args[3];
+			System.out.println("Lancement...");
 
 			// SOCKETS DES CLIENTS
 			Socket client_tcp = new Socket(adress_ip_tcp, port_tcp);

@@ -1,5 +1,6 @@
 package src.ghostlab.vue.panel;
 
+import src.ghostlab.thread.Client_TCP_GRAPHIQUE;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.VueClient;
 import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
@@ -15,14 +16,17 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
     private JTextField identifiant, port;
     private JTextArea reponse_list_size;
 
+    private int id_game;
+    private boolean partie_lance = false;
+
     public PanelCreateGame() {
         super("ressources/panel/background.jpg");
         this.back = CreateGraphicsUtils.createJButtonImage("ressources/button/retour_button.png");
         this.unreg = CreateGraphicsUtils.createJButtonImage("ressources/button/unreg_button.png");
         this.panel_register = CreateGraphicsUtils.createPanelImage("ressources/panel/newpl_panel.png");
-        this.regis_game = CreateGraphicsUtils.createJButtonImage("ressources/button/regis_button.png");
-        this.list_game = CreateGraphicsUtils.createJButtonImage("ressources/button/list_button.png");
-        this.size_game = CreateGraphicsUtils.createJButtonImage("ressources/button/size_button.png");
+        this.regis_game = CreateGraphicsUtils.createJButtonImage("ressources/button/boutton_add.png");
+        this.list_game = CreateGraphicsUtils.createJButtonImage("ressources/button/list_off_button.png");
+        this.size_game = CreateGraphicsUtils.createJButtonImage("ressources/button/size_off_button.png");
         this.identifiant = CreateGraphicsUtils.createJtextField();
         this.port = CreateGraphicsUtils.createJtextField();
         this.information = CreateGraphicsUtils.createLabelWithFont("Veuillez entrer des valeurs valides", Color.ORANGE);
@@ -31,7 +35,7 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
         this.reponse_list_size = CreateGraphicsUtils.createTextArea(70, 70);
         this.reponse_list_size.append("Aucun message pour le moment...");
         this.reponse_commande = CreateGraphicsUtils.createLabelWithFont("Reponse du serveur", Color.ORANGE);
-        this.game_selectlabel = CreateGraphicsUtils.createLabelWithFont("Création d'une nouvelle game", Color.WHITE);
+        this.game_selectlabel = CreateGraphicsUtils.createLabelWithFont("Creeation d'une nouvelle game", Color.WHITE);
 
         GroupLayout LayoutPrincpal = new GroupLayout(this);
 
@@ -88,5 +92,55 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
             VueClient.setPanel(new PanelLobby());
         });
 
+        this.size_game.addActionListener(e->{
+            if(partie_lance){
+                Client_TCP_GRAPHIQUE.Command_Check("LIST?" + id_game + "***",VueClient.is, VueClient.os, reponse_list_size);
+            }else{
+                reponse_list_size.setText("Aucune partie existante.");
+            }
+        });
+
+        this.list_game.addActionListener(e->{
+            if(partie_lance){
+                Client_TCP_GRAPHIQUE.Command_Check("LIST?" + "***",VueClient.is, VueClient.os, reponse_list_size);
+            }else{
+                reponse_list_size.setText("Aucune partie existante.");
+                }
+            });
+
+        this.unreg.addActionListener(e -> {
+            if(partie_lance){
+                Client_TCP_GRAPHIQUE.Command_Check("UNREG "+ "***",VueClient.is, VueClient.os, reponse_list_size);
+                if(reponse_list_size.getText().startsWith("UNROK")){
+                    partie_lance = false;
+                    this.back.setVisible(true);
+                    this.regis_game = CreateGraphicsUtils.createJButtonImage("ressources/button/boutton_add.png");
+                    this.list_game = CreateGraphicsUtils.createJButtonImage("ressources/button/list_off_button.png");
+                    this.size_game = CreateGraphicsUtils.createJButtonImage("ressources/button/size_off_button.png");
+                }
+            }else{
+                reponse_list_size.setText("Aucune partie existante.");
+            }
+        });
+
+        this.regis_game.addActionListener(e -> {
+            if(partie_lance){
+                //mettre en attente le client
+            }else{
+                if(identifiant.getText().length() != 8 || port.getText().length() != 4 ){
+                    reponse_list_size.setText("Votre identifiant ou port n'est pas correct.");
+                }else{
+                Client_TCP_GRAPHIQUE.Command_Check("NEWPL " + identifiant.getText() + " " + port.getText() + "***",VueClient.is, VueClient.os, reponse_list_size);
+                if(reponse_list_size.getText().startsWith("REGOK")){
+                    partie_lance = true;
+                    id_game = Integer.valueOf(reponse_list_size.getText().replace("REGOK ", ""));
+                    this.regis_game = CreateGraphicsUtils.createJButtonImage("ressources/button/start_button.png");
+                    this.size_game = CreateGraphicsUtils.createJButtonImage("ressources/button/size_button.png");
+                    this.list_game = CreateGraphicsUtils.createJButtonImage("ressources/button/list_button.png");
+                    this.back.setVisible(false);
+                }
+                }
+            }
+        });
     }
 }
