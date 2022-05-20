@@ -7,15 +7,18 @@ public class Game {
     private int hauteur, largeur;//h w
     private int fantome; // f
     private String ip_partie;//ip de la partie
+    private String port;
     private char[][] labyrinth_to_parcour;
 
 
-    private Game(int id_game, int hauteur, int largeur, int fantome, String ip_partie){
+    private Game(int id_game, int hauteur, int largeur, int fantome, String ip_partie, String port, Player player){
         this.id_game = id_game;
         this.hauteur = hauteur;
         this.largeur = largeur;
         this.fantome = fantome;
         this.ip_partie = ip_partie;
+        this.player = player;
+        this.port = port;
         this.labyrinth_to_parcour = new char[hauteur][largeur];
         for (int i = 0; i < hauteur; i++){
             for (int j = 0; j < largeur; j++){
@@ -52,8 +55,8 @@ public class Game {
     }
 
     /* Fabrique static vu en L3 */
-    public static Game createGame(int id_game, int hauteur, int largeur, int fantome, String ip_partie){
-        return new Game(id_game, hauteur, largeur, fantome, ip_partie);
+    public static Game createGame(int id_game, int hauteur, int largeur, int fantome, String ip_partie, String port, Player player){
+        return new Game(id_game, hauteur, largeur, fantome, ip_partie, port, player);
     }
 
     public int getLargeur() { return largeur; }

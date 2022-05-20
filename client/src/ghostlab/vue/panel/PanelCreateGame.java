@@ -125,15 +125,16 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
 
         this.regis_game.addActionListener(e -> {
             if(partie_lance){
+                VueClient.setPanel(new PanelWaiting());
                 //mettre en attente le client
             }else{
-                if(identifiant.getText().length() != 8 || port.getText().length() != 4 ){
+                if(identifiant.getText().length() != 8 || port.getText().length() != 4){
                     reponse_list_size.setText("Votre identifiant ou port n'est pas correct.");
                 }else{
                 Client_TCP_GRAPHIQUE.Command_Check("NEWPL " + identifiant.getText() + " " + port.getText() + "***",VueClient.is, VueClient.os, reponse_list_size);
                 if(reponse_list_size.getText().startsWith("REGOK")){
                     partie_lance = true;
-                    id_game = Integer.valueOf(reponse_list_size.getText().replace("REGOK ", ""));
+                    id_game = Integer.valueOf(reponse_list_size.getText().replace("REGOK ", "").replace("***", ""));
                     this.regis_game = CreateGraphicsUtils.createJButtonImage("ressources/button/start_button.png");
                     this.size_game = CreateGraphicsUtils.createJButtonImage("ressources/button/size_button.png");
                     this.list_game = CreateGraphicsUtils.createJButtonImage("ressources/button/list_button.png");

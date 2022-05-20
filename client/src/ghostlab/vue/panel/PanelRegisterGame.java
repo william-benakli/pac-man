@@ -4,6 +4,7 @@ import src.ghostlab.thread.Client_TCP_GRAPHIQUE;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.VueClient;
 import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
+import src.ghostlab.vue.panel.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -120,6 +121,8 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
 
         this.regis_game.addActionListener(e -> {
             if(partie_join){
+
+                VueClient.setPanel(new PanelWaiting());
                 //mettre en attente le client
             }else{
                 if(identifiant.getText().length() != 8 || port.getText().length() != 4 ){

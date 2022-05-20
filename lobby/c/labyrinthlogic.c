@@ -217,7 +217,8 @@ int spawnJoueur(struct game *game, struct participant *participant){
 }
 
 int spawnFantomes(struct game *game){
-
+    if(game->nb_fantome > 0)return 0;
+    
     uint16_t largeur = game->largeur;
     uint16_t hauteur = game->hauteur;
 

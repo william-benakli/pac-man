@@ -32,7 +32,7 @@ public class Client_Main {
 			// MulticastSocket client_udp = new MulticastSocket(port_udp);
 			Scanner sc = new Scanner(System.in);
 
-			System.out.println("Bonjour, selectionnez une option de lancement - (mode par defaut: terminal)");
+			System.out.println("Selectionnez une option : ");
 			System.out.println("1 | Vue graphique ");
 			System.out.println("2 | Vue terminal ");
 			try {

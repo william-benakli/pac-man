@@ -95,14 +95,19 @@ int waiting_players(struct player *player){
     while(check_ready(game_courant) == PLAYERS_NOT_READY || game_courant->players < 1){
         sleep(1);
     }
-    spawnFantomes(game_courant);
+    pthread_mutex_lock(&verrou1);
+        spawnFantomes(game_courant);
+    pthread_mutex_unlock(&verrou1);
+
     launch_game(game_courant, partcipant_lobby, _games);
     return 0;
 }
 
 void launch_game(struct game * game_courant, struct participant * partcipant_lobby, struct list_game *_games){
-    sendWelcome(game_courant, partcipant_lobby, _games);
-    spawnJoueur(game_courant, partcipant_lobby);
+    pthread_mutex_lock(&verrou1);
+        sendWelcome(game_courant, partcipant_lobby, _games);
+        spawnJoueur(game_courant, partcipant_lobby);
+    pthread_mutex_unlock(&verrou1);
     sendPosit(partcipant_lobby->tcp_sock, game_courant, partcipant_lobby);
     gameInput(partcipant_lobby->tcp_sock, partcipant_lobby, game_courant);
 }

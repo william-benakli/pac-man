@@ -1,6 +1,5 @@
 package src.ghostlab.vue.panel;
 
-import src.ghostlab.modele.Game;
 import src.ghostlab.thread.Client_TCP_GRAPHIQUE;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.VueClient;
@@ -58,6 +57,7 @@ public class PanelLobby extends JPanelGraphiqueBuilder {
 
     public void affichePartie(){
         games_selection.removeAll();
+
         ArrayList<Integer> list = Client_TCP_GRAPHIQUE.list_id_game;
         list.toString();
         if(list.size() > 1){
@@ -69,14 +69,13 @@ public class PanelLobby extends JPanelGraphiqueBuilder {
                 games_selection.add(game_courant);
             });
         }else{
-            games_selection.add(CreateGraphicsUtils.createLabelWithFont("Aucune partie existante, essayez de rafraichir", Color.ORANGE));
+            games_selection.add(CreateGraphicsUtils.createLabelWithFont("Aucune partie existante, essayez plus tard", Color.RED));
         }
  
         
     }
     public void actionListerners(){
         refresh_game.addActionListener(event->{
-            //Client_TCP_GRAPHIQUE.Command_Check("GAME?", VueClient.is, VueClient.os, null);
             Client_TCP_GRAPHIQUE.Command_Check("GAME?***", VueClient.is, VueClient.os, null);
             affichePartie();
         });

@@ -161,11 +161,13 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
   uint16_t hauteur = ntohs(game->hauteur);
   uint16_t largeur = ntohs(game->largeur);
   uint8_t nombre_fantome = game->nb_fantome;
-  participant->address = "225.1.2.4";
-  game -> address_udp = "225.1.2.4";
-  //participant->udp_port = 9999;
-  char * ip = "225.1.2.4######";//TODO: IP A REVOIR
-  char * port = "9999"; // TODO: PORT à REVOIR
+  participant->address = "226.1.2.4";
+  game -> address_udp = "226.1.2.4";
+  int port_udp = generatePortUdp();
+  participant->udp_port = port_udp;
+  char * ip = "225.1.2.4######";
+  char * port[5];
+  sprintf(port, "%d", port_udp);
   char * stars = "***";
 
   memmove(buffer_reponse, buffer_input, SIZE_INPUT_DEFAULT_SPACE);
@@ -189,6 +191,13 @@ int sendWelcome(struct game *game, struct participant *participant, struct list_
     return -1;
   }
   return 0;
+}
+
+int generatePortUdp(){
+  if(port_static > 9999){
+      port_static = 1001;
+  }
+  return (port_static++);
 }
 
 int sendPosit(int client_socket, struct game *game , struct participant *participant){
