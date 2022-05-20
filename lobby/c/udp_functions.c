@@ -9,17 +9,31 @@ int broadcast_message(struct game *_game, char *buf) {
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_DGRAM;
 
-	char portbuffer[5];
-	int bytes_written = sprintf(portbuffer, "%d", _game->port_udp);
+	/* SERT A RIEN FULL BUG TODO: DELETE 
+	 char portbuffer[5];
+	 int bytes_written = sprintf(portbuffer, "%d", _game->port_udp);
+	 if (bytes_written < 0) {
+	 return -1;
+	 }
+	 */
+
+	char private_buffer[strlen(buf) + 9];
+	int bytes_written = sprintf(private_buffer, "MALL %s+++", buf);
 	if (bytes_written < 0) {
 		return -1;
 	}
 
-	int r = getaddrinfo(_game->address_udp, portbuffer, &hints, &first_info);
+	int r = getaddrinfo(_game->address_udp, "9999", &hints, &first_info);
+
+	printf("LE PORT UDP DE LA GAME: %s\n", _game->address_udp);
+	printf("LE STRLEN: %ld\n", strlen(buf));
+	printf("LE BUFFER: %s\n", buf);
+	printf("R EST IL VALIDE: %d\n", r);
+
 	if (r == 0) {
 		if (first_info != NULL) {
 			struct sockaddr *saddr = first_info->ai_addr;
-			sendto(sock, buf, strlen(buf), 0, saddr,
+			sendto(sock, private_buffer, strlen(private_buffer), 0, saddr,
 					(socklen_t) sizeof(struct sockaddr_in));
 		}
 	}
@@ -97,13 +111,21 @@ int private_message(struct game *_game, char *target_identifiant, char *message,
 		return -1;
 	}
 
-	char portbuffer[5];
-	bytes_written = sprintf(portbuffer, "%d", copy_players->udp_port);
-	if (bytes_written < 0) {
-		return -1;
-	}
+	/* SERT A RIEN FULL BUG TODO: DELETE 
+	 char portbuffer[5];
+	 bytes_written = sprintf(portbuffer, "%d", copy_players->udp_port);
+	 if (bytes_written < 0) {
+	 return -1;
+	 }
+	 */
 
-	int r = getaddrinfo(copy_players->address, portbuffer, &hints, &first_info);
+	// private_buffer[strlen(private_buffer)] = '\0';
+	int r = getaddrinfo(copy_players->address, "9999", &hints, &first_info);
+	printf("LE PORT UDP DU JOUEUR: %s\n", copy_players->address);
+	printf("LE STRLEN: %ld\n", strlen(private_buffer));
+	printf("LE BUFFER: %s\n", private_buffer);
+	printf("R EST IL VALIDE: %d\n", r);
+
 	if (r == 0) {
 		if (first_info != NULL) {
 			struct sockaddr *saddr = first_info->ai_addr;
