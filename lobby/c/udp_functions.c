@@ -24,7 +24,7 @@ int broadcast_message(struct game *_game, char *buf) {
 	}
 
 	int r = getaddrinfo(_game->address_udp, "9999", &hints, &first_info);
-	
+
 	// private_buffer[strlen(private_buffer)] = '\0';
 
 	printf("LE PORT UDP DE LA GAME: %s\n", _game->address_udp);
@@ -39,7 +39,7 @@ int broadcast_message(struct game *_game, char *buf) {
 					(socklen_t) sizeof(struct sockaddr_in));
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -51,15 +51,15 @@ int score_message(struct game *_game, struct participant *player, int fantom_x,
 	if (bytes_written < 0) {
 		return -1;
 	}
-	
+
 	int ret = broadcast_message(_game, score_buffer);
-	
+
 	return ret;
 }
 
 int ghost_message(struct game *_game, int fantom_x, int fantom_y) {
-	char ghost_buffer[20];
-	int bytes_written = sprintf(ghost_buffer, "GHOST %03d %03d+++", fantom_x,
+	char ghost_buffer[14];
+	int bytes_written = sprintf(ghost_buffer, "GHOST %03d %03d", fantom_x,
 			fantom_y);
 	if (bytes_written < 0) {
 		return -1;
@@ -69,8 +69,8 @@ int ghost_message(struct game *_game, int fantom_x, int fantom_y) {
 }
 
 int end_message(struct game *_game, struct participant *winner) {
-	char end_buffer[30];
-	int bytes_written = sprintf(end_buffer, "ENDGA %s %04d+++",
+	char end_buffer[28];
+	int bytes_written = sprintf(end_buffer, "ENDGA %s %04d",
 			winner->identifiant, winner->score);
 	if (bytes_written < 0) {
 		return -1;
@@ -82,7 +82,7 @@ int end_message(struct game *_game, struct participant *winner) {
 int group_message(struct game *_game, struct participant *sender,
 		char *message) {
 	char message_buffer[220];
-	int bytes_written = sprintf(message_buffer, "MESSA %s %s+++",
+	int bytes_written = sprintf(message_buffer, "MESSA %s %s",
 			sender->identifiant, message);
 	if (bytes_written < 0) {
 		return -1;
@@ -125,7 +125,6 @@ int private_message(struct game *_game, char *target_identifiant, char *message,
 	 */
 
 	// private_buffer[strlen(private_buffer)] = '\0';
-	
 	int r = getaddrinfo(copy_players->address, "9999", &hints, &first_info);
 	printf("LE PORT UDP DU JOUEUR: %s\n", copy_players->address);
 	printf("LE STRLEN: %ld\n", strlen(private_buffer));
@@ -139,7 +138,7 @@ int private_message(struct game *_game, char *target_identifiant, char *message,
 					(socklen_t) sizeof(struct sockaddr_in));
 		}
 	}
-		
+
 	return 0;
 
 }

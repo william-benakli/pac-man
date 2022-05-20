@@ -267,13 +267,13 @@ void printlabyrinth(struct game *game){
             for (uint16_t j = 0; j < game->hauteur; j++){
                 char c = game->labyrinth[i][j];
                 if(c == '#'){
-                    printf("█");
+                    printf("X");
                 }else if(c == 'f'){
-                    printf("✦");
+                    printf("F");
                 }else if(c == '0'){
-                    printf("_");
+                    printf(" ");
                 }else{
-                    printf("◉");
+                    printf("P");
                 }
             }
             printf("\n");

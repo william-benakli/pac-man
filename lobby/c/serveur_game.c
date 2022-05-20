@@ -132,6 +132,8 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 	sendGodBye(socketclient);
 	free(partcipant_ingame);
 	close(socketclient);
+	pthread_exit(NULL);
+
 	return 0;
 }
 

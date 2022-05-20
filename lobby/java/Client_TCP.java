@@ -77,6 +77,13 @@ public class Client_TCP implements Runnable {
 			// FERMETURE DES SOCKETS FIN DE LA PARTIE
 			socket.close();
 			System.out.println("Votre partie est fini vous êtes allez être déconnecté.");
+			
+			// STOP LE THREAD UDP
+			t_udp.interrupt();
+			
+			// FERME TOUT
+			System.exit(1);
+			
 			return;
 		} catch (Exception e) {
 			if (!hostAvailabilityCheck(socket.getInetAddress().toString(), socket.getPort())) {
@@ -334,31 +341,19 @@ public class Client_TCP implements Runnable {
 				pos_lecture++;
 			}
 
-			// ENVOIE COMME MEME POUR TESTER ROBUSTESSE DU SERVEUR
-			if (!lecture.equals("")) {
-				try {
-					System.out.println("ATTENTION MSG NON CONFORME ENVOYE");
-					System.out.println("MSG ENVOYE: " + lecture);
-					os.write(lecture.getBytes());
-					// Recois msg - message en TCP
-					String msg_erreur = "";
-					String receptacle = null;
-					int read;
-					byte[] msg_byte = new byte[8];
-					if ((read = is.read(msg_byte)) != -1) {
-						receptacle = new String(msg_byte, 0, read);
-					}
-					for (int j = 0; j < msg_byte.length; j++) {
-						byte b = (byte) msg_byte[j];
-						msg_erreur += (char) b;
-					}
-					System.out.println("MSG RECU: " + msg_erreur);
-				} catch (Exception e) {
-					System.out.println("ERREUR DEFAULT SWITCH");
-					e.printStackTrace();
-				}
-			}
-			// FIN TEST ROBUSTESSE DU SERVEUR
+			/*
+			 * // ENVOIE COMME MEME POUR TESTER ROBUSTESSE DU SERVEUR if
+			 * (!lecture.equals("")) { try {
+			 * System.out.println("ATTENTION MSG NON CONFORME ENVOYE");
+			 * System.out.println("MSG ENVOYE: " + lecture); os.write(lecture.getBytes());
+			 * // Recois msg - message en TCP String msg_erreur = ""; String receptacle =
+			 * null; int read; byte[] msg_byte = new byte[8]; if ((read = is.read(msg_byte))
+			 * != -1) { receptacle = new String(msg_byte, 0, read); } for (int j = 0; j <
+			 * msg_byte.length; j++) { byte b = (byte) msg_byte[j]; msg_erreur += (char) b;
+			 * } System.out.println("MSG RECU: " + msg_erreur); } catch (Exception e) {
+			 * System.out.println("ERREUR DEFAULT SWITCH"); e.printStackTrace(); } } // FIN
+			 * TEST ROBUSTESSE DU SERVEUR
+			 */
 
 			System.out.println("Derniere lecture: " + lecture);
 		}
@@ -426,37 +421,24 @@ public class Client_TCP implements Runnable {
 				pos_lecture++;
 			}
 
-			// ENVOIE COMME MEME POUR TESTER ROBUSTESSE DU SERVEUR
-			if (!lecture.equals("")) {
-				try {
-					System.out.println("ATTENTION MSG NON CONFORME ENVOYE");
-					System.out.println("MSG ENVOYE: " + lecture);
-					os.write(lecture.getBytes());
-					// Recois msg - message en TCP
-					String msg_erreur = "";
-					String receptacle = null;
-					int read;
-					byte[] msg_byte = new byte[8];
-					if ((read = is.read(msg_byte)) != -1) {
-						receptacle = new String(msg_byte, 0, read);
-					}
-					for (int j = 0; j < msg_byte.length; j++) {
-						byte b = (byte) msg_byte[j];
-						msg_erreur += (char) b;
-					}
-					System.out.println("MSG RECU: " + msg_erreur);
-				} catch (Exception e) {
-					System.out.println("ERREUR DEFAULT SWITCH");
-					e.printStackTrace();
-				}
-			}
-			// FIN TEST ROBUSTESSE DU SERVEUR
+			/*
+			 * // ENVOIE COMME MEME POUR TESTER ROBUSTESSE DU SERVEUR if
+			 * (!lecture.equals("")) { try {
+			 * System.out.println("ATTENTION MSG NON CONFORME ENVOYE");
+			 * System.out.println("MSG ENVOYE: " + lecture); os.write(lecture.getBytes());
+			 * // Recois msg - message en TCP String msg_erreur = ""; String receptacle =
+			 * null; int read; byte[] msg_byte = new byte[8]; if ((read = is.read(msg_byte))
+			 * != -1) { receptacle = new String(msg_byte, 0, read); } for (int j = 0; j <
+			 * msg_byte.length; j++) { byte b = (byte) msg_byte[j]; msg_erreur += (char) b;
+			 * } System.out.println("MSG RECU: " + msg_erreur); } catch (Exception e) {
+			 * System.out.println("ERREUR DEFAULT SWITCH"); e.printStackTrace(); } } // FIN
+			 * TEST ROBUSTESSE DU SERVEUR
+			 */
 
 			System.out.println("Derniere lecture_in_game: " + lecture);
 		}
 
 	}
-	// TODO: ACONTROLER PDNT LA GAME
 
 	// Pour verifier la commande 5 premiers chars (commande)
 	public static String Command_Read(String msg) {
