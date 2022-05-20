@@ -55,5 +55,6 @@ int readStars(int socketclient);
 
 
 extern struct list_game *_games;
+extern int port_static;
 
 #endif

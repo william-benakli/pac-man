@@ -10,8 +10,5 @@ int sendRegOk(int socketclient, u_int8_t id_partie);
 int sendGlist(struct player *player, struct list_game *list);
 int sendWelcome(struct game *game, struct participant *participant, struct list_game *list_game);
 int sendPosit(int client_socket, struct game *game , struct participant *participant);
-int generatePortUdp();
-
-int port_static = 1001;
 
 #endif

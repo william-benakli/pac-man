@@ -12,7 +12,6 @@
 #define GAME_CREATION_FAILED -1 
 #define PLAYERS_READY 1
 #define PLAYERS_NOT_READY 0
-
 struct game{
     uint8_t id_partie;
     uint8_t players;
@@ -20,12 +19,15 @@ struct game{
     uint16_t hauteur;
     uint16_t largeur;
     uint8_t nb_fantome;
+    
 
     int port_udp; 
     char *address_udp;
 
     char **labyrinth;
     enum {STATUS_AVAILABLE, STATUS_UNAVAILABLE} status;
+    enum {NO, YES} isGhost;
+
     struct participant *participants;
 
 };

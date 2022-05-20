@@ -50,7 +50,9 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 game->labyrinth[player->pos_y][player->pos_x - i] = '0';
                 player->score++;
                 game->nb_fantome--;
-                //score_message(game,player,player->pos_x - i,player->pos_y);
+                
+                score_message(game,player,player->pos_x - i,player->pos_y);
+                
                 check_endgame(game);
             }
             stepsmoved++;
@@ -77,7 +79,9 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 game->labyrinth[player->pos_y][player->pos_x + i] = '0';
                 player->score++;
                 game->nb_fantome--;
-                //score_message(game,player,player->pos_x + i,player->pos_y);
+                
+                score_message(game,player,player->pos_x + i,player->pos_y);
+                
                 check_endgame(game);
             }
             stepsmoved++;
@@ -104,7 +108,9 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 game->labyrinth[player->pos_y - i][player->pos_x] = '0';
                 player->score++;
                 game->nb_fantome--;
-                //score_message(game,player,player->pos_x,player->pos_y - i);
+                
+                score_message(game,player,player->pos_x,player->pos_y - i);
+                
                 check_endgame(game);
             }
             stepsmoved++;
@@ -131,7 +137,9 @@ int moveinlabyrinth(int direction, int steps, struct game *game, struct particip
                 game->labyrinth[player->pos_y + i][player->pos_x] = '0';
                 player->score++;
                 game->nb_fantome--;
-                //score_message(game,player,player->pos_x,player->pos_y + i);
+                
+                score_message(game,player,player->pos_x,player->pos_y + i);
+                
                 check_endgame(game);
             }
             stepsmoved++;
@@ -217,16 +225,16 @@ int spawnJoueur(struct game *game, struct participant *participant){
 }
 
 int spawnFantomes(struct game *game){
-    if(game->nb_fantome > 0)return 0;
-    
+    if(game->isGhost == YES)return 0;
+
     uint16_t largeur = game->largeur;
     uint16_t hauteur = game->hauteur;
 
     int spawn_location_x = rand() % (hauteur-1);       // % => Reste de la division entière
     int spawn_location_y = rand() % (largeur-1);       // % => Reste de la division entière
     uint8_t nombre_fantome_courant = 0;
-
-    while(nombre_fantome_courant <= game->nb_fantome){
+    game->nb_fantome = 3;
+    while(nombre_fantome_courant < game->nb_fantome){
 
         char c = getElementAtPos(game, spawn_location_x, spawn_location_y);
         while( c != '0'){
@@ -243,30 +251,62 @@ int spawnFantomes(struct game *game){
     if(nombre_fantome_courant != game->nb_fantome) {
         return -1; 
     }
+    game->isGhost = YES;
     return 0;
+}
+
+
+struct participant* find_winner(struct game *game){
+    struct game *courant = game;
+    if (courant->participants == NULL){
+        printf("COPY EST NUL\n");
+        return NULL;
+    }
+
+    struct participant *winner =  courant->participants;
+    int fscore = winner->score;
+    printf("SCORE DU GAGNANT %d",winner->score);
+    
+    while(courant->participants->next!= NULL){
+        if(courant->participants->score > fscore){
+            fscore = courant->participants->score;
+            winner = courant->participants;
+        }
+        courant->participants = courant->participants->next;
+    }
+    return winner;
 }
 
 int check_endgame(struct game *game){
     if(game->nb_fantome <= 0 || game->players == 0){//TODO: ici on devra verifier 2
-        game->status = STATUS_UNAVAILABLE; 
-        return FINISH;
+        if(game->status == STATUS_AVAILABLE){
+            game->status = STATUS_UNAVAILABLE;
+            struct participant *winner = find_winner(game);
+            if(winner!=NULL)
+                end_message(game,winner);
+            else
+                printf("ERREUR PARTICIPANT VIDE");
+            return FINISH;
+        } else {
+            return FINISH;
+        }
     }
     return NOT_FINISH;
 }
 
 void printlabyrinth(struct game *game){
     printf("------------------\n");
-    for (uint16_t i = 0; i < game->largeur; i++){
-            for (uint16_t j = 0; j < game->hauteur; j++){
+    for (int i = 0; i < game->largeur; i++){
+            for (int j = 0; j < game->hauteur; j++){
                 char c = game->labyrinth[i][j];
                 if(c == '#'){
-                    printf("█");
+                    printf("X");
                 }else if(c == 'f'){
-                    printf("✦");
+                    printf("F");
                 }else if(c == '0'){
-                    printf("_");
+                    printf(" ");
                 }else{
-                    printf("◉");
+                    printf("P");
                 }
             }
             printf("\n");
