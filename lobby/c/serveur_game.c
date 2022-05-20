@@ -44,7 +44,7 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 			if (test_mall != 0) {
 				printf(
 						"erreur remplir le buffer de message ligne 34 fichier serveur_game.c\n");
-				send(socketclient, "NMALL***", 9 * sizeof(char), 0);
+				send(socketclient, "NMALL***", 8 * sizeof(char), 0);
 				continue;
 			}
 			
@@ -53,10 +53,10 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 			if (test_mall != 0) {
 				printf(
 						"erreur envoyer le buffer de message ligne 38 fichier serveur_game.c\n");
-				send(socketclient, "NMALL***", 9 * sizeof(char), 0);
+				send(socketclient, "NMALL***", 8 * sizeof(char), 0);
 				continue;
 			}
-			send(socketclient, "MALL!***", 9 * sizeof(char), 0);
+			send(socketclient, "MALL!***", 8 * sizeof(char), 0);
 			continue;
 		}
 
@@ -75,7 +75,7 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 			if (test_private != 0) {
 				printf(
 						"erreur remplir le buffer de message ligne 50 fichier serveur_game.c\n");
-				send(socketclient, "NSEND***", 9 * sizeof(char), 0);
+				send(socketclient, "NSEND***", 8 * sizeof(char), 0);
 				continue;
 			}
 
@@ -85,10 +85,10 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 			if (test_private != 0) {
 				printf(
 						"erreur remplir le buffer de message ligne 56 fichier serveur_game.c\n");
-				send(socketclient, "NSEND***", 9 * sizeof(char), 0);
+				send(socketclient, "NSEND***", 8 * sizeof(char), 0);
 				continue;
 			}
-			send(socketclient, "SEND!***", 9 * sizeof(char), 0);
+			send(socketclient, "SEND!***", 8 * sizeof(char), 0);
 			continue;
 		}
 

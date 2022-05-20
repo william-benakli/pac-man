@@ -36,7 +36,7 @@ public class Client_UDP implements Runnable {
 					msg_recu += msg.charAt(i);
 					if (msg_est_complet(msg_recu)) {
 						System.out.println("J'ai reçu en UDP-Multicast: " + msg_recu);
-						msg_recu = msg_recu.substring(i, msg_recu.length());
+						msg_recu = msg_recu.substring(i+1, msg_recu.length());
 					}
 				}
 

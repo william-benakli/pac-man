@@ -17,13 +17,15 @@ int broadcast_message(struct game *_game, char *buf) {
 	 }
 	 */
 
-	char private_buffer[strlen(buf) + 9];
+	char private_buffer[strlen(buf) + 8];
 	int bytes_written = sprintf(private_buffer, "MALL %s+++", buf);
 	if (bytes_written < 0) {
 		return -1;
 	}
 
 	int r = getaddrinfo(_game->address_udp, "9999", &hints, &first_info);
+	
+	// private_buffer[strlen(private_buffer)] = '\0';
 
 	printf("LE PORT UDP DE LA GAME: %s\n", _game->address_udp);
 	printf("LE STRLEN: %ld\n", strlen(buf));
@@ -37,6 +39,7 @@ int broadcast_message(struct game *_game, char *buf) {
 					(socklen_t) sizeof(struct sockaddr_in));
 		}
 	}
+	
 	return 0;
 }
 
@@ -120,6 +123,7 @@ int private_message(struct game *_game, char *target_identifiant, char *message,
 	 */
 
 	// private_buffer[strlen(private_buffer)] = '\0';
+	
 	int r = getaddrinfo(copy_players->address, "9999", &hints, &first_info);
 	printf("LE PORT UDP DU JOUEUR: %s\n", copy_players->address);
 	printf("LE STRLEN: %ld\n", strlen(private_buffer));
@@ -133,6 +137,7 @@ int private_message(struct game *_game, char *target_identifiant, char *message,
 					(socklen_t) sizeof(struct sockaddr_in));
 		}
 	}
+		
 	return 0;
 
 }
