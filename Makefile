@@ -11,7 +11,7 @@ CLASSES_JAVA = \
 # COMPILATION DES FICHIERS C #########################
 CC = gcc
 CFLAGS = -pthread -Wall
-CPATH = lobby/c/
+CPATH = serveur/lobby/c/
 CPATH_H = include/
 CPATH_GAME = game/
 CPATH_UTILS = $(CPATH)utils/
@@ -35,7 +35,7 @@ c: $(CLASSES_C)
 
 # NETOYAGE DES FICHIERS INUTILES #####################
 clean:
-	$(RM) lobby/c/-f *.o
+	$(RM) serveur/lobby/c/-f *.o
 	$(RM) client/src/ghostlab/*.class
 
 ######################################################
