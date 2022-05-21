@@ -31,11 +31,10 @@ int main(){
     pthread_join(thread1,NULL);
     //pthread_join(thread2,NULL);*/
     char *msg = "RIMOV 055***";
-    char buf[3];
-    memmove(buf,msg+6,3);
-    printf("%s,%d\n",buf,atoi(buf));
-
-
+    char buf[20];
+    int x = sprintf(buf,"%s",msg);
+    sprintf(buf + x, "%s", "hi");
+    printf("%s",buf);
     return 0;
 }
 

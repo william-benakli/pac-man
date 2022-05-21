@@ -7,6 +7,11 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
   while (1) {
 		printlabyrinth(game_courant);
 
+    int x = rand() % 20;
+    if (x == 0){
+      deplace_fantom(game_courant);
+    }
+
 		size_t size_buffer_first = SIZE_INPUT_DEFAULT;
 		char buffer[size_buffer_first + 1];
 		buffer[size_buffer_first] = '\0';
@@ -39,6 +44,16 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 			}
 		}
 
+    if (strcmp(buffer,"GLIS?") == 0){
+      int rep_stars = readStars(socketclient);
+			if (rep_stars == -1) {
+				sendDunno(socketclient, "GLIS? but '***' miss ligne 45 de serveur_game.c");
+				continue;
+      } else {
+        sendGlist(socketclient,game_courant);
+        continue;
+      }
+    }
 		if (strcmp(buffer, "MALL?") == 0) {
 			char message_buffer[201];
 			message_buffer[200] = '\0';
@@ -143,7 +158,7 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 }
 
 void move_by_action(char *direction, char *distance, struct game *game_courant,
-		struct participant *partcipant_ingame) {
+		struct participant *partcipant_ingame){
 	if (strcmp(direction, CMD_RIMOV) == 0) {
 		move(MOVERIGHT, distance, game_courant, partcipant_ingame);
 	} else if (strcmp(direction, CMD_LEMOV) == 0) {
