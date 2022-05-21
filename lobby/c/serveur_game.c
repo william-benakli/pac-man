@@ -3,14 +3,13 @@
 int gameInput(int socketclient, struct participant *partcipant_ingame,
 		struct game *game_courant) {
 
-	//while (check_endgame(game_courant) == NOT_FINISH) {
   while (1) {
 		printlabyrinth(game_courant);
 
-    int x = rand() % 20;
-    if (x == 0){
-      deplace_fantom(game_courant);
-    }
+		int x = rand() % 20;
+		if (x == 0){
+			deplace_fantom(game_courant);
+		}
 
 		size_t size_buffer_first = SIZE_INPUT_DEFAULT;
 		char buffer[size_buffer_first + 1];
@@ -18,12 +17,16 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 
 		int count_fst = read(socketclient, buffer, size_buffer_first);
 
-    if(game_courant->status == STATUS_UNAVAILABLE){
-      break;
-    }
+		if(game_courant->status == STATUS_UNAVAILABLE){
+			break;
+		}
 
-		if (count_fst == 0)
-			return -1; //TODO verifier
+		if (count_fst == 0){
+			int ret = remove_player(partcipant_ingame,game_courant);
+			free(partcipant_ingame);
+			close(socketclient);
+			return ret;
+		}
 
 		printf("%s\n", buffer);
 		printf("hi, %d\n", count_fst);
@@ -44,16 +47,16 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 			}
 		}
 
-    if (strcmp(buffer,"GLIS?") == 0){
-      int rep_stars = readStars(socketclient);
-			if (rep_stars == -1) {
-				sendDunno(socketclient, "GLIS? but '***' miss ligne 45 de serveur_game.c");
-				continue;
-      } else {
-        sendGlist(socketclient,game_courant);
-        continue;
-      }
-    }
+		if (strcmp(buffer,"GLIS?") == 0){
+			int rep_stars = readStars(socketclient);
+				if (rep_stars == -1) {
+					sendDunno(socketclient, "GLIS? but '***' miss ligne 45 de serveur_game.c");
+					continue;
+			} else {
+			sendGlist(socketclient,game_courant);
+			continue;
+			}
+		}
 		if (strcmp(buffer, "MALL?") == 0) {
 			char message_buffer[201];
 			message_buffer[200] = '\0';
@@ -171,4 +174,27 @@ void move_by_action(char *direction, char *distance, struct game *game_courant,
 		sendDunno(partcipant_ingame->tcp_sock,
 				"[GAME ACTION] Argument introuvable");
 	}
+}
+
+
+int remove_player(struct participant *leaver, struct game *game){
+	struct game *copy = game;
+
+	if(copy->participants->tcp_sock == leaver->tcp_sock){
+		game->participants->next = game->participants->next->next;
+		game->players--;
+	}
+
+	while(copy->participants->next != NULL){
+		if(copy->participants->next->tcp_sock == leaver->tcp_sock){
+			copy->participants->next = copy->participants->next->next;
+			game->players--;
+		}
+	}
+
+	if (game->players <= 0){
+		remove_game(game,_games);
+	}
+
+	return 0;
 }
