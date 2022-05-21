@@ -4,19 +4,9 @@ import src.ghostlab.vue.VueClient;
 
 
 import java.awt.*;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MulticastSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.ArrayList;
-
 import src.ghostlab.controler.SendReq;
-import src.ghostlab.modele.Game;
-import src.ghostlab.modele.Player;
 
 public class Client_TCP_GRAPHIQUE implements Runnable {
 

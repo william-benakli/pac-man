@@ -57,8 +57,7 @@ public class Client_Main {
 			return;
 
 		} catch (Exception e) {
-			System.out.println("java Client_Main [ip_TCP] [port_TCP]");
-			e.printStackTrace();
+			System.out.println("[Erreur] Argument non valide : java Client_Main [ip] [port]");
 			return;
 		}
 	}

@@ -1,7 +1,6 @@
 package src.ghostlab.vue.panel;
 
 import src.ghostlab.controler.SendReq;
-import src.ghostlab.thread.Client_TCP_GRAPHIQUE;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.VueClient;
 import src.ghostlab.vue.graphics.JButtonGraphiqueBuilder;

@@ -43,10 +43,6 @@ public class SendReq{
         String str_socket_UDP = Check_udp_port(game.getPortUdp());
         String adress_ip_udp = (game.getIpUdp());
         
-        System.out.println("Voici le port_UDP de la partie: " + str_socket_UDP);
-        System.out.println("Voici votre port_UDP de joueur: " + port_du_joueur);
-        System.out.println("Voici votre ip_UDP: " + adress_ip_udp);
-        
         try { // CREER LES CLIENTS UDP
             MulticastSocket client_udp_jeu = new MulticastSocket(Integer.valueOf(str_socket_UDP));
             MulticastSocket client_udp_joueur = new MulticastSocket(Integer.valueOf(port_du_joueur));
@@ -82,7 +78,6 @@ public class SendReq{
     public void commandStart(){
         try {
             // Envoie msg - message en TCP
-            System.out.println("ENVOIE START");
             String start = "START***";
             os.write(start.getBytes());
             Game game = Command_welcome();
@@ -218,10 +213,7 @@ public class SendReq{
 				}
 			}
 			byte[] to_send = byte_out.toByteArray();
-			System.out.println("LENGTH DU BYTE BUFFER: " + to_send.length);
 			os.write(to_send);
-			System.out.println("J'ai envoye en TCP: " + str);
-
 			// Recois msg - message en TCP
 			String msg = "";
 			String receptacle = null;
@@ -253,7 +245,6 @@ public class SendReq{
 						msg += (char) b;
 					}
 				}
-				System.out.println("J'ai reçu en TCP: " + msg);
 				// la partie suivi de s messages de la forme [PLAYR␣id***]
 				if (nombre_de_joueur == 0) {
 					System.out.println("Il n'y a aucun joueur dans cette partie.");
@@ -272,7 +263,7 @@ public class SendReq{
 								msg += (char) b;
 							}
 						}
-						System.out.println("J'ai reçu en TCP: " + msg);
+						reponse.append(msg + "\n");
 					}
 				}
 			} else if (msg.equals("DUNNO")) {
@@ -284,7 +275,6 @@ public class SendReq{
 					byte b = (byte) msg_byte_NO[i];
 					msg += (char) b;
 				}
-				System.out.println("J'ai reçu en TCP: " + msg);
 			} else {
 				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[LIST?␣m***]");
 				System.out.println("MESSAGE RECU: " + msg);
@@ -315,10 +305,7 @@ public class SendReq{
 				}
 			}
 			byte[] to_send = byte_out.toByteArray();
-			System.out.println("LENGTH DU BYTE BUFFER: " + to_send.length);
 			os.write(to_send);
-			System.out.println("J'ai envoye en TCP: " + str);
-
 			// Recois msg - message en TCP [SIZE!␣m␣h␣w***]
 			String msg = "";
 			String receptacle = null;
@@ -393,8 +380,6 @@ public class SendReq{
 		try {
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
-
-			System.out.println("J'ai envoye en TCP: " + str);
 			// Recois msg - message en TCP
 			String msg = "";
 			String receptacle = null;
@@ -434,7 +419,6 @@ public class SendReq{
 				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[UNREG***]");
 				System.out.println("MESSAGE RECU: " + msg);
 			}
-			System.out.println("J'ai reçu en TCP: " + msg);
 		} catch (Exception e) {
 			System.out.println("ERREUR UNREG");
 			e.printStackTrace();
@@ -445,8 +429,6 @@ public class SendReq{
 	public void Command_new_player(String str, JTextArea area) {
 		try {
 			// Envoie msg - message en TCP
-			System.out.println("J'envoie en tcp" + str);
-
 			os.write(str.getBytes());
 			// Recois msg - message en TCP
 			String msg = "";
@@ -515,10 +497,7 @@ public class SendReq{
 				}
 			}
 			byte[] to_send = byte_out.toByteArray();
-			System.out.println("LENGTH DU BYTE BUFFER: " + to_send.length);
 			os.write(to_send);
-			System.out.println("J'ai envoye en TCP: " + str);
-
 			// Recois msg - message en TCP
 			String msg = "";
 			String receptacle = null;
@@ -599,7 +578,6 @@ public class SendReq{
 				System.out.println("MESSAGE RECU: " + msg);
 				return;
 			}
-			System.out.println("J'ai reçu en TCP: " + msg);
 			// retourne le nombre n dans [GAMES␣n***]
 			int nombre_de_partie = Check_nb_game(msg);
 			// [OGAME␣m␣s***] m indique le numéro de partie et s le nombre de joueur
@@ -637,7 +615,6 @@ public class SendReq{
 					System.out.println("MESSAGE RECU: " + msg);
 					return;
 				}
-				System.out.println("J'ai reçu en TCP: " + msg);
 			}
 		} catch (Exception e) {
 			System.out.println("MESSAGE RECU ERREUR_TCP_[GAMES␣n***]/[OGAME␣m␣s***]");
@@ -694,11 +671,9 @@ public class SendReq{
 					return null;
 				}
 				// Si tout s'est bien passé
-				System.out.println("J'ai reçu en TCP: " + msg);
                 String args[] = msg.split(" ");
 				String port = args[6].replace("***", "");
 				String ip = args[5].replaceAll("#", "");
-                System.out.println("voici l'ip "+ ip);
 				int m = Integer.valueOf(args[1]);
 				int h = Integer.valueOf(args[2]);
 				int w = Integer.valueOf(args[3]);
@@ -718,7 +693,6 @@ public class SendReq{
 					byte b = (byte) msg_byte_NO[i];
 					msg += (char) b;
 				}
-				System.out.println("J'ai reçu en TCP: " + msg);
 				return null;
 			} else
 				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[WELCO␣m␣h␣w␣f␣ip␣port***]_01");
@@ -764,7 +738,6 @@ public class SendReq{
 				}
 				// Si tout s'est bien passé
 
-				System.out.println("J'ai reçu en TCP: " + msg);
 				String identifant = msg.substring(6, msg.length()-1);
                 String args[] = msg.split(" ");
             
@@ -786,7 +759,6 @@ public class SendReq{
 	// COMMAND_SEND: [UPMOV␣d***],[DOMOV␣d***],[LEMOV␣d***] et [RIMOV␣d***]
 	public void check_move_in_game(String str, Game game, int distance, int direction, JTextArea reponse) {
 		try {
-            System.out.println("hello" + str);
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
 			// Verifie que le message recu est correct
@@ -816,7 +788,6 @@ public class SendReq{
 					reponse.setText(msg);
 				}
 				// Si tout s'est bien passé
-				System.out.println("J'ai reçu en TCP: " + msg);
                 String args[] = msg.split(" ");
                 int x = Integer.valueOf(args[1]);
                 int y = Integer.valueOf(args[2].replace("***", ""));
@@ -955,8 +926,6 @@ public class SendReq{
 		try {
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
-			System.out.println("J'ai envoye en TCP: " + str);
-
 			// Verifie que le message recu est correct
 			String msg = "";
 			String receptacle = null;
@@ -983,7 +952,6 @@ public class SendReq{
 					System.out.println("MESSAGE RECU: " + msg);
 				}
 				// Si tout s'est bien passé
-				System.out.println("J'ai reçu en TCP: " + msg);
 				if (msg.equals("GOBYE***")) {
 					
 				} else { // Si ca ne s'est pas bien passé car la reponse est mauvaise
@@ -1015,8 +983,6 @@ public class SendReq{
 		try {
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
-			System.out.println("J'ai envoye en TCP: " + str);
-
 			// Verifie que le message recu est correct
 			String msg = "";
 			String receptacle = null;
@@ -1110,8 +1076,6 @@ public class SendReq{
 		try {
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
-			System.out.println("J'ai envoye en TCP: " + str);
-
 			// Verifie que le message recu est correct
 			String msg = "";
 			String receptacle = null;
@@ -1138,7 +1102,6 @@ public class SendReq{
 					System.out.println("MESSAGE RECU: " + msg);
 				}
 				// Si tout s'est bien passé
-				System.out.println("J'ai reçu en TCP: " + msg);
 				reponse.setText(msg);
 			} else if (msg.equals("GOBYE")) {
 				byte[] msg_byte = new byte[3];
@@ -1153,7 +1116,6 @@ public class SendReq{
 					System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[MALL!***]_02");
 					System.out.println("MESSAGE RECU: " + msg);
 				}
-				System.out.println("J'ai reçu en TCP: " + msg);
 				if (msg.equals("GOBYE***")) {
 					    closeSocket();
 				} else { // Si ca ne s'est pas bien passé car la reponse est mauvaise
@@ -1169,7 +1131,6 @@ public class SendReq{
 					byte b = (byte) msg_byte_NO[i];
 					msg += (char) b;
 				}
-				System.out.println("J'ai reçu en TCP: " + msg);
 			} else {
 				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[MALL!***]_01");
 				System.out.println("MESSAGE RECU: " + msg);

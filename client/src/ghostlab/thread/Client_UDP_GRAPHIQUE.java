@@ -4,7 +4,6 @@ import java.net.*;
 
 import javax.swing.JTextArea;
 
-import src.ghostlab.controler.SendReq;
 
 public class Client_UDP_GRAPHIQUE implements Runnable {
 	MulticastSocket mso;
@@ -41,15 +40,19 @@ public class Client_UDP_GRAPHIQUE implements Runnable {
 				// Affiche msg du serveur - message en UDP Multicast
 				mso.receive(paquet);
 				msg = new String(paquet.getData(), 0, paquet.getLength());
+				if(zone.getText().length() > 140){
+					zone.setText("");
+				}
 
 				for (int i = 0; i < msg.length(); i++) {
 					msg_recu += msg.charAt(i);
 					if (msg_est_complet(msg_recu)) {
 						System.out.println("J'ai reçu en UDP-Multicast: " + msg_recu);
+						zone.append(msg_recu + "\n");
 						msg_recu = msg_recu.substring(i+1, msg_recu.length());
-						zone.setText(msg_recu + " ");
 					}
 				}
+	
 
 			}
 

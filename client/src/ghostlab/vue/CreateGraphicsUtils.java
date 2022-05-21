@@ -18,7 +18,7 @@ public class CreateGraphicsUtils {
     }
 
     public static JButtonGraphiqueBuilder createJButtonImage(String chemin){
-        final JButtonGraphiqueBuilder jButton = new JButtonGraphiqueBuilder(chemin);
+        JButtonGraphiqueBuilder jButton = new JButtonGraphiqueBuilder(chemin);
         return jButton;
     }
 

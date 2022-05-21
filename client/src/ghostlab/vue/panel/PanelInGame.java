@@ -145,9 +145,9 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         laby_panel.setLayout(new BorderLayout());
         laby_panel.add(in_laby_panel);
         laby_panel.setBackground(Color.black);
-        updateUI();
         this.in_laby_panel.setLayout(new GridLayout(game.getHauteur(),game.getLargeur()));
         controller.connectUdp(game, multicasttextarea,msgpvtextarea);
+        updateUI();
         refresh_laby(game);
         actionListerner();
         

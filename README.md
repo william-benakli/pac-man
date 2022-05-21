@@ -8,10 +8,18 @@ GROUPE NUMERO 5:
 #################### PARTIE_CLIENT ####################
 
 # Lancer le client: 
+
+Tout d'abord assurez vous de n'avoir aucune fichier du type '.class'
+pour cela il y'a la rubrique __#Nettoyer les .class du client__
+
 Depuis le dossier (client) executer la commande:
 **javac src/ghostlab/Client_Main.java**
+
 Puis depuis ce même dossier faire la commande:
 **java src.ghostlab.Client_Main [adresse_ip] [numéro_de_port]**
+
+L'utilisation d'un makefile étant recommandé nous l'avons fait, mais par soucis
+de sureté executer les commandes à la mains nous semble plus sécurisée.
 
 # Nettoyer les .class du client:
 Depuis le dossier (client) executer la commande:
