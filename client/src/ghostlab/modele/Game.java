@@ -20,8 +20,8 @@ public class Game {
         this.player = player;
         this.port = port;
         this.labyrinth_to_parcour = new char[hauteur][largeur];
-        for (int i = 0; i < hauteur; i++){
-            for (int j = 0; j < largeur; j++){
+        for (int i = 0; i < largeur ; i++){
+            for (int j = 0; j < hauteur; j++){
                 if(i == 0 || j == 0 || i == (hauteur-1) || j == (largeur-1)){
                     labyrinth_to_parcour[i][j]= '#';
                 }else{
@@ -34,13 +34,14 @@ public class Game {
 
     public void setPosition(int x, int y, char c){
         labyrinth_to_parcour[x][y] = c;
+        movePlayer(x,y);
     }
 
     public void movePlayer(int x, int y){
         labyrinth_to_parcour[player.getPosX()][player.getPosY()] = '1';
         labyrinth_to_parcour[x][y] = 'p';
         player.setPoX(x);
-        player.setPoY(x);
+        player.setPoY(y);
     }
 
     public char[][] getLabyrinth_to_parcour() {

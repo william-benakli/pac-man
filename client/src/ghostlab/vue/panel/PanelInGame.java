@@ -149,11 +149,11 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
     
 
     public void refresh_laby(Game game) {
-
+        in_laby_panel.removeAll();
         final char[][] labyrinth_to_parcour = game.getLabyrinth_to_parcour();
 
-        for (int i = 0; i < game.getHauteur(); i++){
-            for (int j = 0; j < game.getLargeur(); j++){
+        for (int i = 0; i < game.getLargeur(); i++){
+            for (int j = 0; j < game.getHauteur(); j++){
                 final JPanel mur = CreateGraphicsUtils.createPanelImage("ressources/textures/mur.png");
                 final JPanel vide = CreateGraphicsUtils.createPanelImage("ressources/textures/vide.png");
                 final JPanel sol = CreateGraphicsUtils.createPanelImage("ressources/textures/sol.png");
@@ -175,13 +175,13 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
                 sol.setMaximumSize(new Dimension(40,50));
                 sol.setPreferredSize(new Dimension(40,50));
 
-                if(labyrinth_to_parcour[i][j] == '#'){
+                if(labyrinth_to_parcour[j][i] == '#'){
                     in_laby_panel.add(mur);
-                }else if(labyrinth_to_parcour[i][j] == '1'){
+                }else if(labyrinth_to_parcour[j][i] == '1'){
                     in_laby_panel.add(sol);
-                }else if(labyrinth_to_parcour[i][j] == 'p'){
+                }else if(labyrinth_to_parcour[j][i] == 'p'){
                     in_laby_panel.add(player);
-                }else if(labyrinth_to_parcour[i][j] == 'f'){
+                }else if(labyrinth_to_parcour[j][i] == 'f'){
                     in_laby_panel.add(fantome);
                 }else{
                     in_laby_panel.add(vide);
@@ -193,19 +193,19 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
 
     public void actionListerner(){
         up.addActionListener(event->{
-            controller.check_move_in_game("UPMOV "+ pasdeplacementext.getText() + "***",reponserveurtextarea);
+            controller.check_move_in_game("UPMOV "+ pasdeplacementext.getText() + "***",game, reponserveurtextarea);
             refresh_laby(game);
         });
         down.addActionListener(event->{
-            controller.check_move_in_game("DOMOV "+ pasdeplacementext.getText() + "***",reponserveurtextarea);
+            controller.check_move_in_game("DOMOV "+ pasdeplacementext.getText() + "***",game,reponserveurtextarea);
             refresh_laby(game);
         });
         right.addActionListener(event->{
-            controller.check_move_in_game("RIMOV "+ pasdeplacementext.getText() + "***",reponserveurtextarea);
+            controller.check_move_in_game("RIMOV "+ pasdeplacementext.getText() + "***",game,reponserveurtextarea);
             refresh_laby(game);
         });
         left.addActionListener(event->{
-            controller.check_move_in_game("LEMOV "+ pasdeplacementext.getText() + "***", reponserveurtextarea);
+            controller.check_move_in_game("LEMOV "+ pasdeplacementext.getText() + "***",game, reponserveurtextarea);
             refresh_laby(game);
         });
 
@@ -224,6 +224,8 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
 
         quit.addActionListener(event->{
             controller.quit_in_game("IQUIT***");
+            controller.closeSocket();
+            System.exit(0);
         });
         
         glist.addActionListener(event->{

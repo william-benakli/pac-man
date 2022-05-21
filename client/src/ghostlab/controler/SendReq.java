@@ -27,6 +27,13 @@ public class SendReq{
         this.os = socket.getOutputStream();
     }
 
+    public void closeSocket(){
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public ArrayList<Integer> getListId(){return list_id_game;}
 
     public String Check_udp_port(String s) {
@@ -732,12 +739,10 @@ public class SendReq{
 	}
 
 	// COMMAND_SEND: [UPMOV␣d***],[DOMOV␣d***],[LEMOV␣d***] et [RIMOV␣d***]
-	public void check_move_in_game(String str, JTextArea reponse) {
+	public void check_move_in_game(String str, Game game, JTextArea reponse) {
 		try {
 			// Envoie msg - message en TCP
 			os.write(str.getBytes());
-			System.out.println("J'ai envoye en TCP: " + str);
-
 			// Verifie que le message recu est correct
 			String msg = "";
 			String receptacle = null;
@@ -766,6 +771,11 @@ public class SendReq{
 				}
 				// Si tout s'est bien passé
 				System.out.println("J'ai reçu en TCP: " + msg);
+                String args[] = msg.split(" ");
+                int x = Integer.valueOf(args[1]);
+                int y = Integer.valueOf(args[2].replace("***", ""));
+                game.movePlayer(x, y);
+                reponse.setText(msg);
 			} else if (msg.equals("MOVEF")) { // [MOVEF␣x␣y␣p***] 21 bytes
 				byte[] msg_byte = new byte[16];
 				if ((read = is.read(msg_byte)) != -1) {
@@ -781,7 +791,11 @@ public class SendReq{
 					reponse.setText(msg);
 				}
 				// Si tout s'est bien passé
-				System.out.println("J'ai reçu en TCP: " + msg);
+				reponse.setText("Vous avez attrape un fantome ! +1 bravo");
+                String args[] = msg.split(" ");
+                int x = Integer.valueOf(args[1]);
+                int y = Integer.valueOf(args[2]);
+                game.setPosition(x, y,'f');
 			} else if (msg.equals("DUNNO")) {
 				byte[] msg_byte_NO = new byte[3];
 				if ((read = is.read(msg_byte_NO)) != -1) {
@@ -792,7 +806,6 @@ public class SendReq{
 					msg += (char) b;
 				}
 				reponse.setText(msg);
-				System.out.println("J'ai reçu en TCP: " + msg);
 			} else if (msg.equals("GOBYE")) {
 				byte[] msg_byte_NO = new byte[3];
 				if ((read = is.read(msg_byte_NO)) != -1) {
@@ -802,7 +815,6 @@ public class SendReq{
 					byte b = (byte) msg_byte_NO[i];
 					msg += (char) b;
 				}
-				System.out.println("J'ai reçu en TCP: " + msg);
 				reponse.setText(msg);
 				if (msg.equals("GOBYE***")) {
 				//	closeClient(socket);
