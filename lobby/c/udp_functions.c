@@ -85,7 +85,48 @@ int group_message(struct game *_game, struct participant *sender,
 	return ret;
 }
 
-int private_message(struct game *_game, char *target_identifiant, char *message,
+struct participant* find_player(struct game *game, char *id) {
+	struct game *courant = game;
+	if (courant->participants == NULL) {
+		printf("PAS DE JOUEUR\n");
+		return NULL;
+	}
+
+	struct participant *joueur = courant->participants;
+
+	char id_cours[9];
+	memcpy(id_cours, joueur->identifiant, 8);
+	id_cours[8] = '\0';
+
+	if (strcmp(id_cours, id) == 0) {
+		return joueur;
+	}
+
+	memset(id_cours, 0, 9);
+
+	while (courant->participants->next != NULL) {
+		memcpy(id_cours, joueur->identifiant, 8);
+		id_cours[8] = '\0';
+
+		if (strcmp(id_cours, id) == 0) {
+			return joueur;
+		}
+		memset(id_cours, 0, 9);
+
+		courant->participants = courant->participants->next;
+	}
+
+	memcpy(id_cours, joueur->identifiant, 8);
+	id_cours[8] = '\0';
+	if (strcmp(id_cours, id) == 0) {
+		return joueur;
+	}
+
+	printf("PAS TROUVE LE JOUEUR\n");
+	return NULL;
+}
+
+int private_message(struct game *_game, char *target_id, char *message,
 		struct participant *sender) {
 	int sock = socket(PF_INET, SOCK_DGRAM, 0);
 	struct addrinfo *first_info;
@@ -94,32 +135,33 @@ int private_message(struct game *_game, char *target_identifiant, char *message,
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_DGRAM;
 
-	struct participant *copy_players = _game->participants;
-	while (strcmp(copy_players->identifiant, target_identifiant) != 0) {
-		copy_players = copy_players->next;
-	}
+	struct participant *joueur = find_player(_game, target_id);
 
-	if (copy_players == NULL) {
+	if (joueur == NULL) {
 		return -1;
 	}
 
-	char private_buffer[230];
-	int bytes_written = sprintf(private_buffer, "MESSP %s %s+++",
-			sender->identifiant, message);
+	char sender_id[9];
+	memcpy(sender_id, sender->identifiant, 8);
+	sender_id[8] = '\0';
+
+	char private_buffer[strlen(message) + 15];
+
+	int bytes_written = sprintf(private_buffer, "%s: %s+++",
+			sender_id, message);
 	if (bytes_written < 0) {
 		return -1;
 	}
 
-	 char portbuffer[5];
-	 bytes_written = sprintf(portbuffer, "%d", copy_players->udp_port);
-	 if (bytes_written < 0) {
-	 	return -1;
-	 }
-	 
+	char portbuffer[5];
+	bytes_written = sprintf(portbuffer, "%d", joueur->udp_port);
+	if (bytes_written < 0) {
+		return -1;
+	}
 
 	//private_buffer[strlen(private_buffer)] = '\0';
-	int r = getaddrinfo(copy_players->address, portbuffer, &hints, &first_info);
-	printf("LE PORT UDP DU JOUEUR: %s\n", copy_players->address);
+	int r = getaddrinfo(joueur->address, portbuffer, &hints, &first_info);
+	printf("LE PORT UDP DU JOUEUR: %s\n", portbuffer);
 	printf("LE STRLEN: %ld\n", strlen(private_buffer));
 	printf("LE BUFFER: %s\n", private_buffer);
 	printf("R EST IL VALIDE: %d\n", r);
@@ -131,9 +173,7 @@ int private_message(struct game *_game, char *target_identifiant, char *message,
 					(socklen_t) sizeof(struct sockaddr_in));
 		}
 	}
-
 	return 0;
-
 }
 
 int get_mall_message(int clientsocket, char *message_buffer) {
