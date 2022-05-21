@@ -3,12 +3,13 @@ package src.ghostlab.modele;
 public class Player {
 
     private String identifant;
-    private int x,y;
+    private int x,y, point;
 
     private Player(String identifant, int x, int y){
         this.identifant = identifant;
         this.x = x;
         this.y = y;
+        this.point = 0;
     }
 
     public String getIdentifant(){
@@ -19,6 +20,12 @@ public class Player {
     }
     public int getPosY(){
         return y;
+    }
+    public int getPoint(){
+        return point;
+    }
+    public void addPoint(){
+        point++;
     }
 
     /* Fabrique static vu en L3 */

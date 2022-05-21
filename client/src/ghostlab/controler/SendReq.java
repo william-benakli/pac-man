@@ -13,13 +13,14 @@ import java.util.ArrayList;
 
 import src.ghostlab.modele.Game;
 import src.ghostlab.modele.Player;
-
+import src.ghostlab.thread.Client_UDP_GRAPHIQUE;
 public class SendReq{
 
     private final ArrayList<Integer> list_id_game = new ArrayList<>();
     private final Socket socket;
     private final InputStream is;
     private final OutputStream os;
+    private String port_du_joueur;
 
     public SendReq(Socket socket) throws IOException{
         this.socket = socket;
@@ -35,6 +36,35 @@ public class SendReq{
         }
     }
     public ArrayList<Integer> getListId(){return list_id_game;}
+
+    public void connectUdp(Game game, JTextArea zone_multi, JTextArea zone_send){
+        String str_socket_UDP = Check_udp_port(game.getPortUdp());
+        String adress_ip_udp = (game.getIpUdp());
+        
+        System.out.println("Voici le port_UDP de la partie: " + str_socket_UDP);
+        System.out.println("Voici votre port_UDP de joueur: " + port_du_joueur);
+        System.out.println("Voici votre ip_UDP: " + adress_ip_udp);
+        
+        try (// CREER LES CLIENTS UDP
+            MulticastSocket client_udp_jeu = new MulticastSocket(Integer.valueOf(str_socket_UDP))) {
+            MulticastSocket client_udp_joueur = new MulticastSocket(Integer.valueOf(port_du_joueur));
+            
+            // Adresses de classe D comprises entre 224.0.0.0 à 239.255.255.255
+            Client_UDP_GRAPHIQUE launcher_UDP_jeu = new Client_UDP_GRAPHIQUE(client_udp_jeu, adress_ip_udp, zone_multi);
+            Client_UDP_GRAPHIQUE launcher_UDP_joueur = new Client_UDP_GRAPHIQUE(client_udp_joueur, adress_ip_udp,zone_send);
+
+            // CREER LES THREADS UDP
+            Thread t_udp_jeu = new Thread(launcher_UDP_jeu);
+            Thread t_udp_joueur = new Thread(launcher_UDP_joueur);
+
+            // LANCE LES THREADS UDP
+            t_udp_jeu.start();
+            t_udp_joueur.start();
+        } catch (NumberFormatException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
     public String Check_udp_port(String s) {
 		String res = "";
@@ -427,6 +457,7 @@ public class SendReq{
 			}
 			area.setText(msg);
 			if (msg.equals("REGOK")) {
+                port_du_joueur = str.substring(15, 19);
 				byte[] msg_byte_OK = new byte[5];
 				if ((read = is.read(msg_byte_OK)) != -1) {
 					receptacle = new String(msg_byte_OK, 0, read);
@@ -497,6 +528,8 @@ public class SendReq{
 			}
 			reponse.setText(msg);
 			if (msg.equals("REGOK")) {
+                port_du_joueur = str.substring(15, 19);
+
 				byte[] msg_byte_OK = new byte[5];
 				if ((read = is.read(msg_byte_OK)) != -1) {
 					receptacle = new String(msg_byte_OK, 0, read);
@@ -651,9 +684,10 @@ public class SendReq{
 				}
 				// Si tout s'est bien passé
 				System.out.println("J'ai reçu en TCP: " + msg);
-				String port = msg.substring(msg.length() - 7, msg.length() - 3);
-				String ip = msg.substring(msg.length() - 23, msg.length() - 8);
                 String args[] = msg.split(" ");
+				String port = args[6].replace("***", "");
+				String ip = args[5].replaceAll("#", "");
+                System.out.println("voici l'ip "+ ip);
 				int m = Integer.valueOf(args[1]);
 				int h = Integer.valueOf(args[2]);
 				int w = Integer.valueOf(args[3]);
@@ -792,10 +826,14 @@ public class SendReq{
 				}
 				// Si tout s'est bien passé
 				reponse.setText("Vous avez attrape un fantome ! +1 bravo");
+                game.getPlayer().addPoint();
                 String args[] = msg.split(" ");
                 int x = Integer.valueOf(args[1]);
                 int y = Integer.valueOf(args[2]);
                 game.setPosition(x, y,'f');
+                game.setPosition(game.getPlayer().getPosX(), game.getPlayer().getPosY(),'1');
+                game.getPlayer().setPoX(x);
+                game.getPlayer().setPoY(y);
 			} else if (msg.equals("DUNNO")) {
 				byte[] msg_byte_NO = new byte[3];
 				if ((read = is.read(msg_byte_NO)) != -1) {
@@ -817,7 +855,7 @@ public class SendReq{
 				}
 				reponse.setText(msg);
 				if (msg.equals("GOBYE***")) {
-				//	closeClient(socket);
+					closeSocket();
 				} else { // Si ca ne s'est pas bien passé car la reponse est mauvaise
 					System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[GOBYE]_[MOVE?]");
 					System.out.println("MESSAGE RECU: " + msg);
@@ -928,18 +966,15 @@ public class SendReq{
 					}
 				}
 				if (!Check_valide_message(msg)) {
-					System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[GLIS?]_02");
-					System.out.println("MESSAGE RECU: " + msg);
+					reponse.setText("Une erreur s'est produite, ressayez !");
 				}
 				// Si tout s'est bien passé
-				System.out.println("J'ai reçu en TCP: " + msg);
 				reponse.setText(msg);
 				int nombre_de_joueur = Check_int_value(msg, 6);
 				// [GPLYR␣id␣x␣y␣p***] 30 bytes
 				if (nombre_de_joueur == 0) {
-					System.out.println("Aucun joueurs dans la partie");
+					reponse.setText("Aucun joueurs dans la partie");
 				} else {
-					System.out.println("Nombre de joueurs: " + nombre_de_joueur);
 				}
 				for (int j = 0; j < nombre_de_joueur; j++) {
 					byte[] msg_byte2 = new byte[30];
@@ -952,11 +987,11 @@ public class SendReq{
 						msg += (char) b;
 					}
 					if (!Check_valide_message(msg)) {
-						System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[GPLYR␣id␣x␣y␣p***]");
-						System.out.println("MESSAGE RECU: " + msg);
+                        reponse.setText("Une erreur s'est produite, ressayez !");
 						return;
 					}
-					System.out.println("J'ai reçu en TCP: " + msg);
+                    reponse.append("\nNombre de joueurs: " + nombre_de_joueur);
+                    reponse.append("\n" + msg);
 				}
 			} else if (msg.equals("GOBYE")) {
 				byte[] msg_byte_NO = new byte[3];
@@ -967,13 +1002,11 @@ public class SendReq{
 					byte b = (byte) msg_byte_NO[i];
 					msg += (char) b;
 				}
-				System.out.println("J'ai reçu en TCP: " + msg);
-				reponse.setText(msg);
+                reponse.setText(msg);
 				if (msg.equals("GOBYE***")) {
-				//	closeClient(socket);
+				    closeSocket();
 				} else { // Si ca ne s'est pas bien passé car la reponse est mauvaise
-					System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[GOBYE]_[GLIS?]");
-					System.out.println("MESSAGE RECU: " + msg);
+                    reponse.setText("Une erreur s'est produite, ressayez !");
 				}
 			} else if (msg.equals("DUNNO")) {
 				byte[] msg_byte_NO = new byte[3];
@@ -984,10 +1017,9 @@ public class SendReq{
 					byte b = (byte) msg_byte_NO[i];
 					msg += (char) b;
 				}
-				System.out.println("J'ai reçu en TCP: " + msg);
+                reponse.setText(msg);
 			} else {
-				System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[GLIS?]_01");
-				System.out.println("MESSAGE RECU: " + msg);
+                reponse.setText("Une erreur s'est produite, ressayez !");
 			}
 		} catch (Exception e) {
 			System.out.println("MESSAGE RECU ERREUR_TCP_[GLIS?]");
@@ -1045,7 +1077,7 @@ public class SendReq{
 				}
 				System.out.println("J'ai reçu en TCP: " + msg);
 				if (msg.equals("GOBYE***")) {
-					//closeClient(socket);
+					    closeSocket();
 				} else { // Si ca ne s'est pas bien passé car la reponse est mauvaise
 					System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[MALL!***]_03");
 					System.out.println("MESSAGE RECU: " + msg);
@@ -1133,7 +1165,7 @@ public class SendReq{
 				}
 				System.out.println("J'ai reçu en TCP: " + msg);
 				if (msg.equals("GOBYE***")) {
-					//closeClient(socket);
+                    closeSocket();
 				} else { // Si ca ne s'est pas bien passé car la reponse est mauvaise
 					System.out.println("MESSAGE RECU NON VALIDE PROTOCOLE_TCP_[SEND!***]_03");
 					System.out.println("MESSAGE RECU: " + msg);

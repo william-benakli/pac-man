@@ -34,7 +34,6 @@ public class Game {
 
     public void setPosition(int x, int y, char c){
         labyrinth_to_parcour[x][y] = c;
-        movePlayer(x,y);
     }
 
     public void movePlayer(int x, int y){
@@ -51,6 +50,11 @@ public class Game {
     public int getIdGame(){
         return this.id_game;
     }
+
+    public String getIpUdp(){ 
+        return ip_partie;}
+    public String getPortUdp(){ return port;}
+    public Player getPlayer(){ return player;}
 
     /* Fabrique static vu en L3 */
     public static Game createGame(int id_game, int hauteur, int largeur, int fantome, String ip_partie, String port, Player player){

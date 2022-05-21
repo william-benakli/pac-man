@@ -14,7 +14,7 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
     private int game_id;
     private JPanel panel_register;
     private JLabel name_game, identifiantlabel, portlabel, reponse_commande, information, game_selectlabel;
-    private JButton back, unreg,regis_game, size_game, list_game;
+    private JButton start_game, back, unreg,regis_game, size_game, list_game;
     private JTextField identifiant, port;
     private JTextArea reponse_list_size;
 
@@ -42,6 +42,8 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
         this.reponse_commande = CreateGraphicsUtils.createLabelWithFont("Reponse du serveur", Color.ORANGE);
         this.game_selectlabel = CreateGraphicsUtils.createLabelWithFont("Vous avez selectionne la partie Game n-"+game_id, Color.WHITE);
         panel_register.add(name_game);
+        this.start_game = CreateGraphicsUtils.createJButtonImage("ressources/button/start_button.png");
+
         GroupLayout LayoutPrincpal = new GroupLayout(this);
 
         setLayout(LayoutPrincpal);
@@ -64,8 +66,8 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(180).addComponent(information))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(300).addComponent(identifiant, 200,200,200))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(300).addComponent(port, 200,200,200))
-
-                        .addGroup(LayoutPrincpal.createSequentialGroup().addGap(480).addComponent(regis_game))
+                        .addGroup(LayoutPrincpal.createSequentialGroup().addGap(590).addComponent(start_game))
+                        .addGroup(LayoutPrincpal.createSequentialGroup().addGap(390).addComponent(regis_game))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(220).addComponent(unreg))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(70).addComponent(panel_register))
                         );
@@ -85,6 +87,7 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
 
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(250).addComponent(identifiant, 50,50,50))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(400).addComponent(port, 50,50,50))
+                        .addGroup(LayoutPrincpal.createSequentialGroup().addGap(550).addComponent(start_game))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(560).addComponent(regis_game))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(550).addComponent(unreg))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(70).addComponent(panel_register))
@@ -93,8 +96,18 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
     }
 
     public void actionListerner() {
+        this.start_game.addActionListener(event->{
+            if(partie_join){
+                VueClient.setPanel(new PanelWaiting(controller));
+            }else{
+                reponse_list_size.setText("Aucune partie existante.");
+            }
+        });
+
         this.back.addActionListener(event -> {
+            controller.Command_unreg_player("UNREG " + game_id + "***", reponse_list_size);
             VueClient.setPanel(new PanelLobby(controller));
+            partie_join = false;
         });
 
         this.size_game.addActionListener(e->{
@@ -110,7 +123,6 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
                 controller.Command_unreg_player("UNREG " + game_id + "***", reponse_list_size);
                 if(reponse_list_size.getText().startsWith("UNROK ")){
                     partie_join = false;
-                    this.back.setVisible(true);
                     this.regis_game = CreateGraphicsUtils.createJButtonImage("ressources/button/regis_button.png");    
                     updateUI();
                 }else{
@@ -122,21 +134,15 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
         });
 
         this.regis_game.addActionListener(e -> {
-            if(partie_join){
-                controller.commandStart();
-                VueClient.setPanel(new PanelWaiting(controller));
-            }else{
                 if(identifiant.getText().length() != 8 || port.getText().length() != 4 ){
                     reponse_list_size.setText("Votre identifiant ou port n'est pas correct.");
                 }else{
                     controller.Command_regis_player("REGIS " + identifiant.getText() + " " + port.getText() + " " +game_id + "***", reponse_list_size);
                     if(reponse_list_size.getText().startsWith("REGOK")){
                         partie_join = true;
-                        this.back.setVisible(false);
                         this.regis_game = CreateGraphicsUtils.createJButtonImage("ressources/button/start_button.png");
                         updateUI();
                     }
-                }
             }
         });
     }

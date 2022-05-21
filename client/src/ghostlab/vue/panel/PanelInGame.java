@@ -10,7 +10,7 @@ import java.awt.*;
 public class PanelInGame extends JPanelGraphiqueBuilder {
 
     private Game game;
-    private JLabel multicastlabel, msg_privelabel, multicasttextlabel, msg_privetextlabel,pasdeplacementlabel, idplayerlabel;
+    private JLabel game_over, point, multicastlabel, msg_privelabel, multicasttextlabel, msg_privetextlabel,pasdeplacementlabel, idplayerlabel;
 
     private JPanel game_panel, laby_panel, in_laby_panel, chat_panel, reponse_panel;
     private JButton up,down,right,left,quit,sendpv,sendmulti, glist;
@@ -18,8 +18,9 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
     private JTextArea  msgpvtextarea, multicasttextarea, reponserveurtextarea;
     private SendReq controller;
 
-    public PanelInGame(SendReq controller) {
+    public PanelInGame(Game game, SendReq controller) {
         super("ressources/panel/background.jpg");
+        controller.glist_in_game("GLIS?***", reponserveurtextarea);
         this.controller = controller;
         this.game_panel = CreateGraphicsUtils.createPanelImage("ressources/panel/game_panel.png");
         this.chat_panel = CreateGraphicsUtils.createPanelImage("ressources/panel/systemchat_panel.png");
@@ -32,7 +33,9 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         this.msg_privetextlabel = CreateGraphicsUtils.createLabelWithFont("Msg", Color.ORANGE);
         this.pasdeplacementlabel = CreateGraphicsUtils.createLabelWithFont("Pas", Color.ORANGE);
         this.idplayerlabel = CreateGraphicsUtils.createLabelWithFont("Id", Color.ORANGE);
-        
+        this.point = CreateGraphicsUtils.createLabelWithFont("Vos points: 0", Color.ORANGE);
+        this.game_over = CreateGraphicsUtils.createLabelWithFont("GAME OVER", Color.RED);
+        this.game_over.setVisible(false);
         this.laby_panel = new JPanel();
         this.in_laby_panel = new JPanel();
 
@@ -47,7 +50,7 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         this.sendmulti = CreateGraphicsUtils.createJButtonImage("ressources/button/send_button.png");
         this.glist = CreateGraphicsUtils.createJButtonImage("ressources/button/glist_button.png");
         this.idplayerpvtext = new JTextField();
-
+        this.game = game;
 
         this.msgpvtextarea =  CreateGraphicsUtils.createTextArea(280, 200);
         this.multicasttextarea = CreateGraphicsUtils.createTextArea(280,200);
@@ -66,7 +69,9 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         LayoutMain.setHorizontalGroup(
                 LayoutMain.createParallelGroup(GroupLayout.Alignment.LEADING)
                         //panel game et laby
+                        .addGroup(LayoutMain.createSequentialGroup().addGap(185).addComponent(game_over))
                         .addGroup(LayoutMain.createSequentialGroup().addGap(40).addComponent(laby_panel, 400, 400, 400))
+                        .addGroup(LayoutMain.createSequentialGroup().addGap(60).addComponent(point))
 
                         .addGroup(LayoutMain.createSequentialGroup().addGap(520).addComponent(up, 50, 50, 50))
                         .addGroup(LayoutMain.createSequentialGroup().addGap(520).addComponent(down, 50, 50, 50))
@@ -102,7 +107,9 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         LayoutMain.setVerticalGroup(
                 LayoutMain.createParallelGroup(GroupLayout.Alignment.LEADING)
                         //panel game et laby
+                        .addGroup(LayoutMain.createSequentialGroup().addGap(210).addComponent(game_over))
                         .addGroup(LayoutMain.createSequentialGroup().addGap(60).addComponent(laby_panel, 300, 300, 300))
+                        .addGroup(LayoutMain.createSequentialGroup().addGap(370).addComponent(point))
 
                         .addGroup(LayoutMain.createSequentialGroup().addGap(90).addComponent(up, 50, 50, 50))
                         .addGroup(LayoutMain.createSequentialGroup().addGap(210).addComponent(down, 50, 50, 50))
@@ -140,8 +147,8 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         laby_panel.add(in_laby_panel);
         laby_panel.setBackground(Color.black);
         updateUI();
-        this.game = controller.Command_welcome();
         this.in_laby_panel.setLayout(new GridLayout(game.getHauteur(),game.getLargeur()));
+        controller.connectUdp(game, multicasttextarea,msgpvtextarea);
         refresh_laby(game);
         actionListerner();
         
@@ -187,10 +194,30 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
                     in_laby_panel.add(vide);
                 }
             }
+            if(reponserveurtextarea.getText().startsWith("GOBYE")){
+                affiche_end();
+            }
         }
+        point.setText("Vos points :" + game.getPlayer().getPoint());
 
     }
 
+    public void affiche_end(){
+        in_laby_panel.removeAll();
+        for(int i = 0; i < 10; i++){
+            for(int y = 0; y < 10; y++){
+                    JPanel noir = new JPanel();
+                    noir.setBackground(Color.BLACK);
+                    noir.setSize(new Dimension(40,50));
+                    noir.setMaximumSize(new Dimension(40,50));
+                    noir.setPreferredSize(new Dimension(40,50));
+                    in_laby_panel.add(noir);
+                }
+        }
+        updateUI();
+        laby_panel.updateUI();
+        this.game_over.setVisible(true);
+    }
     public void actionListerner(){
         up.addActionListener(event->{
             controller.check_move_in_game("UPMOV "+ pasdeplacementext.getText() + "***",game, reponserveurtextarea);
@@ -210,12 +237,12 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         });
 
         sendmulti.addActionListener(event->{
-            controller.msg_all_in_game("MALL? "+ msgmulticast.getText() + "***", multicasttextarea);
+            controller.msg_all_in_game("MALL? "+ msgmulticast.getText() + "***", reponserveurtextarea);
         });
         
         sendpv.addActionListener(event->{
             if(idplayerlabel.getText().length() != 8 ){
-                controller.msg_send_in_game("SEND? "+ idplayerpvtext.getText() + " " + msgprive.getText() + "***",msgpvtextarea);
+                controller.msg_send_in_game("SEND? "+ idplayerpvtext.getText() + " " + msgprive.getText() + "***",reponserveurtextarea);
             }else{
                 msgpvtextarea.setText("Identifiant incorrect.");
             }
@@ -229,7 +256,7 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         });
         
         glist.addActionListener(event->{
-            controller.glist_in_game("GLIST?***", reponserveurtextarea);
+            controller.glist_in_game("GLIS?***", reponserveurtextarea);
         });
     }
     }

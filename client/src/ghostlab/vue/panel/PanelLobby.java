@@ -24,8 +24,8 @@ public class PanelLobby extends JPanelGraphiqueBuilder {
         super("ressources/panel/background.jpg");
         this.controller = controller;
 
-        this.add_game = CreateGraphicsUtils.createJButtonImage("ressources/button/boutton_add.png");
-        this.refresh_game = CreateGraphicsUtils.createJButtonImage("ressources/button/boutton_refresh.png");
+        this.add_game = CreateGraphicsUtils.createJButtonImage("ressources/button/newpl_button.png");
+        this.refresh_game = CreateGraphicsUtils.createJButtonImage("ressources/button/game_button.png");
         this.game_panel = CreateGraphicsUtils.createPanelImage("ressources/panel/menu_game.png");
         this.game_panel.setPreferredSize(new Dimension(1280, 720));
         this.games_selection = new JPanel();
@@ -43,8 +43,8 @@ public class PanelLobby extends JPanelGraphiqueBuilder {
                 mainLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(mainLayout.createSequentialGroup().addGap(100).addComponent(games_selection, 1050, 1050, 1050))
                         .addGroup(mainLayout.createSequentialGroup().addGap(20).addComponent(game_panel, 1200, 1200, 1200))
-                        .addGroup(mainLayout.createSequentialGroup().addGap(1120).addComponent(refresh_game, 100, 100, 100))
-                        .addGroup(mainLayout.createSequentialGroup().addGap(1010).addComponent(add_game, 100, 100, 100))
+                        .addGroup(mainLayout.createSequentialGroup().addGap(1120).addComponent(refresh_game))
+                        .addGroup(mainLayout.createSequentialGroup().addGap(950).addComponent(add_game))
         );
         /* Y */
         mainLayout.setVerticalGroup(

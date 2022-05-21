@@ -25,6 +25,7 @@ public class Client_Main {
 			int port_tcp = Integer.valueOf(args[1]);
 			// SOCKETS DES CLIENTS
 			Socket client_tcp = new Socket(adress_ip_tcp, port_tcp);
+
 			// MulticastSocket client_udp = new MulticastSocket(port_udp);
 			Scanner sc = new Scanner(System.in);
 
@@ -46,17 +47,13 @@ public class Client_Main {
 
 				// Client_UDP launcher_UDP = new Client_UDP(client_udp, client_tcp, adress_ip_udp);
 				// t_udp.start();
-
-
-
-
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("Aucune connexion etablie... ressayez !");
 			}
 
 			// TODO: FERME LES CLIENTS?
-			// client_tcp.close();
-			// client_udp.close();
+			//client_tcp.close();
+			//client_udp.close();
 			return;
 
 		} catch (Exception e) {

@@ -12,7 +12,7 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
 
     private JPanel panel_register;
     private JLabel identifiantlabel, portlabel, reponse_commande, information, game_selectlabel;
-    private JButton back, unreg, regis_game, size_game, list_game;
+    private JButton back, start_game, unreg, regis_game, size_game, list_game;
     private JTextField identifiant, port;
     private JTextArea reponse_list_size;
 
@@ -27,7 +27,9 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
         this.back = CreateGraphicsUtils.createJButtonImage("ressources/button/retour_button.png");
         this.unreg = CreateGraphicsUtils.createJButtonImage("ressources/button/unreg_button.png");
         this.panel_register = CreateGraphicsUtils.createPanelImage("ressources/panel/newpl_panel.png");
-        this.regis_game = CreateGraphicsUtils.createJButtonImage("ressources/button/boutton_add.png");
+        this.regis_game = CreateGraphicsUtils.createJButtonImage("ressources/button/newpl_button.png");
+        this.start_game = CreateGraphicsUtils.createJButtonImage("ressources/button/start_button.png");
+
         this.list_game = CreateGraphicsUtils.createJButtonImage("ressources/button/list_off_button.png");
         this.size_game = CreateGraphicsUtils.createJButtonImage("ressources/button/size_off_button.png");
         this.identifiant = CreateGraphicsUtils.createJtextField();
@@ -63,7 +65,8 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(300).addComponent(identifiant, 200, 200, 200))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(300).addComponent(port, 200, 200, 200))
 
-                        .addGroup(LayoutPrincpal.createSequentialGroup().addGap(480).addComponent(regis_game))
+                        .addGroup(LayoutPrincpal.createSequentialGroup().addGap(590).addComponent(start_game))
+                        .addGroup(LayoutPrincpal.createSequentialGroup().addGap(410).addComponent(regis_game))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(220).addComponent(unreg))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(70).addComponent(panel_register))
         );
@@ -83,7 +86,8 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
 
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(250).addComponent(identifiant, 50, 50, 50))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(400).addComponent(port, 50, 50, 50))
-                        .addGroup(LayoutPrincpal.createSequentialGroup().addGap(560).addComponent(regis_game))
+                        .addGroup(LayoutPrincpal.createSequentialGroup().addGap(550).addComponent(start_game))
+                        .addGroup(LayoutPrincpal.createSequentialGroup().addGap(550).addComponent(regis_game))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(550).addComponent(unreg))
                         .addGroup(LayoutPrincpal.createSequentialGroup().addGap(70).addComponent(panel_register))
         );
@@ -92,9 +96,18 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
 
     public void actionListerner() {
         this.back.addActionListener(event -> {
+            controller.Command_unreg_player("UNREG "+ id_game+ "***", reponse_list_size);
+            partie_lance = false;
             VueClient.setPanel(new PanelLobby(controller));
         });
-
+        this.start_game.addActionListener(event->{
+            if(partie_lance){
+                VueClient.setPanel(new PanelWaiting(controller));
+                controller.commandStart();
+            }else{
+                reponse_list_size.setText("Aucune partie existante.");
+            }
+        });
         this.size_game.addActionListener(e->{
             if(partie_lance){
                 controller.Command_size_player("SIZE?" + id_game + "***", reponse_list_size);
@@ -128,10 +141,6 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
         });
 
         this.regis_game.addActionListener(e -> {
-            if(partie_lance){
-                controller.commandStart();
-                VueClient.setPanel(new PanelInGame(controller));
-            }else{
                 if(identifiant.getText().length() != 8 || port.getText().length() != 4){
                     reponse_list_size.setText("Votre identifiant ou port n'est pas correct.");
                 }else{
@@ -142,11 +151,9 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
                     this.regis_game = CreateGraphicsUtils.createJButtonImage("ressources/button/start_button.png");
                     this.size_game = CreateGraphicsUtils.createJButtonImage("ressources/button/size_button.png");
                     this.list_game = CreateGraphicsUtils.createJButtonImage("ressources/button/list_button.png");
-                    this.back.setVisible(false);
                     updateUI();
                 }
                 }
-            }
         });
     }
 }
