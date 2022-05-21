@@ -4,13 +4,10 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 		struct game *game_courant) {
 
 	//while (check_endgame(game_courant) == NOT_FINISH) {
-  while (1) {
-		printlabyrinth(game_courant);
+	while (1) {
+		deplace_fantom(game_courant);
 
-    int x = rand() % 20;
-    if (x == 0){
-      deplace_fantom(game_courant);
-    }
+		printlabyrinth(game_courant);
 
 		size_t size_buffer_first = SIZE_INPUT_DEFAULT;
 		char buffer[size_buffer_first + 1];
@@ -18,9 +15,9 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 
 		int count_fst = read(socketclient, buffer, size_buffer_first);
 
-    if(game_courant->status == STATUS_UNAVAILABLE){
-      break;
-    }
+		if (game_courant->status == STATUS_UNAVAILABLE) {
+			break;
+		}
 
 		if (count_fst == 0)
 			return -1; //TODO verifier
@@ -44,32 +41,33 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 			}
 		}
 
-    if (strcmp(buffer,"GLIS?") == 0){
-      int rep_stars = readStars(socketclient);
+		if (strcmp(buffer, "GLIS?") == 0) {
+			int rep_stars = readStars(socketclient);
 			if (rep_stars == -1) {
-				sendDunno(socketclient, "GLIS? but '***' miss ligne 45 de serveur_game.c");
+				sendDunno(socketclient,
+						"GLIS? but '***' miss ligne 45 de serveur_game.c");
 				continue;
-      } else {
-        sendGlist(socketclient,game_courant);
-        continue;
-      }
-    }
+			} else {
+				sendGlist(socketclient, game_courant);
+				continue;
+			}
+		}
 		if (strcmp(buffer, "MALL?") == 0) {
 			char message_buffer[201];
 			message_buffer[200] = '\0';
-			
+
 			int test_mall = get_mall_message(socketclient, message_buffer);
 			printf("MSGBUFFER: %s\n", message_buffer);
-			
+
 			if (test_mall != 0) {
 				printf(
 						"erreur remplir le buffer de message ligne 34 fichier serveur_game.c\n");
 				send(socketclient, "NMALL***", 8 * sizeof(char), 0);
 				continue;
 			}
-			
+
 			test_mall = mutilcast_message(game_courant, message_buffer);
-			
+
 			if (test_mall != 0) {
 				printf(
 						"erreur envoyer le buffer de message ligne 38 fichier serveur_game.c\n");
@@ -152,13 +150,13 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 	sendGodBye(socketclient);
 	free(partcipant_ingame);
 	close(socketclient);
-	pthread_exit(NULL);
+	pthread_exit (NULL);
 
 	return 0;
 }
 
 void move_by_action(char *direction, char *distance, struct game *game_courant,
-		struct participant *partcipant_ingame){
+		struct participant *partcipant_ingame) {
 	if (strcmp(direction, CMD_RIMOV) == 0) {
 		move(MOVERIGHT, distance, game_courant, partcipant_ingame);
 	} else if (strcmp(direction, CMD_LEMOV) == 0) {
