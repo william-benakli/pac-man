@@ -11,8 +11,8 @@ char** initlabirynth(uint16_t x, uint16_t y) {
 
 	// Génère un labyrinthe au hasard parmi 5 types différents
 
-	srand (time(NULL));
-	int nRandonNumber = rand() % (4);
+	srand (time(NULL));int
+	nRandonNumber = rand() % (4);
 	switch (nRandonNumber) {
 	case 0: // Labirynthe sans aucun mur (Titre: RUNDOWN)
 		printf("LABYRINTHE RUNDOWN\n");
@@ -105,7 +105,7 @@ void freelabirynth(struct game *game) {
 }
 
 int moveinlabyrinth(int direction, int steps, struct game *game,
-	struct participant *player) {
+		struct participant *player) {
 	pthread_mutex_lock (&verrou2);
 	int stepsmoved = 0;
 	int ghostfound = 0;
@@ -238,10 +238,12 @@ int moveinlabyrinth(int direction, int steps, struct game *game,
 
 char getElementAtPos(struct game *game, int x, int y) {
 	pthread_mutex_lock (&verrou2);
+
 	if (game->labyrinth == NULL) {
 		pthread_mutex_unlock(&verrou2);
 		return '-';
 	}
+
 	pthread_mutex_unlock(&verrou2);
 	return game->labyrinth[x][y];
 }
@@ -308,29 +310,32 @@ int spawnFantomes(struct game *game) {
 	if (game->isGhost == YES)
 		return 0;
 
-	uint16_t largeur = game->largeur;
-	uint16_t hauteur = game->hauteur;
+	int largeur = game->largeur;
+	int hauteur = game->hauteur;
 
 	int spawn_location_x = rand() % (hauteur - 1); // % => Reste de la division entière
 	int spawn_location_y = rand() % (largeur - 1); // % => Reste de la division entière
-	uint8_t nombre_fantome_courant = 0;
+	int nombre_fantome_courant = 0;
 
 	while (nombre_fantome_courant < game->nb_fantome) {
 		char c = getElementAtPos(game, spawn_location_x, spawn_location_y);
 		while (c != '0') {
 			spawn_location_x = rand() % (hauteur - 1); // % => Reste de la division entière
-			spawn_location_y = rand() % (largeur - 1);
+			spawn_location_y = rand() % (largeur - 1); // % => Reste de la division entière
 			c = getElementAtPos(game, spawn_location_x, spawn_location_y);
 		}
 
 		char fantom = 'f';
 		int reponse = setElementAtPos(game, fantom, spawn_location_x,
 				spawn_location_y);
-		if (reponse == -1)
+		if (reponse == -1) {
+			printf("erreur spawn fantom_01\n");
 			return -1;
+		}
 		nombre_fantome_courant++;
 	}
 	if (nombre_fantome_courant != game->nb_fantome) {
+		printf("erreur spawn fantom_02\n");
 		return -1;
 	}
 	game->isGhost = YES;

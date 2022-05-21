@@ -47,8 +47,8 @@ public class SendReq{
         System.out.println("Voici votre port_UDP de joueur: " + port_du_joueur);
         System.out.println("Voici votre ip_UDP: " + adress_ip_udp);
         
-        try (// CREER LES CLIENTS UDP
-            MulticastSocket client_udp_jeu = new MulticastSocket(Integer.valueOf(str_socket_UDP))) {
+        try { // CREER LES CLIENTS UDP
+            MulticastSocket client_udp_jeu = new MulticastSocket(Integer.valueOf(str_socket_UDP));
             MulticastSocket client_udp_joueur = new MulticastSocket(Integer.valueOf(port_du_joueur));
             
             // Adresses de classe D comprises entre 224.0.0.0 à 239.255.255.255

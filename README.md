@@ -11,7 +11,7 @@ GROUPE NUMERO 5:
 Depuis le dossier (client) executer la commande:
 **javac src/ghostlab/Client_Main.java**
 Puis depuis ce même dossier faire la commande:
-**java src.ghostlab.Client_Main [adresse_ip] [numéro_de_port] **
+**java src.ghostlab.Client_Main [adresse_ip] [numéro_de_port]**
 
 # Nettoyer les .class du client:
 Depuis le dossier (client) executer la commande:
