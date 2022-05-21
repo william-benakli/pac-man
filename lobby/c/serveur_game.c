@@ -19,8 +19,12 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
 			break;
 		}
 
-		if (count_fst == 0)
-			return -1; //TODO verifier
+		if (count_fst == 0){
+			int ret = remove_player(partcipant_ingame,game_courant);
+			free(partcipant_ingame);
+			close(socketclient);
+			return ret;
+		}
 
 		printf("%s\n", buffer);
 		printf("hi, %d\n", count_fst);
@@ -169,4 +173,27 @@ void move_by_action(char *direction, char *distance, struct game *game_courant,
 		sendDunno(partcipant_ingame->tcp_sock,
 				"[GAME ACTION] Argument introuvable");
 	}
+}
+
+
+int remove_player(struct participant *leaver, struct game *game){
+	struct game *copy = game;
+
+	if(copy->participants->tcp_sock == leaver->tcp_sock){
+		game->participants->next = game->participants->next->next;
+		game->players--;
+	}
+
+	while(copy->participants->next != NULL){
+		if(copy->participants->next->tcp_sock == leaver->tcp_sock){
+			copy->participants->next = copy->participants->next->next;
+			game->players--;
+		}
+	}
+
+	if (game->players <= 0){
+		remove_game(game,_games);
+	}
+
+	return 0;
 }
