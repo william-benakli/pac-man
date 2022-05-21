@@ -29,10 +29,7 @@ public class Game {
                 }
             }
         }
-        labyrinth_to_parcour[4][4]= 'p';
-        labyrinth_to_parcour[4][5]= 'f';
-        labyrinth_to_parcour[3][1]= 'f';
-
+        movePlayer(player.getPosX(), player.getPosY());
     }
 
     public void setPosition(int x, int y, char c){

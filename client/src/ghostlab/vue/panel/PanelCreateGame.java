@@ -1,6 +1,6 @@
 package src.ghostlab.vue.panel;
 
-import src.ghostlab.thread.Client_TCP_GRAPHIQUE;
+import src.ghostlab.controler.SendReq;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.VueClient;
 import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
@@ -16,11 +16,14 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
     private JTextField identifiant, port;
     private JTextArea reponse_list_size;
 
+    private SendReq controller;
+
     private int id_game;
     private boolean partie_lance = false;
 
-    public PanelCreateGame() {
+    public PanelCreateGame(SendReq controller) {
         super("ressources/panel/background.jpg");
+        this.controller = controller;
         this.back = CreateGraphicsUtils.createJButtonImage("ressources/button/retour_button.png");
         this.unreg = CreateGraphicsUtils.createJButtonImage("ressources/button/unreg_button.png");
         this.panel_register = CreateGraphicsUtils.createPanelImage("ressources/panel/newpl_panel.png");
@@ -89,12 +92,12 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
 
     public void actionListerner() {
         this.back.addActionListener(event -> {
-            VueClient.setPanel(new PanelLobby());
+            VueClient.setPanel(new PanelLobby(controller));
         });
 
         this.size_game.addActionListener(e->{
             if(partie_lance){
-                Client_TCP_GRAPHIQUE.Command_Check("LIST?" + id_game + "***",VueClient.is, VueClient.os, reponse_list_size);
+                controller.Command_size_player("SIZE?" + id_game + "***", reponse_list_size);
             }else{
                 reponse_list_size.setText("Aucune partie existante.");
             }
@@ -102,7 +105,7 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
 
         this.list_game.addActionListener(e->{
             if(partie_lance){
-                Client_TCP_GRAPHIQUE.Command_Check("LIST?" + "***",VueClient.is, VueClient.os, reponse_list_size);
+                controller.Command_list_player("LIST?" + "***",reponse_list_size);
             }else{
                 reponse_list_size.setText("Aucune partie existante.");
                 }
@@ -110,13 +113,14 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
 
         this.unreg.addActionListener(e -> {
             if(partie_lance){
-                Client_TCP_GRAPHIQUE.Command_Check("UNREG "+ "***",VueClient.is, VueClient.os, reponse_list_size);
+                controller.Command_unreg_player("UNREG "+ id_game+ "***", reponse_list_size);
                 if(reponse_list_size.getText().startsWith("UNROK")){
                     partie_lance = false;
                     this.back.setVisible(true);
                     this.regis_game = CreateGraphicsUtils.createJButtonImage("ressources/button/boutton_add.png");
                     this.list_game = CreateGraphicsUtils.createJButtonImage("ressources/button/list_off_button.png");
                     this.size_game = CreateGraphicsUtils.createJButtonImage("ressources/button/size_off_button.png");
+                    updateUI();
                 }
             }else{
                 reponse_list_size.setText("Aucune partie existante.");
@@ -125,13 +129,13 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
 
         this.regis_game.addActionListener(e -> {
             if(partie_lance){
-                VueClient.setPanel(new PanelWaiting());
-                //mettre en attente le client
+                controller.commandStart();
+                VueClient.setPanel(new PanelInGame(controller));
             }else{
                 if(identifiant.getText().length() != 8 || port.getText().length() != 4){
                     reponse_list_size.setText("Votre identifiant ou port n'est pas correct.");
                 }else{
-                Client_TCP_GRAPHIQUE.Command_Check("NEWPL " + identifiant.getText() + " " + port.getText() + "***",VueClient.is, VueClient.os, reponse_list_size);
+                    controller.Command_new_player("NEWPL " + identifiant.getText() + " " + port.getText() + "***", reponse_list_size);
                 if(reponse_list_size.getText().startsWith("REGOK")){
                     partie_lance = true;
                     id_game = Integer.valueOf(reponse_list_size.getText().replace("REGOK ", "").replace("***", ""));
@@ -139,6 +143,7 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
                     this.size_game = CreateGraphicsUtils.createJButtonImage("ressources/button/size_button.png");
                     this.list_game = CreateGraphicsUtils.createJButtonImage("ressources/button/list_button.png");
                     this.back.setVisible(false);
+                    updateUI();
                 }
                 }
             }

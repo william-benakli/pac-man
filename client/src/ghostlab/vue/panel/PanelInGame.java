@@ -1,10 +1,9 @@
 package src.ghostlab.vue.panel;
 
 import src.ghostlab.modele.Game;
+import src.ghostlab.controler.SendReq;
 import src.ghostlab.vue.CreateGraphicsUtils;
 import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
-import src.ghostlab.thread.Client_TCP_GRAPHIQUE;
-import src.ghostlab.vue.VueClient;
 import javax.swing.*;
 import java.awt.*;
 
@@ -17,10 +16,11 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
     private JButton up,down,right,left,quit,sendpv,sendmulti, glist;
     private JTextField pasdeplacementext, idplayerpvtext, msgmulticast, msgprive;
     private JTextArea  msgpvtextarea, multicasttextarea, reponserveurtextarea;
+    private SendReq controller;
 
-    public PanelInGame(Game game){
+    public PanelInGame(SendReq controller) {
         super("ressources/panel/background.jpg");
-        this.game = game;
+        this.controller = controller;
         this.game_panel = CreateGraphicsUtils.createPanelImage("ressources/panel/game_panel.png");
         this.chat_panel = CreateGraphicsUtils.createPanelImage("ressources/panel/systemchat_panel.png");
         this.reponse_panel = CreateGraphicsUtils.createPanelImage("ressources/panel/reponse_panel.png");
@@ -61,9 +61,6 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         GroupLayout LayoutMain = new GroupLayout(this);
         setLayout(LayoutMain);
         //this.laby_panel.setPreferredSize(new Dimension(400, 300));
-        this.in_laby_panel.setLayout(new GridLayout(game.getHauteur(),game.getLargeur()));
-
-
 
         /* X */
         LayoutMain.setHorizontalGroup(
@@ -138,14 +135,18 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
                         .addGroup(LayoutMain.createSequentialGroup().addGap(450).addComponent(reponse_panel, 198, 198, 198))
 
         );
-        refresh_laby(game);
         laby_panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         laby_panel.setLayout(new BorderLayout());
         laby_panel.add(in_laby_panel);
         laby_panel.setBackground(Color.black);
-
-
+        updateUI();
+        this.game = controller.Command_welcome();
+        this.in_laby_panel.setLayout(new GridLayout(game.getHauteur(),game.getLargeur()));
+        refresh_laby(game);
+        actionListerner();
+        
     }
+    
 
     public void refresh_laby(Game game) {
 
@@ -190,34 +191,31 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
 
     }
 
-
-    //    private JButton up,down,right,left,quit,sendpv,sendmulti, glist;
-
     public void actionListerner(){
         up.addActionListener(event->{
-            Client_TCP_GRAPHIQUE.Command_Check_in_game("UPMOV "+ pasdeplacementext.getText() + "***",VueClient.is, VueClient.os, reponserveurtextarea);
+            controller.check_move_in_game("UPMOV "+ pasdeplacementext.getText() + "***",reponserveurtextarea);
             refresh_laby(game);
         });
         down.addActionListener(event->{
-            Client_TCP_GRAPHIQUE.Command_Check_in_game("DOMOV "+ pasdeplacementext.getText() + "***",VueClient.is, VueClient.os, reponserveurtextarea);
+            controller.check_move_in_game("DOMOV "+ pasdeplacementext.getText() + "***",reponserveurtextarea);
             refresh_laby(game);
         });
         right.addActionListener(event->{
-            Client_TCP_GRAPHIQUE.Command_Check_in_game("RIMOV "+ pasdeplacementext.getText() + "***",VueClient.is, VueClient.os, reponserveurtextarea);
+            controller.check_move_in_game("RIMOV "+ pasdeplacementext.getText() + "***",reponserveurtextarea);
             refresh_laby(game);
         });
         left.addActionListener(event->{
-            Client_TCP_GRAPHIQUE.Command_Check_in_game("LEMOV "+ pasdeplacementext.getText() + "***",VueClient.is, VueClient.os, reponserveurtextarea);
+            controller.check_move_in_game("LEMOV "+ pasdeplacementext.getText() + "***", reponserveurtextarea);
             refresh_laby(game);
         });
 
         sendmulti.addActionListener(event->{
-            Client_TCP_GRAPHIQUE.Command_Check_in_game("MALL? "+ msgmulticast.getText() + "***",VueClient.is, VueClient.os, multicasttextarea);
+            controller.msg_all_in_game("MALL? "+ msgmulticast.getText() + "***", multicasttextarea);
         });
         
         sendpv.addActionListener(event->{
             if(idplayerlabel.getText().length() != 8 ){
-                Client_TCP_GRAPHIQUE.Command_Check_in_game("SEND? "+ idplayerpvtext.getText() + " " + msgprive.getText() + "***",VueClient.is, VueClient.os, msgpvtextarea);
+                controller.msg_send_in_game("SEND? "+ idplayerpvtext.getText() + " " + msgprive.getText() + "***",msgpvtextarea);
             }else{
                 msgpvtextarea.setText("Identifiant incorrect.");
             }
@@ -225,11 +223,11 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
         });
 
         quit.addActionListener(event->{
-            Client_TCP_GRAPHIQUE.Command_Check_in_game("IQUIT***",VueClient.is, VueClient.os, null);
+            controller.quit_in_game("IQUIT***");
         });
         
         glist.addActionListener(event->{
-            Client_TCP_GRAPHIQUE.Command_Check_in_game("GLIST?***",VueClient.is, VueClient.os, reponserveurtextarea);
+            controller.glist_in_game("GLIST?***", reponserveurtextarea);
         });
     }
     }

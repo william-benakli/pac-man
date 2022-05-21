@@ -19,14 +19,10 @@ public class Client_Main {
 		try {
 			// NUMEROS DES PORTS et ADRESSE IP
 			if(args.length  != 2){
-				System.out.println("Erreur : Arguments manquants, essayez 'java Client 4545 localhost'");
+				System.out.println("Erreur : Arguments manquants, essayez 'java Client localhost 4545'");
 			}
-			int port_tcp = Integer.valueOf(args[0]);
-			// int port_udp = Integer.valueOf(args[1]);
-			String adress_ip_tcp = args[1];
-			// String adress_ip_udp = args[3];
-			System.out.println("Lancement...");
-
+			String adress_ip_tcp = args[0];
+			int port_tcp = Integer.valueOf(args[1]);
 			// SOCKETS DES CLIENTS
 			Socket client_tcp = new Socket(adress_ip_tcp, port_tcp);
 			// MulticastSocket client_udp = new MulticastSocket(port_udp);
@@ -36,9 +32,6 @@ public class Client_Main {
 			System.out.println("1 | Vue graphique ");
 			System.out.println("2 | Vue terminal ");
 			try {
-
-				// CREER LES CLIENTS UDP/TCP
-
 				int value = sc.nextInt();
 
 				if(value == 1){
