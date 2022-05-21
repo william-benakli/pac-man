@@ -37,8 +37,8 @@ int deplace_fantom(struct game *game) {
 	int search_x = rand() % (game->largeur - 1);
 	int search_y = rand() % (game->hauteur - 1);
 
-	for (int x = search_x; x < game->largeur - 1; x++) {
-		for (int y = search_y; y < game->hauteur - 1; y++) {
+	for (int x = search_x + 1; x < game->largeur - 1; x++) {
+		for (int y = search_y + 1; y < game->hauteur - 1; y++) {
 			if (game->labyrinth[y][x] == 'f') {
 				int direction = rand() % 4;
 				int distance = (rand() % 2) + 1;
@@ -49,9 +49,7 @@ int deplace_fantom(struct game *game) {
 						pthread_mutex_unlock(&verrou2);
 						return 0;
 					}
-					if (game->labyrinth[y][x - distance] == '#'
-							|| game->labyrinth[y][x - distance] == 'p'
-							|| game->labyrinth[y][x - distance] == 'f') {
+					if (game->labyrinth[y][x - distance] != '0') {
 						pthread_mutex_unlock(&verrou2);
 						return 0;
 					}
@@ -64,9 +62,7 @@ int deplace_fantom(struct game *game) {
 						pthread_mutex_unlock(&verrou2);
 						return 0;
 					}
-					if (game->labyrinth[y][x + distance] == '#'
-							|| game->labyrinth[y][x + distance] == 'p'
-							|| game->labyrinth[y][x + distance] == 'f') {
+					if (game->labyrinth[y][x + distance] != '0') {
 						pthread_mutex_unlock(&verrou2);
 						return 0;
 					}
@@ -79,9 +75,7 @@ int deplace_fantom(struct game *game) {
 						pthread_mutex_unlock(&verrou2);
 						return 0;
 					}
-					if (game->labyrinth[y - distance][x] == '#'
-							|| game->labyrinth[y - distance][x] == 'p'
-							|| game->labyrinth[y][y - distance] == 'f') {
+					if (game->labyrinth[y - distance][x] != '0') {
 						pthread_mutex_unlock(&verrou2);
 						return 0;
 					}
@@ -89,21 +83,18 @@ int deplace_fantom(struct game *game) {
 					game->labyrinth[y][x] = '0';
 					ghost_message(game, x, y - distance);
 					break;
-				case 3: //direction down
+				default: //direction down
 					if (y + distance >= game->largeur) {
 						pthread_mutex_unlock(&verrou2);
 						return 0;
 					}
-					if (game->labyrinth[y + distance][x] == '#'
-							|| game->labyrinth[y + distance][x] == 'p'
-							|| game->labyrinth[y][y + distance] == 'f') {
+					if (game->labyrinth[y + distance][x] != '0') {
 						pthread_mutex_unlock(&verrou2);
 						return 0;
 					}
 					game->labyrinth[y + distance][x] = 'f';
 					game->labyrinth[y][x] = '0';
 					ghost_message(game, x, y + distance);
-					break;
 				}
 			}
 		}
