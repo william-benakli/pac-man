@@ -12,6 +12,7 @@ public class Client_TCP implements Runnable {
 	Socket socket;
 	static int is_the_game_started = 0;
 	static int is_the_game_ended = 0;
+	static String port_du_joueur;
 
 	public Client_TCP(Socket sock) {
 		this.socket = sock;
@@ -50,19 +51,26 @@ public class Client_TCP implements Runnable {
 			// INFOS UDP
 			String str_socket_UDP = Check_udp_port(str_info_UDP);
 			String adress_ip_udp = Check_udp_ip(str_info_UDP);
-
-			// CREER LE CLIENT UDP
-			System.out.println("Voici votre port_UDP: " + str_socket_UDP);
+			
+			System.out.println("Voici le port_UDP de la partie: " + str_socket_UDP);
+			System.out.println("Voici votre port_UDP de joueur: " + port_du_joueur);
 			System.out.println("Voici votre ip_UDP: " + adress_ip_udp);
-			MulticastSocket client_udp = new MulticastSocket(Integer.valueOf(str_socket_UDP));
+			
+			// CREER LES CLIENTS UDP
+			MulticastSocket client_udp_jeu = new MulticastSocket(Integer.valueOf(str_socket_UDP));
+			MulticastSocket client_udp_joueur = new MulticastSocket(Integer.valueOf(port_du_joueur));
+			
 			// Adresses de classe D comprises entre 224.0.0.0 à 239.255.255.255
-			Client_UDP launcher_UDP = new Client_UDP(client_udp, adress_ip_udp);
+			Client_UDP launcher_UDP_jeu = new Client_UDP(client_udp_jeu, adress_ip_udp);
+			Client_UDP launcher_UDP_joueur = new Client_UDP(client_udp_joueur, adress_ip_udp);
 
-			// CREER LE THREAD UDP
-			Thread t_udp = new Thread(launcher_UDP);
+			// CREER LES THREADS UDP
+			Thread t_udp_jeu = new Thread(launcher_UDP_jeu);
+			Thread t_udp_joueur = new Thread(launcher_UDP_joueur);
 
-			// LANCE LE THREAD UDP
-			t_udp.start();
+			// LANCE LES THREADS UDP
+			t_udp_jeu.start();
+			t_udp_joueur.start();
 
 			// POSITION DE DEBUT DE PARTIE
 			Command_posit(is);
@@ -80,7 +88,8 @@ public class Client_TCP implements Runnable {
 			System.out.println("Votre partie est fini vous êtes allez être déconnecté.");
 			
 			// STOP LE THREAD UDP
-			t_udp.interrupt();
+			t_udp_jeu.interrupt();
+			t_udp_joueur.interrupt();
 			
 			// FERME TOUT
 			System.exit(1);
@@ -713,6 +722,7 @@ public class Client_TCP implements Runnable {
 				msg += (char) b;
 			}
 			if (msg.equals("REGOK")) {
+				port_du_joueur = str.substring(15, 19);
 				byte[] msg_byte_OK = new byte[5];
 				if ((read = is.read(msg_byte_OK)) != -1) {
 					receptacle = new String(msg_byte_OK, 0, read);
@@ -783,6 +793,7 @@ public class Client_TCP implements Runnable {
 				msg += (char) b;
 			}
 			if (msg.equals("REGOK")) {
+				port_du_joueur = str.substring(15, 19);
 				byte[] msg_byte_OK = new byte[5];
 				if ((read = is.read(msg_byte_OK)) != -1) {
 					receptacle = new String(msg_byte_OK, 0, read);
