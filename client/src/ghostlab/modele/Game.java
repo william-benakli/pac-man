@@ -20,8 +20,8 @@ public class Game {
         this.player = player;
         this.port = port;
         this.labyrinth_to_parcour = new char[hauteur][largeur];
-        for (int i = 0; i < hauteur; i++){
-            for (int j = 0; j < largeur; j++){
+        for (int i = 0; i < largeur ; i++){
+            for (int j = 0; j < hauteur; j++){
                 if(i == 0 || j == 0 || i == (hauteur-1) || j == (largeur-1)){
                     labyrinth_to_parcour[i][j]= '#';
                 }else{
@@ -29,10 +29,7 @@ public class Game {
                 }
             }
         }
-        labyrinth_to_parcour[4][4]= 'p';
-        labyrinth_to_parcour[4][5]= 'f';
-        labyrinth_to_parcour[3][1]= 'f';
-
+        movePlayer(player.getPosX(), player.getPosY());
     }
 
     public void setPosition(int x, int y, char c){
@@ -43,7 +40,7 @@ public class Game {
         labyrinth_to_parcour[player.getPosX()][player.getPosY()] = '1';
         labyrinth_to_parcour[x][y] = 'p';
         player.setPoX(x);
-        player.setPoY(x);
+        player.setPoY(y);
     }
 
     public char[][] getLabyrinth_to_parcour() {
@@ -53,6 +50,11 @@ public class Game {
     public int getIdGame(){
         return this.id_game;
     }
+
+    public String getIpUdp(){ 
+        return ip_partie;}
+    public String getPortUdp(){ return port;}
+    public Player getPlayer(){ return player;}
 
     /* Fabrique static vu en L3 */
     public static Game createGame(int id_game, int hauteur, int largeur, int fantome, String ip_partie, String port, Player player){
