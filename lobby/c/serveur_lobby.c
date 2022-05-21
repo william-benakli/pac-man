@@ -117,7 +117,7 @@ int waiting_players(struct player *player) {
 	partcipant_lobby->player_ready = 1;
 
 	while (check_ready(game_courant) == PLAYERS_NOT_READY
-			|| game_courant->players < 1) {
+			|| game_courant->players < 2) {
 		sleep(1);
 	}
 	pthread_mutex_lock (&verrou1);

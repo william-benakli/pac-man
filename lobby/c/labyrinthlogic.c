@@ -364,7 +364,7 @@ struct participant* find_winner(struct game *game) {
 }
 
 int check_endgame(struct game *game) {
-	if (game->nb_fantome <= 0 || game->players == 0) { //TODO: ici on devra verifier 2
+	if (game->nb_fantome <= 0 || game->players == 1) { //TODO: ici on devra verifier 2
 		if (game->status == STATUS_AVAILABLE) {
 			game->status = STATUS_UNAVAILABLE;
 			struct participant *winner = find_winner(game);
