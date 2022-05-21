@@ -39,9 +39,14 @@ int mutilcast_message(struct game *_game, char *buf) {
 
 int score_message(struct game *_game, struct participant *player, int fantom_x,
 		int fantom_y) {
-	char score_buffer[27];
+
+	char sender_id[9];
+	memcpy(sender_id, player->identifiant, 8);
+	sender_id[8] = '\0';
+
+	char score_buffer[28];
 	int bytes_written = sprintf(score_buffer, "SCORE %s %04d %03d %03d",
-			player->identifiant, player->score, fantom_x, fantom_y);
+			sender_id, player->score, fantom_x, fantom_y);
 	if (bytes_written < 0) {
 		return -1;
 	}
@@ -63,9 +68,14 @@ int ghost_message(struct game *_game, int fantom_x, int fantom_y) {
 }
 
 int end_message(struct game *_game, struct participant *winner) {
-	char end_buffer[28];
+
+	char sender_id[9];
+	memcpy(sender_id, winner->identifiant, 8);
+	sender_id[8] = '\0';
+
+	char end_buffer[20];
 	int bytes_written = sprintf(end_buffer, "ENDGA %s %04d",
-			winner->identifiant, winner->score);
+			sender_id, winner->score);
 	if (bytes_written < 0) {
 		return -1;
 	}
@@ -147,8 +157,8 @@ int private_message(struct game *_game, char *target_id, char *message,
 
 	char private_buffer[strlen(message) + 15];
 
-	int bytes_written = sprintf(private_buffer, "%s: %s+++",
-			sender_id, message);
+	int bytes_written = sprintf(private_buffer, "%s: %s+++", sender_id,
+			message);
 	if (bytes_written < 0) {
 		return -1;
 	}

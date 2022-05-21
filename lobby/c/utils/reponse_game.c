@@ -118,9 +118,9 @@ int sendGlist(int socketclient, struct game *current_game){
   //int size_glist = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t) + SIZE_INPUT_STAR;
   //int size_plyr = SIZE_INPUT_DEFAULT_SPACE + sizeof(uint8_t)*2 + SIZE_ONE_SPACE + SIZE_INPUT_STAR;
   //int size_max = size_glist + nombre_joueur*(size_plyr);
-  char glis_buffer[15];
-  char gplyr_buffer[30];
-  char trait[9];
+  char glis_buffer[11];
+  char gplyr_buffer[31]; // c'était 30
+  char id_joueur[9];
 
   //memmove(mess_game, "GLIS! ", SIZE_INPUT_DEFAULT_SPACE);
   //memmove(mess_game+(SIZE_INPUT_DEFAULT)+SIZE_ONE_SPACE, &nombre_joueur, sizeof(uint8_t));
@@ -136,20 +136,26 @@ int sendGlist(int socketclient, struct game *current_game){
   memmove(glis_buffer + 6,&nombre_joueur,1);
   memmove(glis_buffer + 7, "***", 3);
   count =  write(socketclient, glis_buffer, strlen(glis_buffer));
+  
   if(count < strlen(glis_buffer)){
     return -1;
   }
+  
   while(participant_courant != NULL){
-    memset(gplyr_buffer,0,30);
-    memset(trait,0,9);
-    memcpy(trait,participant_courant->identifiant,8);
-    trait[8] = '\0';
+	
+    // memset(gplyr_buffer,0,24);
+    // memset(trait,0,9);
+    memcpy(id_joueur,participant_courant->identifiant,8);
+    id_joueur[8] = '\0';
+        
     bytes_written = sprintf(gplyr_buffer,"GPLYR %s %03d %03d %04d***", 
-    trait,participant_courant->pos_x,participant_courant->pos_y,participant_courant->score);
+    id_joueur,participant_courant->pos_x,participant_courant->pos_y,participant_courant->score);
+    
     count =  write(socketclient, gplyr_buffer, strlen(gplyr_buffer));
     if(count < strlen(glis_buffer)){
       return -1;
     }
+        
     accumulator += bytes_written;
   /*memmove(mess_game+size_glist + (it_players*size_plyr), "GPLYR ", SIZE_INPUT_DEFAULT_SPACE);
     memmove(mess_game+size_glist + (it_players*size_plyr) +(SIZE_INPUT_DEFAULT_SPACE), participant_courant->identifiant, SIZE_IDENTIFIANT);
