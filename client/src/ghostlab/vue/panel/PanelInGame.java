@@ -20,7 +20,6 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
 
     public PanelInGame(Game game, SendReq controller) {
         super("ressources/panel/background.jpg");
-        controller.glist_in_game("GLIS?***", reponserveurtextarea);
         this.controller = controller;
         this.game_panel = CreateGraphicsUtils.createPanelImage("ressources/panel/game_panel.png");
         this.chat_panel = CreateGraphicsUtils.createPanelImage("ressources/panel/systemchat_panel.png");
@@ -199,7 +198,6 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
             }
         }
         point.setText("Vos points :" + game.getPlayer().getPoint());
-
     }
 
     public void affiche_end(){
@@ -220,19 +218,19 @@ public class PanelInGame extends JPanelGraphiqueBuilder {
     }
     public void actionListerner(){
         up.addActionListener(event->{
-            controller.check_move_in_game("UPMOV "+ pasdeplacementext.getText() + "***",game, reponserveurtextarea);
+            controller.check_move_in_game("UPMOV "+ pasdeplacementext.getText() + "***", game,Integer.valueOf(pasdeplacementext.getText()),1, reponserveurtextarea);
             refresh_laby(game);
         });
         down.addActionListener(event->{
-            controller.check_move_in_game("DOMOV "+ pasdeplacementext.getText() + "***",game,reponserveurtextarea);
+            controller.check_move_in_game("DOMOV "+ pasdeplacementext.getText() + "***", game,Integer.valueOf(pasdeplacementext.getText()), 2,reponserveurtextarea);
             refresh_laby(game);
         });
         right.addActionListener(event->{
-            controller.check_move_in_game("RIMOV "+ pasdeplacementext.getText() + "***",game,reponserveurtextarea);
+            controller.check_move_in_game("RIMOV "+ pasdeplacementext.getText() + "***", game,Integer.valueOf(pasdeplacementext.getText()), 3,reponserveurtextarea);
             refresh_laby(game);
         });
         left.addActionListener(event->{
-            controller.check_move_in_game("LEMOV "+ pasdeplacementext.getText() + "***",game, reponserveurtextarea);
+            controller.check_move_in_game("LEMOV "+ pasdeplacementext.getText() + "***",game, Integer.valueOf(pasdeplacementext.getText()), 4, reponserveurtextarea);
             refresh_laby(game);
         });
 

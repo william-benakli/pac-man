@@ -98,7 +98,7 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
     public void actionListerner() {
         this.start_game.addActionListener(event->{
             if(partie_join){
-                VueClient.setPanel(new PanelWaiting(controller));
+                controller.commandStart();
             }else{
                 reponse_list_size.setText("Aucune partie existante.");
             }

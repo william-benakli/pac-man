@@ -3,7 +3,9 @@
 
 
 int move(int direction, char * distance, struct game * game, struct participant *player){
-        printf("MOUVEUMENT: %d",atoi(distance));
+    printf("%d\n", direction);
+    printf("%d ON PASSE LAS-----\n", atoi(distance));
+
     int movement = moveinlabyrinth(direction, atoi(distance), game, player);
     if (movement != 0){
         char sendbuffer[17];
