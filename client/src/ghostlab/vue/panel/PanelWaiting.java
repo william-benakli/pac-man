@@ -8,6 +8,7 @@ import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.TimerTask;
 public class PanelWaiting extends JPanelGraphiqueBuilder {
 
     private JPanel game_panel;
@@ -42,6 +43,7 @@ public class PanelWaiting extends JPanelGraphiqueBuilder {
         );
         repaint();
         revalidate();
+        controller.commandStart();
     }
 
     public void connecting(){
