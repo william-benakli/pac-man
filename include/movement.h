@@ -8,5 +8,7 @@
 #include "game_settings.h"
 
 int move(int direction, char * distance, struct game * game, struct participant *player);
+int deplace_fantom(struct game *game);
+
 
 #endif

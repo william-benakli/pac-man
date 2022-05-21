@@ -7,6 +7,11 @@ int gameInput(int socketclient, struct participant *partcipant_ingame,
   while (1) {
 		printlabyrinth(game_courant);
 
+    int x = rand() % 20;
+    if (x == 0){
+      deplace_fantom(game_courant);
+    }
+
 		size_t size_buffer_first = SIZE_INPUT_DEFAULT;
 		char buffer[size_buffer_first + 1];
 		buffer[size_buffer_first] = '\0';
