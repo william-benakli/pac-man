@@ -60,6 +60,18 @@ public class Game {
     public static Game createGame(int id_game, int hauteur, int largeur, int fantome, String ip_partie, String port, Player player){
         return new Game(id_game, hauteur, largeur, fantome, ip_partie, port, player);
     }
+/*
+    public void parcoursX(int depart_x, int arrive_x, int y){
+        for(int i = 0; i < arrive_x; i++){
+            movePlayer(depart_x+i, y);
+        }
+    }
+
+    public void parcoursY(int depart_y, int arrive_y, int x){
+        for(int i = 0; i < arrive_y; i++){
+            movePlayer(x, depart_y+i);
+        }
+    }*/
 
     public int getLargeur() { return largeur; }
     public int getHauteur() { return hauteur; }

@@ -57,7 +57,7 @@ public class Client_Main {
 			return;
 
 		} catch (Exception e) {
-			System.out.println("java Client_Main [port_TCP] [ip_TCP]");
+			System.out.println("java Client_Main [ip_TCP] [port_TCP]");
 			e.printStackTrace();
 			return;
 		}

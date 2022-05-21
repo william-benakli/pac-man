@@ -8,6 +8,7 @@ import src.ghostlab.vue.graphics.JPanelGraphiqueBuilder;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.TimerTask;
 public class PanelWaiting extends JPanelGraphiqueBuilder {
 
     private JPanel game_panel;
@@ -40,12 +41,7 @@ public class PanelWaiting extends JPanelGraphiqueBuilder {
                 .addGroup(mainLayout.createSequentialGroup().addGap(250).addComponent(waiting_title))
                         .addGroup(mainLayout.createSequentialGroup().addGap(200).addComponent(game_panel, 150,150,150 ))
         );
-        updateUI();
-        
-        controller.commandStart();
-        Game game = controller.Command_welcome();
-        VueClient.setPanel(new PanelInGame(game, controller));
+        repaint();
+        revalidate();
     }
-
-
 }
