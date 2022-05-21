@@ -30,7 +30,7 @@ Depuis le dossier (client) executer la commande:
 # Lancer le serveur:
 Depuis la racine du projet lancer la commande: **make**
 + En cas de problème de compatibilité de version lancer avant: **make clean**
-Puis lancer la commande: **./lobby/c/out/serveur [numéro_de_port]**
+Puis lancer la commande: **./serveur/lobby/c/out/serveur [numéro_de_port]**
 
 # Nettoyer les fichiers générés par le serveur:
 Depuis la racine du projet lancer la commande: **make clean**

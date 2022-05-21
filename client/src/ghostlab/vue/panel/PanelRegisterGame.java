@@ -57,8 +57,8 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
 
 		/* X */
 		LayoutPrincpal.setHorizontalGroup(LayoutPrincpal.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addGroup(mainLayout.createSequentialGroup().addGap(465).addComponent(waiting))
-				.addGroup(mainLayout.createSequentialGroup().addGap(465).addComponent(waiting_title))
+				.addGroup(LayoutPrincpal.createSequentialGroup().addGap(465).addComponent(waiting))
+				.addGroup(LayoutPrincpal.createSequentialGroup().addGap(465).addComponent(waiting_title))
 				.addGroup(LayoutPrincpal.createSequentialGroup().addGap(0).addComponent(back))
 				.addGroup(LayoutPrincpal.createSequentialGroup().addGap(450).addComponent(game_selectlabel))
 				.addGroup(LayoutPrincpal.createSequentialGroup().addGap(800).addComponent(reponse_commande))
@@ -80,8 +80,8 @@ public class PanelRegisterGame extends JPanelGraphiqueBuilder {
 				.addGroup(LayoutPrincpal.createSequentialGroup().addGap(70).addComponent(panel_register)));
 		/* Y */
 		LayoutPrincpal.setVerticalGroup(LayoutPrincpal.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addGroup(mainLayout.createSequentialGroup().addGap(300).addComponent(waiting))
-				.addGroup(mainLayout.createSequentialGroup().addGap(250).addComponent(waiting_title))
+				.addGroup(LayoutPrincpal.createSequentialGroup().addGap(300).addComponent(waiting))
+				.addGroup(LayoutPrincpal.createSequentialGroup().addGap(250).addComponent(waiting_title))
 				.addGroup(LayoutPrincpal.createSequentialGroup().addGap(0).addComponent(back))
 				.addGroup(LayoutPrincpal.createSequentialGroup().addGap(150).addComponent(game_selectlabel))
 				.addGroup(LayoutPrincpal.createSequentialGroup().addGap(180).addComponent(reponse_commande))

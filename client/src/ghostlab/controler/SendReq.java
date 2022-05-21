@@ -263,7 +263,7 @@ public class SendReq{
 								msg += (char) b;
 							}
 						}
-						reponse.append(msg + "\n");
+						reponse.setText(msg);
 					}
 				}
 			} else if (msg.equals("DUNNO")) {
