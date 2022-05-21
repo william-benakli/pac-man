@@ -105,7 +105,7 @@ void freelabirynth(struct game *game) {
 }
 
 int moveinlabyrinth(int direction, int steps, struct game *game,
-		struct participant *player) {
+	struct participant *player) {
 	pthread_mutex_lock (&verrou2);
 	int stepsmoved = 0;
 	int ghostfound = 0;

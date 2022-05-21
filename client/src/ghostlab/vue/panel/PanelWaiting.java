@@ -43,14 +43,5 @@ public class PanelWaiting extends JPanelGraphiqueBuilder {
         );
         repaint();
         revalidate();
-        controller.commandStart();
     }
-
-    public void connecting(){
-        controller.commandStart();
-        Game game = controller.Command_welcome();
-        VueClient.setPanel(new PanelInGame(game, controller));
-    }
-
-
 }
