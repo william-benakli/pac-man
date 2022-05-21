@@ -611,13 +611,19 @@ public class SendReq{
 					receptacle = new String(msg_byte2, 0, read);
 				}
 				msg = "";
+                boolean b_t = true;
 				for (int i = 0; i < msg_byte2.length; i++) {
 					byte b = (byte) msg_byte2[i];
 					// Printing the content of byte array
 					if (i != 6 && i != 8) {
 						msg += (char) b;
 					} else {
-                        list_id_game.add((int) b);
+                        if(b_t){
+                            list_id_game.add((int) b);
+                            b_t = false;
+                        }else{
+                            b_t = true;
+                        }
 						msg += String.valueOf((int) b);
 					}
 				}

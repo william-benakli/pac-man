@@ -45,5 +45,4 @@ public class VueClient extends JFrame {
         return sendReq;
     }
 
-   
 }

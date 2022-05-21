@@ -102,8 +102,8 @@ public class PanelCreateGame extends JPanelGraphiqueBuilder {
         });
         this.start_game.addActionListener(event->{
             if(partie_lance){
-                VueClient.setPanel(new PanelWaiting(controller));
-                controller.commandStart();
+                PanelWaiting p = new PanelWaiting(controller);
+                VueClient.setPanel(p);
             }else{
                 reponse_list_size.setText("Aucune partie existante.");
             }
